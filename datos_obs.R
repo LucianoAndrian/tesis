@@ -1,12 +1,10 @@
 rm(list=ls()) 
 require(here)
 #setwd("/home/auri/Facultad/")
-PATH <- "/home/luciano/V"
-setwd(PATH)
 library(ncdf4)
-path<-"/home/auri/Facultad/Tesis/"
 
-tref = nc_open(paste(path, "tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
+
+tref = nc_open(paste("tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
 names(tref$var)
 temp = ncvar_get(tref, "tref")
 
@@ -32,8 +30,12 @@ for(j in 1:12){
 
 estaciones_p_a = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
 for(i in 1:9){
-  estaciones_p_a[,,,i-ceiling(i/2)] = apply(temp_estaciones[,,,1:i+3], c(1,2,3), mean)
+  if( i == 1){
+  estaciones_p_a[,,,i-floor(i/2)] = apply(temp_estaciones[,,,1:i+3], c(1,2,3), mean)
   i = i + 3
+  } else {
+    estaciones_p_a[,,,i-ceiling(i/2)] = apply(temp_estaciones[,,,1:i+3], c(1,2,3), mean)  
+  }
 }
 
 estaciones_prom = array(NA, dim = c(length(lon2), length(lat2), 4))
@@ -57,7 +59,7 @@ library(mapproj)
 lon = 23
 lat = 30
 
-value = array(estaciones_prom, dim = length(lon2)*length(lat2))
+value = array(estaciones_prom[,,4], dim = length(lon2)*length(lat2))
 data = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 3)
 
 l=0
@@ -71,7 +73,7 @@ for(j in 1:length(lat2)){
   data[(length(lon2)*j-(length(lon2)-1)):(j*length(lon2)),2]<-lat_v
 } 
 
-value[which(is.na(value))] = 0
+#value[which(is.na(value))] = 0
 data[,3]<-value-273.15
 error<-as.data.frame(data)
 
@@ -85,15 +87,18 @@ mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French 
                                       "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua"), 
                  colour = "black")
 # veeeeeeer
-library(scico)
-g <- ggplot() + theme_minimal()+
+
+ggplot() + theme_minimal()+
   xlab("Longitud") + ylab("Latitud") + 
   theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
-  geom_contour_fill2(data=error,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = 0)+
-  #geom_tile(data=error,aes(x = lon, y= lat,fill = temp),alpha=1, na.rm = T)+
-  scale_fill_gradient2(name="°C",low = "blue", mid = "white", high = "red",midpoint = 0)+#colours=rev(brewer.pal(n=11,"Spectral")),na.value = "white")+
-  #scale_fill_distiller(type = "div")+
-  geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") + #coord_map("stereographic", orientation = c(-35, -56, 0))+
+  
+  geom_tile(data=error,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+  
+  geom_contour_fill(data=error,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+  
+  scale_fill_gradientn(limits=c(-15,55),name="ºC",colours=rev(brewer.pal(n=11,"Spectral")),na.value = "white")+
+ 
+  geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
   ggtitle(paste("prueba", " - " , "prueba", sep = ""))+
   scale_x_continuous(limits = c(-85, -33))+
   theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
@@ -101,6 +106,5 @@ g <- ggplot() + theme_minimal()+
         panel.border = element_rect(colour = "black", fill=NA, size=3),
         panel.ontop = TRUE,
         plot.title = element_text(hjust=0.5))
-
 
 
