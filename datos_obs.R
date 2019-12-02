@@ -47,12 +47,14 @@ for( i in 1:4){
 }
  
 
-mapa_obs(lista = estaciones_prom, titulo = "Temperatura", nombre_fig = "temp", escala = c(-15, 55) 
-        ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = 1, niveles = 11  )
+mapa_obs(lista = estaciones_prom, titulo = "Temperatura", nombre_fig = "temp", escala = c(-15,55 ) 
+        ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si")
+
+mask = estaciones_prom[,,1]  
+mask[which(!is.na(mask))]=1
 
 
-
-# PP
+### PP ###
 
 prec = nc_open(paste("prec_monthly_nmme_cpc.nc", sep = "/"))
 names(prec$var)
@@ -91,9 +93,20 @@ while(i<=4){
 estaciones_prom = array(NA, dim = c(length(lon2), length(lat2), 4))
 
 for( i in 1:4){
-  estaciones_prom[,,i] = apply(estaciones_p_a[,,,i], c(1,2), mean)
+  estaciones_prom[,,i] = apply(estaciones_p_a[,,,i], c(1,2), mean)*mask
 }
 
+
+
 mapa_obs(lista = estaciones_prom, titulo = "PP", nombre_fig = "pp", escala = c(0,500)
-         , label_escala = "mm", resta = 0, brewer = "GnBu",revert = 0, niveles = 9)
+         , label_escala = "mm", resta = 0, brewer = "GnBu",revert = 0, niveles = 9, contour = "si")
+
+
+# sd
+s= seq(1:10)
+for( i in 1:10){
+  print(sqrt(sum((s-5.5)^2/9)))
+  
+}
+
 

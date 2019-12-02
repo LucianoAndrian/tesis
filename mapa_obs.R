@@ -1,4 +1,4 @@
-mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles ){
+mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour ){
   
   library(ncdf4)
   library(maps)
@@ -9,7 +9,7 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
   library(metR)
   library(RColorBrewer)
   library(mapproj)
-  
+
   
   est=c("MAM", "JJA", "SON", "DJF")
   g = list()
@@ -30,24 +30,25 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
     
     
     data[,3]<-value-resta
-    error<-as.data.frame(data)
+    data<-as.data.frame(data)
     
-    colnames(error)<-c("lon", "lat", "temp")
+    colnames(data)<-c("lon", "lat", "temp")
     
-    error[which(error$lon>180),][,1]<-error[which(error$lon>180),][,1]-360  
+    data[which(data$lon>180),][,1]<-data[which(data$lon>180),][,1]-360  
     
     
     mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French Guiana", "Suriname", "Colombia", "Venezuela",
                                           "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua"), 
                      colour = "black")
-    if(revert == 1){
+    if(revert == "si"){
+      if(contour == "si"){
     g = ggplot() + theme_minimal()+
       xlab("Longitud") + ylab("Latitud") + 
       theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
       
-      geom_tile(data=error,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+      geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
       
-      geom_contour_fill(data=error,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+      geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
       
       scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white")+
       
@@ -61,17 +62,40 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
             plot.title = element_text(hjust=0.5))
     
     ggsave(paste(nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
-    
+      } else {
+        g = ggplot() + theme_minimal()+
+          xlab("Longitud") + ylab("Latitud") + 
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+          
+          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          
+          #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+          
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white")+
+          
+          geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+          scale_x_continuous(limits = c(-85, -33))+
+          theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
+                axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill=NA, size=3),
+                panel.ontop = TRUE,
+                plot.title = element_text(hjust=0.5))
+        
+        ggsave(paste(nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        
+      }
     
   } else {
+    if(contour == "si"){
     
     g = ggplot() + theme_minimal()+
       xlab("Longitud") + ylab("Latitud") + 
       theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
       
-      geom_tile(data=error,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+      geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
       
-      geom_contour_fill(data=error,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+      geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
       
       scale_fill_gradientn(limits=escala,name=label_escala,colours=(brewer.pal(n=niveles,brewer)),na.value = "white")+
       
@@ -85,6 +109,29 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
             plot.title = element_text(hjust=0.5))
     
     ggsave(paste(nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+    } else {
+      g = ggplot() + theme_minimal()+
+        xlab("Longitud") + ylab("Latitud") + 
+        theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+        
+        geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+        
+        #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+        
+        scale_fill_gradientn(limits=escala,name=label_escala,colours=(brewer.pal(n=niveles,brewer)),na.value = "white")+
+        
+        geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
+        ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+        scale_x_continuous(limits = c(-85, -33))+
+        theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
+              axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+              panel.border = element_rect(colour = "black", fill=NA, size=3),
+              panel.ontop = TRUE,
+              plot.title = element_text(hjust=0.5))
+      
+      ggsave(paste(nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+      
+    }
     
   }
 }
