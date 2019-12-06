@@ -10,37 +10,41 @@ modelos_r10 = function(nombre, lon2, lat2){
   mask=as.matrix(read.table("mascara.txt"))
   t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre, sep = ""))
   
-                 
-  tref = nc_open(paste(ruta,t[1], sep = "/"))
-   
-  # para obtener lon2 y lat2 desde el mismo modelo              
+  tref = nc_open(paste(ruta, t[1], sep = "/"))
   temp = ncvar_get(tref, names(tref$var)[1])
-                 
+  
   lat = ncvar_get(tref, "Y")
   lon = ncvar_get(tref, "X")
-                 
+  
   lon2 = lon[which(lon==275):which(lon==330)]
   lat2 = lat[which(lat==-60):which(lat==15)]
-                 
-  # 3era dimension leads               
-  v = array(NA, dim = c(length(lon2), length(lat2), 12))
   
-  # 3era dim meses estaciones, 4ta dim runs, 5ta dim estaciones                
-  v2 = array(NA, dim = c(length(lon2), length(lat2), 3, 10, 4))
-                 
-  for(i in 0:3){ # i pasa de en los meses previos a las estaciones nov, feb, may, ago
-    for(j in 0:9){ # j las corridas
-      v = nc_open(paste(ruta, t[(101+j+30*i)], sep = "/"))
-      temp = ncvar_get(v, "tref")
-      temp = temp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),] #****
-      v2[,,,j+1,i+1] = temp[,,2:4]
-    }
-  }
-                 
+  v2 = array(NA, dim = c(length(lon2), length(lat2), 3, 10, 37, 4))
+  
+  anios = as.character(seq(from = 1982, to = 2018, by = 1))
+  meses = as.character(c("11_r", "02_r", "05_r", "08_r"))
+  
 
+  #esto anda, pero tarda como 10min...
+  
+  
+  for(m in 1:4){
+      for(i in 1:37){
+        for(j in 1:10){
+          t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre,"_", anios[i], meses[m], sep = ""))
+          v = nc_open(paste(ruta, t[j], sep = "/"))
+          v2[,,,j,i,m] = ncvar_get(v, "tref")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
+        }               
+      }
+  }
+  
+  
+
+
+  
   T =  array(NA, dim = c(length(lon2), length(lat2), 4)) #****   si hay diferencia va tirar error
   for(i in 1:4){
-    T[,,i] = apply(v2[,,,,i], c(1,2), mean)*mask 
+    T[,,i] = apply(v2[,,,,,i], c(1,2), mean)*mask 
   }
                  
   

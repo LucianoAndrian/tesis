@@ -8,6 +8,8 @@ source("r_modelos.R")
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
 
+#modelos mm por dia!! multiplicar por 30
+
 CM4i =modelos_r10("CMC-CanCM4i", lon2, lat2)
 
 mapa_obs(lista = CM4i[[1]], titulo = "prono CM4i", nombre_fig = "CM4i", escala = c(-5,40)
