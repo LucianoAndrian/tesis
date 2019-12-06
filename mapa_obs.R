@@ -1,4 +1,4 @@
-mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour ){
+mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat){
   
   library(ncdf4)
   library(maps)
@@ -15,18 +15,18 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
   est=c("MAM", "JJA", "SON", "DJF")
   g = list()
   for(i in 1:4){
-    value = array(lista[,,i], dim = length(lon2)*length(lat2))
-    data = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 3)
+    value = array(lista[,,i], dim = length(lon)*length(lat))
+    data = matrix(data = NA, nrow = length(lon)*length(lat), ncol = 3)
     
     l=0
-    while(l<length(lon2)*length(lat2)){
-      data[seq(l:l+length(lon2)),1]<-lon2
-      l=l+length(lon2)
+    while(l<length(lon)*length(lat)){
+      data[seq(l:l+length(lon)),1]<-lon
+      l=l+length(lon)
     }
     
-    for(j in 1:length(lat2)){
-      lat_v = array(lat2[j],dim=length(lon2))
-      data[(length(lon2)*j-(length(lon2)-1)):(j*length(lon2)),2]<-lat_v
+    for(j in 1:length(lat)){
+      lat_v = array(lat[j],dim=length(lon))
+      data[(length(lon)*j-(length(lon)-1)):(j*length(lon)),2]<-lat_v
     } 
     
     

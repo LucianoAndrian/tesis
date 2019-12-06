@@ -51,14 +51,11 @@ for( i in 1:4){
 
 
 mapa_obs(lista = estaciones_prom_t, titulo = "Temperatura", nombre_fig = "temp", escala = c(-5,35 ) 
-         ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si")
+         ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2)
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
 
-
-mask2 = estaciones_prom_t[,,3]
-mask2[which(mask2>315)]=
 
 
 # sd
@@ -69,7 +66,7 @@ for( i in 1:4 ){
 
 
 mapa_obs(lista = standar_d_t, titulo = "sd - TEMP", nombre_fig = "sd_TEMP", escala = c(0,1.8)
-         , label_escala = "mm", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si")
+         , label_escala = "mm", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2)
 
 
 
@@ -118,7 +115,7 @@ for( i in 1:4){
 
 
 mapa_obs(lista = estaciones_prom_pp, titulo = "PP", nombre_fig = "pp", escala = c(0,500)
-         , label_escala = "mm", resta = 0, brewer = "GnBu",revert = 0, niveles = 9, contour = "si")
+         , label_escala = "mm", resta = 0, brewer = "GnBu",revert = 0, niveles = 9, contour = "si", lon2, lat2)
 
 
 ## sd
@@ -131,7 +128,6 @@ for( i in 1:4 ){
 satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=90   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
 mapa_obs(lista = standar_d_pp, titulo = "sd - PP", nombre_fig = "sd_pp", escala = c(0,100)
-         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si")
-
+         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2)
 
 
