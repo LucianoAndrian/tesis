@@ -30,46 +30,50 @@ modelos_r10 = function(nombre, lon2, lat2){
   
   for(m in 1:4){
       for(i in 1:37){
-        for(j in 1:10){
-          t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre,"_", anios[i], meses[m], sep = ""))
+        t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre,"_", anios[i], meses[m], sep = ""))
+        for(j in 1:length(t)){
           v = nc_open(paste(ruta, t[j], sep = "/"))
           v2[,,,j,i,m] = ncvar_get(v, "tref")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
         }               
       }
   }
   
-  
-
-
-  
   T =  array(NA, dim = c(length(lon2), length(lat2), 4)) #****   si hay diferencia va tirar error
   for(i in 1:4){
     T[,,i] = apply(v2[,,,,,i], c(1,2), mean)*mask 
   }
                  
-  
   ### PP ###
   
-  pp = list.files("/datos/osman/nmme/monthly", pattern = paste("prec_Amon_", nombre, sep=""))
-                 
-  v = array(NA, dim = c(length(lon2), length(lat2), 12))
-                 
-  v2 = array(NA, dim = c(length(lon2), length(lat2), 3, 10, 4))
-                 
-  for(i in 0:3){
-    for(j in 0:9){
-      v = nc_open(paste(ruta, pp[(101+j+30*i)], sep = "/"))
-      prec = ncvar_get(v, "prec")
-      prec = prec[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),] 
-      v2[,,,j+1,i+1] = prec[,,2:4]
+  pp = list.files("/datos/osman/nmme/monthly", pattern = paste("prec_Amon_", nombre, sep = ""))
+  
+  pref = nc_open(paste(ruta, pp[1], sep = "/"))
+  prec = ncvar_get(pref, names(pref$var)[1])
+  
+  lat = ncvar_get(pref, "Y")
+  lon = ncvar_get(pref, "X")
+  
+  lon2 = lon[which(lon==275):which(lon==330)]
+  lat2 = lat[which(lat==-60):which(lat==15)]
+  
+  v2 = array(NA, dim = c(length(lon2), length(lat2), 3, 10, 37, 4))
+  
+  
+  for(m in 1:4){
+    for(i in 1:37){
+      pp = list.files("/datos/osman/nmme/monthly", pattern = paste("prec_Amon_", nombre,"_", anios[i], meses[m], sep = ""))
+      for(j in 1:length(pp)){
+        v = nc_open(paste(ruta, pp[j], sep = "/"))
+        v2[,,,j,i,m] = ncvar_get(v, "prec")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
+      }               
     }
   }
-                 
-                 
-  PP =  array(NA, dim = c(length(lon2), length(lat2), 4))
+  
+  PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) #****   si hay diferencia va tirar error
   for(i in 1:4){
-    PP[,,i] = apply(v2[,,,,i], c(1,2), mean)*mask
+    PP[,,i] = apply(v2[,,,,,i], c(1,2), mean)*mask 
   }
+  
   
   T_PP = list()
   T_PP[[1]]=T
