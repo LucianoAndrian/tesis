@@ -10,7 +10,7 @@ mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brew
   library(mapproj)
   library(metR)
   ruta = getwd()
-  
+  mask=read.table("mascara.txt")
   
   est=c("MAM", "JJA", "SON", "DJF")
   g = list()
