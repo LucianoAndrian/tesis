@@ -1,4 +1,4 @@
-# lectura salidas de modelos.
+CM# lectura salidas de modelos.
 # promedios ensambles corridas del mismo modelo, cada estacion pronosticada un mes antes.
 # falta desvio
 
