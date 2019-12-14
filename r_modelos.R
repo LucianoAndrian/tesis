@@ -121,14 +121,30 @@ modelos_rx = function(nombre, lon2, lat2, r){
   lon2 = lon[which(lon==275):which(lon==330)]
   lat2 = lat[which(lat==-60):which(lat==15)]
   
-  anios = as.character(seq(from = 1982, to = 2010, by = 1))
-  meses = as.character(c("11_r", "02_r", "05_r", "08_r"))
+  #anios = as.character(seq(from = 1982, to = 2010, by = 1))
+  anios= seq(from = 1994, to = 1995, by = 1)
+  #meses = as.character(c("11_r", "02_r", "05_r", "08_r"))
   
   v2 = array(NA, dim = c(length(lon2), length(lat2), 3, r, length(anios), 4))
+  init_cond=c(11,2,5,8)
   
+  final_month = init_cond[1] + 11
+  
+  if (final_month > 13){
+    flag_end = 1
+  final_month = final_month - 12
+  }else{
+    flag_end = 0
+  }
+  
+  ic_format=formatC(11, width = 2, format = "d", flag = "0")
+  
+  
+  t=list.files("/datos/osman/nmme/monthly/",file,full.names=TRUE)
   for(m in 1:4){
     for(i in 1:length(anios)){
-      t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre,"_", anios[i], meses[m], sep = ""))
+      file_pattern = paste('tref_Amon_',nombre,"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , as.character(anios[i] + flag_end), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
+      t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
       for(j in 1:length(t)){
         v = nc_open(paste(ruta, t[j], sep = "/"))
         v2[,,,j,i,m] = ncvar_get(v, "tref")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
@@ -146,7 +162,7 @@ modelos_rx = function(nombre, lon2, lat2, r){
   
   T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4)) #****   si hay diferencia va tirar error
   for(i in 1:4){
-    T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean)
+    T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = T)
   }
   
   sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) #****   si hay diferencia va tirar error
@@ -154,6 +170,19 @@ modelos_rx = function(nombre, lon2, lat2, r){
     sd_t[,,i] = apply(T2[,,,i], c(1,2), sd)*mask
   }
   
+  prom_v2<- apply(v2,c(1,2,4,5,6), mean)
+  prom_v2_mm<- apply(v2,c(1,2,4,5), mean)
+  mam_ds<- apply(prom_v2_mm[,,,1],c(1,2),sd,na.rm=T)
+  mam_ds
+  
+  prom_v2_2 <- apply(v2,c(1,2,4,5,6), mean,na.rm=T)
+  #prom_v2_mm_2 <- apply(prom_v2_2,c(1,2,4,5), mean, na.rm=T)
+  for (i in 1:30){
+    print(i)
+  #mam_ds_2 <- apply(prom_v2_2[,,6,,1],c(1,2),sd,na.rm=T)
+  #mam_ds_2
+  image.plot(prom_v2_2[,,6,i,1])
+  }  
   ### PP ###
   
   pp = list.files("/datos/osman/nmme/monthly", pattern = paste("prec_Amon_", nombre, sep = ""))
