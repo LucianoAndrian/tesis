@@ -1,4 +1,4 @@
-mapa_obs = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat){
+mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat){
   
   library(ncdf4)
   library(maps)
