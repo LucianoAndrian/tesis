@@ -1,6 +1,6 @@
 
 
-modelos_rx2 = function(nombre, lon2, lat2, r){
+modelos_rx2 = function(nombre, r){
   library(ncdf4)
   
   
@@ -51,7 +51,29 @@ modelos_rx2 = function(nombre, lon2, lat2, r){
     
     v2[which(v2<=0)]=NA 
     
-    # ACA GENERAR NCFD PARA GUARDAR!! 
+    londim = ncdim_def("lon", "grados_este", as.double(lon2))
+    latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+    timedim = ncdim_def("time", "Years", as.double(anios))
+    mesesdim = ncdim_def("meses", "meses", as.double(1:3))
+    rdim = ncdim_def("r","miembros", as.double(1:10))
+    tempdim = ncdim_def("temp", "°C", as.double(v2))
+    seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
+  
+    
+    fillvalue = NA
+    dlname = "temperatura"
+    temp_def = ncvar_def("temp", "Kelvin", list(londim, latdim, mesesdim, rdim, timedim, seasondim ), fillvalue, dlname, prec="single")
+    
+    ncfname = paste(nombre, "-temp", ".nc", sep = "")
+    
+    ncout = nc_create(ncfname, list(temp_def), force_v4=T)
+    
+    ncvar_put(ncout, temp_def, v2)
+    
+    #ncatt_put(ncout, "lon", "lat", "meses", "r", "anios", "season") #esto nse que hace pero no anda
+    
+    nc_close(ncout) #verificar donde guarda los nc
+    
     
     T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
     for(i in 1:4){
@@ -99,6 +121,30 @@ modelos_rx2 = function(nombre, lon2, lat2, r){
     }
     
     v2[which(v2<0)]=NA
+    
+    londim = ncdim_def("lon", "grados_este", as.double(lon2))
+    latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+    timedim = ncdim_def("time", "Years", as.double(anios))
+    mesesdim = ncdim_def("meses", "meses", as.double(1:3))
+    rdim = ncdim_def("r","miembros", as.double(1:10))
+    tempdim = ncdim_def("PP", "mm x day", as.double(v2))
+    seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
+    
+    
+    fillvalue = NA
+    dlname = "precipitacion"
+    temp_def = ncvar_def("pp", "mm x dia", list(londim, latdim, mesesdim, rdim, timedim, seasondim ), fillvalue, dlname, prec="single")
+    
+    ncfname = paste(nombre, "-pp", ".nc", sep = "")
+    
+    ncout = nc_create(ncfname, list(temp_def), force_v4=T)
+    
+    ncvar_put(ncout, temp_def, v2)
+    
+    #ncatt_put(ncout, "lon", "lat", "meses", "r", "anios", "season") #esto nse que hace pero no anda
+    
+    nc_close(ncout) #verificar donde guarda los nc
+    
     
     # ACA GENERAR NCFD PARA GUARDAR!! 
     
@@ -178,7 +224,29 @@ modelos_rx2 = function(nombre, lon2, lat2, r){
     
     v2[which(v2<=0)]=NA 
     
-    # ACA GENERAR NCFD PARA GUARDAR!! 
+    londim = ncdim_def("lon", "grados_este", as.double(lon2))
+    latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+    timedim = ncdim_def("time", "Years", as.double(anios))
+    mesesdim = ncdim_def("meses", "meses", as.double(1:3))
+    rdim = ncdim_def("r","miembros", as.double(1:10))
+    tempdim = ncdim_def("temp", "kelvin", as.double(v2))
+    seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
+    
+    
+    fillvalue = NA
+    dlname = "temperatura"
+    temp_def = ncvar_def("temp", "Kelvin", list(londim, latdim, mesesdim, rdim, timedim, seasondim ), fillvalue, dlname, prec="single")
+    
+    ncfname = paste(nombre, "-temp", ".nc", sep = "")
+    
+    ncout = nc_create(ncfname, list(temp_def), force_v4=T)
+    
+    ncvar_put(ncout, temp_def, v2)
+    
+    #ncatt_put(ncout, "lon", "lat", "meses", "r", "anios", "season") #esto nse que hace pero no anda
+    
+    nc_close(ncout) #verificar donde guarda los nc
+    
     
     T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
     for(i in 1:4){
@@ -230,7 +298,28 @@ modelos_rx2 = function(nombre, lon2, lat2, r){
     
     v2[which(v2<0)]=NA
     
-    # ACA GENERAR NCFD PARA GUARDAR!! 
+    
+    londim = ncdim_def("lon", "grados_este", as.double(lon2))
+    latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+    timedim = ncdim_def("time", "Years", as.double(anios))
+    mesesdim = ncdim_def("meses", "meses", as.double(1:3))
+    rdim = ncdim_def("r","miembros", as.double(1:10))
+    tempdim = ncdim_def("PP", "mm x day", as.double(v2))
+    seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
+    
+    
+    fillvalue = NA
+    dlname = "precipitacion"
+    temp_def = ncvar_def("pp", "mm x dia", list(londim, latdim, mesesdim, rdim, timedim, seasondim ), fillvalue, dlname, prec="single")
+    
+    ncfname = paste(nombre, "-pp", ".nc", sep = "")
+    
+    ncout = nc_create(ncfname, list(temp_def), force_v4=T)
+    
+    ncvar_put(ncout, temp_def, v2)
+    
+    nc_close(ncout) #verificar donde guarda los nc
+    
     
     PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
     for(i in 1:4){
