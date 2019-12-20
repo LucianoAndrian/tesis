@@ -55,7 +55,7 @@ modelos_rx2 = function(nombre, r){
     latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
     timedim = ncdim_def("time", "Years", as.double(anios))
     mesesdim = ncdim_def("meses", "meses", as.double(1:3))
-    rdim = ncdim_def("r","miembros", as.double(1:10))
+    rdim = ncdim_def("r","miembros", as.double(1:r))
     tempdim = ncdim_def("temp", "°C", as.double(v2))
     seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
   
@@ -75,22 +75,22 @@ modelos_rx2 = function(nombre, r){
     nc_close(ncout) #verificar donde guarda los nc
     
     
-    T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
-    for(i in 1:4){
-      T1[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  # poner TRUE xq T lo toma como si fuera el array...
-    }
+    #T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    #for(i in 1:4){
+    #  T1[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  # poner TRUE xq T lo toma como si fuera el array...
+    #}
     
     # SD
     
-    T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
-    for(i in 1:4){
-      T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
-    }
+    #T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+    #for(i in 1:4){
+    #  T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    #}
     
-    sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
-    for(i in 1:4){
-      sd_t[,,i] = apply(T2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
-    }
+    #sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    #for(i in 1:4){
+    #  sd_t[,,i] = apply(T2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    #}
     
     
     ### PP ###
@@ -126,7 +126,7 @@ modelos_rx2 = function(nombre, r){
     latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
     timedim = ncdim_def("time", "Years", as.double(anios))
     mesesdim = ncdim_def("meses", "meses", as.double(1:3))
-    rdim = ncdim_def("r","miembros", as.double(1:10))
+    rdim = ncdim_def("r","miembros", as.double(1:r))
     tempdim = ncdim_def("PP", "mm x day", as.double(v2))
     seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
     
@@ -148,30 +148,30 @@ modelos_rx2 = function(nombre, r){
     
     # ACA GENERAR NCFD PARA GUARDAR!! 
     
-    PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
-    for(i in 1:4){
-      PP[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask 
-    }
+    #PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    #for(i in 1:4){
+    #  PP[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask 
+    #}
     
     #SD
     
-    PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4)) 
-    for(i in 1:4){
-      PP2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
-    }
+    #PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4)) 
+    #for(i in 1:4){
+    #  PP2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    #}
     
-    sd_pp = array(NA, dim = c(length(lon2), length(lat2),4)) 
-    for(i in 1:4){
-      sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
-    }
+    #sd_pp = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    #for(i in 1:4){
+    #  sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    #}
     
     
-    T_PP = list()
-    T_PP[[1]] = T1
-    T_PP[[2]] = sd_t
-    T_PP[[3]] = PP
-    T_PP[[4]] = sd_pp
-    return(T_PP)
+    #T_PP = list()
+    #T_PP[[1]] = T1
+    #T_PP[[2]] = sd_t
+    #T_PP[[3]] = PP
+    #T_PP[[4]] = sd_pp
+    #return(T_PP)
     
   } else {
     ruta = "/datos/osman/nmme/monthly"
@@ -228,7 +228,7 @@ modelos_rx2 = function(nombre, r){
     latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
     timedim = ncdim_def("time", "Years", as.double(anios))
     mesesdim = ncdim_def("meses", "meses", as.double(1:3))
-    rdim = ncdim_def("r","miembros", as.double(1:10))
+    rdim = ncdim_def("r","miembros", as.double(1:r))
     tempdim = ncdim_def("temp", "kelvin", as.double(v2))
     seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
     
@@ -247,23 +247,25 @@ modelos_rx2 = function(nombre, r){
     
     nc_close(ncout) #verificar donde guarda los nc
     
+    ### seria bueno convertir todo lo anterior en funcion ###
     
-    T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
-    for(i in 1:4){
-      T1[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
-    }
-    
+    #T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    #for(i in 1:4){
+    #  T1[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+    #}
+  
+    #  
     # SD
     
-    T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
-    for(i in 1:4){
-      T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
-    }
+    #T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+    #for(i in 1:4){
+    #  T2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    #}
     
-    sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
-    for(i in 1:4){
-      sd_t[,,i] = apply(T2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
-    }
+    #sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    #for(i in 1:4){
+    #  sd_t[,,i] = apply(T2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    #}
     
     
     ### PP ###
@@ -289,7 +291,7 @@ modelos_rx2 = function(nombre, r){
             v2[,,,j,i,m] = ncvar_get(v, "prec")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
           } else {
             v = nc_open(t[j])
-            v2[,,,j,i,m] = ncvar_get(v, "prec")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]
+            v2[,,,j,i,m] = ncvar_get(v, "prec")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),2:4]*30
           }
           nc_close(v)
         }               
@@ -303,7 +305,7 @@ modelos_rx2 = function(nombre, r){
     latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
     timedim = ncdim_def("time", "Years", as.double(anios))
     mesesdim = ncdim_def("meses", "meses", as.double(1:3))
-    rdim = ncdim_def("r","miembros", as.double(1:10))
+    rdim = ncdim_def("r","miembros", as.double(1:r))
     tempdim = ncdim_def("PP", "mm x day", as.double(v2))
     seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
     
@@ -321,29 +323,97 @@ modelos_rx2 = function(nombre, r){
     nc_close(ncout) #verificar donde guarda los nc
     
     
-    PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
-    for(i in 1:4){
-      PP[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask 
-    }
+    #PP =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    #for(i in 1:4){
+    #  PP[,,i] = apply(v2[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask 
+    #}
     
     #SD
     
-    PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4)) 
-    for(i in 1:4){
-      PP2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
-    }
+    #PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4)) 
+    #for(i in 1:4){
+    #  PP2[,,,i] =  apply(v2[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    #}
     
-    sd_pp = array(NA, dim = c(length(lon2), length(lat2),4)) 
-    for(i in 1:4){
-      sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
-    }
+    #sd_pp = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    #for(i in 1:4){
+    #  sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    #}
     
     
-    T_PP = list()
-    T_PP[[1]] = T1
-    T_PP[[2]] = sd_t
-    T_PP[[3]] = PP
-    T_PP[[4]] = sd_pp
-    return(T_PP)
+    #T_PP = list()
+    #T_PP[[1]] = T1
+    #T_PP[[2]] = sd_t
+    #T_PP[[3]] = PP
+    #T_PP[[4]] = sd_pp
+    #return(T_PP)
   }
+}
+
+
+
+
+mean_sd = function(nombre){
+  
+  ruta =  "/home/luciano.andrian/tesis/"
+  
+  mask=as.matrix(read.table("mascara.txt"))
+  
+  anios= seq(from = 1982, to = 2010, by = 1)
+  ### TEMP ###
+  
+  nc = nc_open(paste(ruta, nombre, "-temp.nc", sep = ""))
+  
+  temp = ncvar_get(nc, "temp")
+  lon = ncvar_get(nc, "lon")
+  lat = ncvar_get(nc, "lat")
+  T1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+  for(i in 1:4){
+    T1[,,i] = apply(temp[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+  }
+ 
+  # SD
+ 
+  T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+  for(i in 1:4){
+    T2[,,,i] =  apply(temp[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+  }
+  
+  sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
+  for(i in 1:4){
+    sd_t[,,i] = apply(T2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+  }
+  
+  
+  ### PP ###
+  
+  nc = nc_open(paste(ruta, nombre, "-pp.nc", sep = ""))
+  
+  PP = ncvar_get(nc, "pp")
+  lon = ncvar_get(nc, "lon")
+  lat = ncvar_get(nc, "lat")
+  PP1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+  for(i in 1:4){
+    PP1[,,i] = apply(PP[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+  }
+  
+  # SD
+  
+  PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+  for(i in 1:4){
+    PP2[,,,i] =  apply(PP[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+  }
+  
+  sd_pp = array(NA, dim = c(length(lon2), length(lat2),4)) 
+  for(i in 1:4){
+    sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+  }
+  
+  T_PP = list()
+  T_PP[[1]] = T1
+  T_PP[[2]] = sd_t
+  T_PP[[3]] = PP1
+  T_PP[[4]] = sd_pp
+  return(T_PP)
+  
 }
