@@ -51,7 +51,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white")+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          
+          guides(fill = guide_legend(reverse = TRUE))+
           
           geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
@@ -73,7 +75,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white")+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          
+          guides(fill = guide_legend(reverse = TRUE))+
           
           geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
@@ -99,7 +103,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=(brewer.pal(n=niveles,brewer)),na.value = "white")+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          
+          guides(fill = guide_legend(reverse = TRUE))+
           
           geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
@@ -120,7 +126,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=(brewer.pal(n=niveles,brewer)),na.value = "white")+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          
+          guides(fill = guide_legend(reverse = TRUE))+
           
           geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
