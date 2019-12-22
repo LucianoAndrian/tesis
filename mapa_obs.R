@@ -1,4 +1,4 @@
-mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat){
+mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, salida){
   
   library(ncdf4)
   library(maps)
@@ -51,7 +51,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis)+
           
           guides(fill = guide_legend(reverse = TRUE))+
           
@@ -65,7 +65,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
                 plot.title = element_text(hjust=0.5))
         
         
-        ggsave(paste(ruta, "/salidas/", nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
       } else {
         g = ggplot() + theme_minimal()+
           xlab("Longitud") + ylab("Latitud") + 
@@ -75,7 +75,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis) +
           
           guides(fill = guide_legend(reverse = TRUE))+
           
@@ -88,7 +88,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
                 panel.ontop = TRUE,
                 plot.title = element_text(hjust=0.5))
         
-        ggsave(paste(ruta, "/salidas/", nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
         
       }
       
@@ -103,7 +103,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours=brewer.pal(n=niveles,brewer),na.value = "white", guide = "legend",breaks = escala_dis)+
           
           guides(fill = guide_legend(reverse = TRUE))+
           
@@ -116,7 +116,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
                 panel.ontop = TRUE,
                 plot.title = element_text(hjust=0.5))
         
-        ggsave(paste(ruta, "/salidas/", nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
       } else {
         g = ggplot() + theme_minimal()+
           xlab("Longitud") + ylab("Latitud") + 
@@ -126,7 +126,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = c(-5,0,5,10,15,20,24,30,35,40,45))+
+          scale_fill_gradientn(limits=escala,name=label_escala,colours= brewer.pal(n=niveles,brewer),na.value = "white", guide = "legend",breaks = escala_dis)+
           
           guides(fill = guide_legend(reverse = TRUE))+
           
@@ -139,7 +139,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
                 panel.ontop = TRUE,
                 plot.title = element_text(hjust=0.5))
         
-        ggsave(paste(ruta, "/salidas/", nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
         
       }
       
