@@ -355,7 +355,7 @@ modelos_rx2 = function(nombre, r){
 
 mean_sd = function(nombre){
   
-  ruta =  "/home/luciano.andrian/tesis/"
+  ruta =  "/home/luciano.andrian/tesis/ncfiles/"
   
   mask=as.matrix(read.table("mascara.txt"))
   
