@@ -38,22 +38,57 @@ for(i in 1:4){
   temp_ym[,,,i,] = apply(temp_seasons[,,,,i,],c(1,2,4,5),mean, na.rm = T)
 }
 
+
 aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
 for(i in 1:length(anios)){
     aux[,,i,] = (temp_y[,,i,]-temp_mean)**2
 }
+
 SSa = apply(aux, c(1,2,4), sum)
 
 aux = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
 for(i in 1:8){
   aux[,,,i] = (temp_m[,,,i]-temp_mean)**2
 }
+
 SSb = apply(aux, c(1,2,3), sum)
 
 aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 8))
 for(i in 1:28){
   aux[,, i,,,] = (temp_seasons[,,i,,,]-temp_ym)**2
 }
+
 SSe = apply(aux, c(1,2,5), sum, na.rm = T)
 
 #SSg  ( ver dimensiones. )
+
+aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
+for(i in 1:8){
+  aux[,,,,i] = temp_ym[,,,,i] - temp_y
+}
+
+aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
+for(i in 1:length(anios)){
+  aux2[,,i,,] = aux[,,i,,] - temp_m
+}
+
+aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
+for(i in 1:length(anios)){
+  for(j in 1:8){
+    aux3[,,i,,j] = aux2[,,i,,j] - temp_mean
+  }
+}
+
+SSg = apply(aux3, c(1,2,4), sum, na.rm = T)
+
+### ?? ###
+# estimadores insesgados
+f1 = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
+for( i in 1:8){
+  f1[,,,i] = SSb/SSe*((length(anios)*8*(r[i]-1))/(8-1))   # uno para cada modelo
+}
+
+
+f1 = SSb/SSe*((length(anios)*8*(r[i]-1))/(8-1))   # uno para cada modelo
+
+
