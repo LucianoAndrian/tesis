@@ -1,5 +1,5 @@
 # ANOVA
-
+rm(list=ls())
 library(ncdf4)
 
 lon2 = read.table("lon2.txt")[,1]
@@ -25,6 +25,36 @@ for(i in 1:8){
   temp_seasons[,,,,,i] = apply(temp_mods[,,,,,,i],c(1,2,4,5,6),mean, na.rm = T) 
 }
 
+
+#londim = ncdim_def("lon", "grados_este", as.double(lon2))
+#latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+#timedim = ncdim_def("years", "Years", as.double(anios))
+#mesesdim = ncdim_def("meses", "meses", as.double(1:3))
+#rdim = ncdim_def("r","miembros", as.double(1:28))
+#mdim = ncdim_def("m", "modelos", as.double(1:8))
+#tempdim = ncdim_def("temp", "°C", as.double(temp_seasons))
+#seasondim = ncdim_def("estaciones", "estaciones", as.double(1:4))
+
+
+#fillvalue = NA
+#dlname = "temperatura"
+#temp_def = ncvar_def("temp", "Kelvin", list(londim, latdim, rdim, timedim, seasondim, mdim ), fillvalue, dlname, prec="single")
+
+#ncfname = paste("pre_anova-temp", ".nc", sep = "")
+
+#ncout = nc_create(ncfname, list(temp_def), force_v4=T)
+
+#ncvar_put(ncout, temp_def, temp_seasons)
+
+#ncatt_put(ncout, "lon", "lat", "meses", "r", "anios", "season") #esto nse que hace pero no anda
+
+#nc_close(ncout) #verificar donde guarda los nc
+
+
+#################################################################################################################################
+nc2 = nc_open("/home/luciano.andrian/tesis/ncfiles/pre_anova-temp.nc")
+temp_seasons2 = ncvar_get(nc2, "temp") 
+nc_close(nc2)
 
 temp_mean = array(NA, dim = c(length(lon2), length(lat2), 4))
 temp_y = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
@@ -88,7 +118,10 @@ for( i in 1:8){
   f1[,,,i] = SSb/SSe*((length(anios)*8*(r[i]-1))/(8-1))   # uno para cada modelo
 }
 
+TSS = SSa + SSb + SSg + SSe
 
-f1 = SSb/SSe*((length(anios)*8*(r[i]-1))/(8-1))   # uno para cada modelo
+r = 14 #promedio???
+f1 = SSb/SSe*((length(anios)*8*(r-1))/(8-1))   # uno para cada modelo?
 
-
+aux_f2 = (8-1)/(29*8+(14-1))
+f2 = (SSb - aux_f2*SSe)/(TSS)  # da muuuyy chico e-6
