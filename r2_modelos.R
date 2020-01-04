@@ -171,7 +171,7 @@ modelos_rx2 = function(nombre, r){
     #T_PP[[2]] = sd_t
     #T_PP[[3]] = PP
     #T_PP[[4]] = sd_pp
-    #return(T_PP)
+    #return(T_PP
     
   } else {
     ruta = "/datos/osman/nmme/monthly"
