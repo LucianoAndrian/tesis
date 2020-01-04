@@ -1,5 +1,5 @@
 # ANOVA
-rm(list=ls())
+# seleccion y orden de los nc en un solo archivo
 library(ncdf4)
 
 lon2 = read.table("lon2.txt")[,1]
@@ -20,11 +20,14 @@ for(i in 1:8){
   nc_close(nc)
 }
 
+# promedio de las seasons
+
 temp_seasons = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 8))
 for(i in 1:8){
   temp_seasons[,,,,,i] = apply(temp_mods[,,,,,,i],c(1,2,4,5,6),mean, na.rm = T) 
 }
 
+# guardado del array en formato nc
 
 #londim = ncdim_def("lon", "grados_este", as.double(lon2))
 #latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
@@ -52,22 +55,30 @@ for(i in 1:8){
 
 
 #################################################################################################################################
-nc2 = nc_open("/home/luciano.andrian/tesis/ncfiles/pre_anova-temp.nc")
-temp_seasons2 = ncvar_get(nc2, "temp") 
-nc_close(nc2)
+nc = nc_open("/home/luciano.andrian/tesis/ncfiles/pre_anova-temp.nc")
+temp_seasons = ncvar_get(nc, "temp") 
+nc_close(nc)
 
+# crear funcion con todo esto, tiene q tener temp y pp y seleccion de un modelo para sacar del ensamble.
+
+mask = as.matrix(read.table("mascara.txt"))
+
+# temp_mean, temp_y, etc, son los X00, Xy00 etc.
 temp_mean = array(NA, dim = c(length(lon2), length(lat2), 4))
 temp_y = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
 temp_m = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
 temp_ym = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
 
 for(i in 1:4){
-  temp_mean[,,i] = apply(temp_seasons[,,,,i,],c(1,2),mean, na.rm = T)         #ver
-  temp_y[,,,i] = apply(temp_seasons[,,,,i,],c(1,2,4),mean, na.rm = T)
-  temp_m[,,i,] = apply(temp_seasons[,,,,i,], c(1,2,5),mean, na.rm = T) 
-  temp_ym[,,,i,] = apply(temp_seasons[,,,,i,],c(1,2,4,5),mean, na.rm = T)
+  temp_mean[,,i] = apply(temp_seasons[,,,,i,],c(1,2), mean, na.rm = T)         #ver
+  temp_y[,,,i] = apply(temp_seasons[,,,,i,],c(1,2,4), mean, na.rm = T)
+  temp_m[,,i,] = apply(temp_seasons[,,,,i,], c(1,2,5), mean, na.rm = T) 
+  temp_ym[,,,i,] = apply(temp_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
 }
 
+# calculo de los estimadores SS's
+
+## SSa ##
 
 aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
 for(i in 1:length(anios)){
@@ -76,6 +87,9 @@ for(i in 1:length(anios)){
 
 SSa = apply(aux, c(1,2,4), sum)
 
+
+## SSb ##
+
 aux = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
 for(i in 1:8){
   aux[,,,i] = (temp_m[,,,i]-temp_mean)**2
@@ -83,14 +97,20 @@ for(i in 1:8){
 
 SSb = apply(aux, c(1,2,3), sum)
 
+
+## SSe ##
+
 aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 8))
 for(i in 1:28){
   aux[,, i,,,] = (temp_seasons[,,i,,,]-temp_ym)**2
 }
 
-SSe = apply(aux, c(1,2,5), sum, na.rm = T)
+SSe = apply(aux, c(1,2,5), sum, na.rm = T)  # los NA que reemplazan los errores en los archivos de FLOR-A06, son omitidos en los calulos
+                                            # pero se notan los valores diferentes del promedio con menos variables. 
+                                            # vuelven aparecer las lineas en JJA (SSe[,,2]) ver image.plot(SSe[,,2])
 
-#SSg  ( ver dimensiones. )
+
+## SSg ## 
 
 aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
 for(i in 1:8){
@@ -105,23 +125,22 @@ for(i in 1:length(anios)){
 aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
 for(i in 1:length(anios)){
   for(j in 1:8){
-    aux3[,,i,,j] = aux2[,,i,,j] - temp_mean
+    aux3[,,i,,j] = (aux2[,,i,,j] + temp_mean)**2
   }
 }
 
-SSg = apply(aux3, c(1,2,4), sum, na.rm = T)
+SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   # revisar calculos, las distintas dimensiones obligan a hacerlos por separado
 
-### ?? ###
+
 # estimadores insesgados
-f1 = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
-for( i in 1:8){
-  f1[,,,i] = SSb/SSe*((length(anios)*8*(r[i]-1))/(8-1))   # uno para cada modelo
-}
 
 TSS = SSa + SSb + SSg + SSe
 
-r = 14 #promedio???
-f1 = SSb/SSe*((length(anios)*8*(r-1))/(8-1))   # uno para cada modelo?
+r = 14 # promedio??? # hodson, inidca que se pueden hacer igual los testeos pero que dejan de ser exactos, pero no especifica como tomar r (k)
+f1 = SSb/SSe*((length(anios)*8*(r-1))/(8-1))   
 
-aux_f2 = (8-1)/(29*8+(14-1))
-f2 = (SSb - aux_f2*SSe)/(TSS)  # da muuuyy chico e-6
+aux_f2 = (8-1)/(29*8*(14-1))
+
+f2 = (SSa - aux_f2*SSe)/(TSS) 
+
+# para testear qf(.95, df1 =, df2 =)

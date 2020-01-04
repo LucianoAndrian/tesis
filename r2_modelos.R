@@ -416,4 +416,6 @@ mean_sd = function(nombre){
   T_PP[[4]] = sd_pp
   return(T_PP)
   
+  nc_close(nc)
+  
 }
