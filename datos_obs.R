@@ -125,7 +125,7 @@ for( i in 1:4 ){
 satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
 mapa(lista = standar_d_pp, titulo = "sd - PP - NMME", nombre_fig = "sd_PP_nmme", escala = c(0,150)
-         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,50,100,150),"/salidas/observado/")
+         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,25,50,75,100,150),"/salidas/observado/")
 
 
 
@@ -138,16 +138,16 @@ aux = nc_open("/home/luciano.andrian/X157.92.36.193.339.11.29.13.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
-aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),]
+aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:397]
 require(fields)
 
 
 lon2 = lon[which(lon==275.25):which(lon==330.25)]
 lat2 = lat[which(lat==-60.25):which(lat==15.25)]
 
-pp2_int = array(NA, dim = c(56, 76, 360))
+pp2_int = array(NA, dim = c(56, 76, 371))
 
-for(i in 13:(396-2*12)){
+for(i in 1:371){
   
   mod = list(x = lon2, y = lat2, z = aux2[,,i])
   
@@ -155,7 +155,7 @@ for(i in 13:(396-2*12)){
   
   pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
   
-  pp2_int[,,i-12] = pp_aux$z
+  pp2_int[,,i] = pp_aux$z
 }
 
 pp2_estaciones = array(NA, dim = c(56, 76, 30, 12))
@@ -202,6 +202,6 @@ mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc"
 
 dif_pp = estaciones_prom_pp -  estaciones_prom_pp2
 
-mapa(lista = dif_pp, titulo = "PP - NMME vs GPCC", nombre_fig = "dif_pp", escala = c(-300,300)
-     , label_escala = "mm", resta = 0, brewer = "RdBu",revert = "si", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(-300,-200,-100,0,100,200,300),"/salidas/observado/")
+mapa(lista = dif_pp, titulo = "PP - NMME vs GPCC", nombre_fig = "dif_pp_escala2", escala = c(-50, 50)
+     , label_escala = "mm", resta = 0, brewer = "RdBu",revert = "si", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(-50,-20, 10, 0, 10, 25, 50),"/salidas/observado/")
 
