@@ -1,6 +1,10 @@
-anova_fun = function(variable){
-  variable = as.character(variable)
+anova_fun = function(){
+  variable = as.character(readline("Variable (pp), (temp): "))
   ensemble_total = readline("Todos los modelos?(si, no): ")
+  lon2 = read.table("lon2.txt")[,1]
+  lat2 = read.table("lat2.txt")[,1]
+  anios = seq(from = 1982, to = 2010, by = 1)
+  
 
   if(ensemble_total == "si"){
 
@@ -78,6 +82,21 @@ anova_fun = function(variable){
     
     SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   # revisar calculos, las distintas dimensiones obligan a hacerlos por separado
     
+    # testeos revisar!
+    
+    #aux_f1 = 29*8*(14-1)/(8-1)
+    #f1 = (SSb/SSe)*aux_f1
+    #f = qf(0.95, 8-1, 29*8*(14-1))
+    #f1[which(f1<f)]=NA
+    
+    # --> la fraccion del total de la varianza explicada por SS, ver si las expresiones para el resto son iguales a las de SSb
+    
+    # PP
+    
+    #aux_pp = ((SSa*(29*8*13))/(SSe*28))-1
+    #PP = 1/(1+((8*14)/aux_pp))
+    
+    #pp_f = 1/(1+(8*14)/qf(0.95, 28, 28*8*13)-1)
     
     # estimadores insesgados
     
@@ -172,6 +191,21 @@ anova_fun = function(variable){
     
     SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   # revisar calculos, las distintas dimensiones obligan a hacerlos por separado
     
+    # testeos revisar!
+    
+    #aux_f1 = 29*8*(14-1)/(8-1)
+    #f1 = (SSb/SSe)*aux_f1
+    #f = qf(0.95, 8-1, 29*8*(14-1))
+    #f1[which(f1<f)]=NA
+    
+    # --> la fraccion del total de la varianza explicada por SS, ver si las expresiones para el resto son iguales a las de SSb
+    
+    # PP
+    
+    #aux_pp = ((SSa*(29*8*13))/(SSe*28))-1
+    #PP = 1/(1+((8*14)/aux_pp))
+    
+    #pp_f = 1/(1+(8*14)/qf(0.95, 28, 28*8*13)-1)
     
     # estimadores insesgados
     
