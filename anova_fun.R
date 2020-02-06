@@ -144,6 +144,8 @@ anova_fun = function(){
     t = 29 #anios
     m = 8 #modelos
     
+    k[nomodel] = NA
+    
     # calculo de los estimadores SS's
     
     ########################################### SSa ########################################### 
@@ -153,7 +155,7 @@ anova_fun = function(){
       aux[,,i,,] = (xt00[,,i,]-x000)**2
     }
     
-    SSa = apply(sum(k)*aux, c(1,2,4), sum)
+    SSa = apply(sum(k, na.rm = T)*aux, c(1,2,4), sum)
     
     
     ########################################### SSb ########################################### 
@@ -164,7 +166,7 @@ anova_fun = function(){
     }
     
     for(i in 1:8){ 
-      aux[,,,i] = aux[,,,i]*k[i]*t
+      aux[,,,i] = aux[,,,i]*k[i]*t # ver si esto funca.. NAxNA
     }
     
     SSb = apply(aux, c(1,2,3), sum)
