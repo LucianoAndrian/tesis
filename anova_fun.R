@@ -85,7 +85,7 @@ anova_fun = function(){
     }
     
     for(i in 1:8){ 
-      aux3[,,,,i] = aux3[,,,,i]*k[i]*t
+      aux3[,,,,i] = aux3[,,,,i]*k[i]    # ERROR! ESTO ESTABA MULTIPLICADO POR t. 
     }
     
     SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   
@@ -106,7 +106,7 @@ anova_fun = function(){
     
     c_a = (SSa - (t-1)/(t*105)*SSe)/TSS   #fraccion de TSS explicada por SSa 
     
-    c_g = (SSg - (t*m-1)/(t*105)*SSe)/TSS  #fraccion de TSS explicada por SSg   
+    c_g = (SSg - ((t-1)*(m-1))/(t*105)*SSe)/TSS  #fraccion de TSS explicada por SSg   
     
     c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
     
