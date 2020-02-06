@@ -51,15 +51,13 @@ for(i in 1:length(nombres2)){
 
 source("anova_fun.R")
 mask=as.matrix(read.table("mascara.txt"))
-ss = anova_fun()  # ver si esta bien la funcion. esta ok!
+ss_temp = anova_fun()  
+ss_pp = anova_fun()
 
 mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
 for(i in 1:4){
   mask_arr[,,i] = mask
 }
-
-
-# cocientes
 
 #SS[[1]] = SSa
 #SS[[2]] = SSb
@@ -73,30 +71,65 @@ for(i in 1:4){
 #SS[[9]] = c_e
 
 
-alpha = as.character("\u03b1")
-beta = as.character("\u03B2")
-gamma = as.character("\u194")
-epsilon = as.character("\u03B5")
+#alpha = as.character("\u03b1")
+#beta = as.character("\u03B2")
+#gamma = as.character("\u194")
+#epsilon = as.character("\u03B5")
 
-letras = c(alpha, beta, gamma, epsilon)
+letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
   
-source("mapa_sig.R")
+source("mapa_sig.R")  #mapa con significancia
 
-for(i in 6:9){ 
+###### testeos cocientes #####
+
+source("tests.R")
+sig_temp = test_cos(ss_temp)
+sig_pp = test_cos(ss_pp)
+
+#graficar
+source("mapa_obs.R")
+
+
+
+for(i in 6:9){  # GRAFICAR CON O SIN SIGNIFICANCIA ??
   
-   mapa(lista = ss[[i]]*mask_arr, titulo = paste("Fraccion de TSS representada por SS", letras[i-5] , by = "")  , nombre_fig = paste("ss", letras[i-5], sep = ""), escala = c(0,1) 
-           ,label_escala = "", resta = 0, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, seq(0, 1, by = 0.1),"/salidas/ensemble/anova/")
+  mapa(lista = ss_temp[[i]]*sig_temp[[i-5]], titulo = paste("T - Fraccion de TSS representada por SS", letras[i-5] , by = "")  , nombre_fig = paste("temp_ss", letras[i-5], sep = ""), escala = c(0,1) 
+       ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/")
+  
+  
+  mapa(lista = ss_pp[[i]]*sig_pp[[i-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[i-5] , by = "")  , nombre_fig = paste("pp_ss", letras[i-5], sep = ""), escala = c(0,1) 
+       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/")
+  
 }
 
 
-#  predictibilidad.  ### VER ahora todo es significativo... ###
+# ssg como otra escala
+
+
+mapa(lista = ss_temp[[8]]*sig[[8-5]], titulo = paste("T - Fraccion de TSS representada por SS", letras[8-5] , by = "")  , nombre_fig = paste("esc_temp_ss", letras[8-5], sep = ""), escala = c(0,0.2) 
+     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04),"/salidas/ensemble/anova/")
+
+mapa(lista = ss_pp[[8]]*sig_pp[[8-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5] , by = "")  , nombre_fig = paste("esc_pp_ss", letras[8-5], sep = ""), escala = c(0,0.2) 
+     ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04),"/salidas/ensemble/anova/")
+
+
+#  predictibilidad.  ### VER ahora todo es significativo... ### OK
+
+sigma_alpha_2 = SS[[1]]/((t-1)) 
+
+sigma_beta_2 = SS[[2]]/(m-1) 
+
+sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
+
+sigma_epsilon_2 = SS[[4]]/(t*(sum(k)-1))
+
 
 # pred = sigmas.. ver estimador insesgado para cada una de ellas
 anios = seq(from = 1982, to = 2010, by = 1)
-#sigma_alfa = ss[[1]]/(length(anios)-1) # esto esta mal
+#sigma_alfa = ss[[1]]/(length(anios)-1) # esto esta MAAAL
 #sigma_error = ss[[5]]/(length(anios)-1)
 
-pred = sigma_alfa/(sigma_alfa+sigma_error)*mask_arr
+pred = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr #ARREGLAR
 
 
 miembros = c(10, 10, 12, 12, 4, 28, 10, 20)
@@ -116,12 +149,14 @@ pp = pp*mask_arr
 image.plot(pp[,,4])
 
 
+# ver si se puede mejorar el grafico con significancia, ver geom_points o stat subset
 
-
-
-
-mapa_sig(lista = pred, lista2 = pp, titulo = "Fraccion de TSS representada por SS()", nombre_fig = paste("ss", sep = ""), escala = c(0,1) 
-         ,label_escala = "no se", resta = 0, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(0, 0.2, 0.6, 0.8, 1),"/salidas/ensemble/anova/")
+sig_temp[[3]][which((sig_temp[[3]]==1))] = 2
+sig_temp[[3]][which(is.na(sig_temp[[3]]))] = 10
+sig_temp[[3]][which((sig_temp[[3]]==2))] = NA
+source("mapa_sig.R")
+mapa_sig(lista = ss_temp[[8]], lista2 = sig_temp[[3]], titulo = "Fraccion de TSS representada por SS()", nombre_fig = paste("prueba", sep = ""), escala = c(0,0.2) 
+         ,label_escala = "no se", resta = 0, brewer = "Spectral", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0,0.2, by = 0.04),"/salidas/ensemble/anova/")
 
 
 
