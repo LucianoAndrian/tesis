@@ -55,5 +55,4 @@ test_cos = function(SS){
   sig[[3]] = gamma
   sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
   return(sig)
-  # 
 }
