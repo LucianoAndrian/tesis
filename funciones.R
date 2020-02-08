@@ -762,10 +762,9 @@ anova_fun = function(){
       xtm0[,,,i,] = apply(v_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
     }
     k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-    t = 29 #anios
-    m = 8 #modelos
-    
     k[nomodel] = NA
+    t = 29 #anios
+    m = 7 #modelos
     
     # calculo de los estimadores SS's
     
@@ -875,10 +874,6 @@ test_cos = function(SS){
   #SS[[7]] = c_b
   #SS[[8]] = c_g
   #SS[[9]] = c_e
-  
-  k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-  t = 29 #anios
-  m = 8 #modelos
   
   mask=as.matrix(read.table("mascara.txt"))
   mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
