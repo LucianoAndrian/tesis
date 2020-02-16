@@ -622,6 +622,18 @@ mean_sd = function(nombre){
 anova_fun = function(){
   variable = as.character(readline("Variable (pp), (temp): "))
   ensemble_total = readline("Todos los modelos?(si, no): ")
+  
+  # cm2p1 tiene 10 miembros en temp y 28 en pp entonces: (ver estos 28 de pp, tomo todos o 24????) ######
+  
+  #if(variable == "temp"){
+  #  k = c(10, 10, 12, 12, 4, 28, 10, 20) 
+  #} else {
+  #  k = c(10, 28, 12, 12, 4, 28, 10, 20)
+  #}
+  k = c(10, 10, 12, 12, 4, 28, 10, 20)
+  t = 29 #anios
+  
+  
   lon2 = read.table("lon2.txt")[,1]
   lat2 = read.table("lat2.txt")[,1]
   anios = seq(from = 1982, to = 2010, by = 1)
@@ -646,8 +658,7 @@ anova_fun = function(){
       x0m0[,,i,] = apply(v_seasons[,,,,i,], c(1,2,5), mean, na.rm = T) 
       xtm0[,,,i,] = apply(v_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
     }
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-    t = 29 #anios
+    
     m = 8 #modelos
     
     # calculo de los estimadores SS's
@@ -743,7 +754,7 @@ anova_fun = function(){
     nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
     
     nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
-    v_seasons = ncvar_get(nc, "temp") 
+    v_seasons = ncvar_get(nc, variable) 
     nc_close(nc)
     
     v_seasons[,,,,,nomodel] = NA
@@ -761,9 +772,9 @@ anova_fun = function(){
       x0m0[,,i,] = apply(v_seasons[,,,,i,], c(1,2,5), mean, na.rm = T) 
       xtm0[,,,i,] = apply(v_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
     }
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    
     k[nomodel] = NA
-    t = 29 #anios
+
     m = 7 #modelos
     
     # calculo de los estimadores SS's
@@ -881,6 +892,14 @@ test_cos = function(SS){
     mask_arr[,,i] = mask
   }
   # 
+  
+  k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+  t = 29 #anios
+  m = 8 #modelos
+  
+  alpha_f = qf(0.95,t-1,t*sum(k))
+  beta_f = qf(0.95, m-1, t*sum(k))
+  gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k)) 
   
   sigma_alpha_2 = SS[[1]]/((t-1)) 
   
