@@ -30,7 +30,7 @@ for( i in 1:length(nombres)){
 
 cm2p1()
 
-
+#####
 ##-----------------------------------------------------------GRAFICADO DE MEDIAS Y DESVIOS-----------------------------------------------------------##
 
 nombres2 = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2") # ACA ESTAN TODOS. INCLUYENDO CM2P1
@@ -41,21 +41,21 @@ for(i in 1:length(nombres2)){
   # imagenes
   # T
   mapa(lista = v[[1]], titulo = paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("temp_",nombres2[i], sep = ""), escala = c(-5,40 ) 
-       ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40),"/salidas/ensemble/")
+       ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), "/salidas/ensemble/")
   
   # SD - T
   mapa(lista = v[[2]], titulo = paste(" SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-temp_",nombres2[i], sep = ""), escala = c(0,3) 
-       ,label_escala = "°C", resta = 0, brewer = "RdYlBu", revert = "si", niveles = 9, contour = "si", lon2, lat2, c(0,0.5,1,1.5,2,2.5,3),"/salidas/ensemble/")
+       ,label_escala = "°C", resta = 0, brewer = "RdYlBu", revert = "si", niveles = 9, contour = "si", lon2, lat2, seq(0, 0.3, by = 0.5),"/salidas/ensemble/")
   
   # PP
   
   mapa(lista = v[[3]], titulo = paste("Promedio Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("pp_",nombres2[i], sep = ""), escala = c(0, 500) 
-       ,label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", lon2, lat2, c(0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500),"/salidas/ensemble/")
+       ,label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", lon2, lat2,seq(0, 500, by = 50),"/salidas/ensemble/")
   
   # SD
   
   mapa(lista = v[[4]], titulo = paste("SD Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-pp_",nombres2[i], sep = ""), escala = c(0, 150) 
-       ,label_escala = "mm", resta = 0, brewer = "Spectral", revert = "si", niveles = 9, contour = "si", lon2, lat2, c(0, 25, 50, 75, 100, 125, 150 ),"/salidas/ensemble/")
+       ,label_escala = "mm", resta = 0, brewer = "Spectral", revert = "si", niveles = 9, contour = "si", lon2, lat2, seq(0, 150, by = 25),"/salidas/ensemble/")
  
 }
 
@@ -108,30 +108,54 @@ mapa_sig(lista = ss_pp[[8]]*sig_pp[[8-5]], lista2 = sig_pp[[8-5]], titulo = past
 
 
 
-###  predictibilidad.  ### VER ahora todo es significativo... ### Ok
-# pred = sigmas.. ver estimador insesgado para cada una de ellas
+###  predictibilidad.  # ver
+
 anios = seq(from = 1982, to = 2010, by = 1)
-#sigma_alfa = ss[[1]]/(length(anios)-1) # esto esta MAAAL
-#sigma_error = ss[[5]]/(length(anios)-1)
 
-pred = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr #ARREGLAR
+k_t = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+t = 29 #anios
+m = 8 #modelos
+
+sigma_alpha_2 = ss_temp[[1]]/((t-1)) 
+
+sigma_epsilon_2 = ss_temp[[4]]/(t*(sum(k_t)-1))
+
+pred_temp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
+
+k_pp = c(10, 10, 12, 12, 4, 28, 10, 20)   # por ahora igual al de temp
+sigma_alpha_2 = ss_pp[[1]]/((t-1)) 
+
+sigma_epsilon_2 = ss_pp[[4]]/(t*(sum(k_pp)-1))
+
+pred_pp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
 
 
-miembros = c(10, 10, 12, 12, 4, 28, 10, 20)
 
-r = sum(miembros)
+
+r = sum(k_t)
 m = 8
 t = 29
 
-aux_pp = (ss[[1]]/ss[[4]])*((t*105)/(t-1))
-pp = 1/(1+((m*r)/(aux_pp-1)))
-
 pp_f = 1/(1+(8*r)/qf(0.95, t-1, t*106)-1)
 
-pp[which(pp<pp_f)]=NA
-pp = pp*mask_arr
+aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+pp_temp = 1/(1+((m*r)/(aux_pp_temp-1)))
+pp_temp[which(pp_temp<pp_f)] = NA
+pp_temp[which(!is.na(pp_temp))] = 1
+pp_temp = pp_temp*mask_arr
 
-image.plot(pp[,,4])
+aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+pp_pp = 1/(1+((m*r)/(aux_pp_pp-1)))
+pp_pp[which(pp_pp<pp_f)] = NA
+pp_pp[which(!is.na(pp_pp))] = 1
+pp_pp = pp_pp*mask_arr
+
+image.plot(pp_temp[,,4])
+
+# variaciones minimas.
+
+mapa_sig(lista = pred_pp*pp_pp, lista2 = pp_pp, titulo = paste("prueba",  by = "")  , nombre_fig = paste("probando"), escala = c(0,1) 
+         ,label_escala = "", resta = 0, brewer = "Spectral", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0.86, 1, by = 0.01),"/salidas/ensemble/anova/pred/")
 
 
 
