@@ -45,17 +45,17 @@ for(i in 1:length(nombres2)){
   
   # SD - T
   mapa(lista = v[[2]], titulo = paste(" SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-temp_",nombres2[i], sep = ""), escala = c(0,3) 
-       ,label_escala = "°C", resta = 0, brewer = "RdYlBu", revert = "si", niveles = 9, contour = "si", lon2, lat2, seq(0, 0.3, by = 0.5),"/salidas/ensemble/")
+       ,label_escala = "°C", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 3, by = 0.5),"/salidas/ensemble/")
   
   # PP
   
   mapa(lista = v[[3]], titulo = paste("Promedio Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("pp_",nombres2[i], sep = ""), escala = c(0, 500) 
-       ,label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", lon2, lat2,seq(0, 500, by = 50),"/salidas/ensemble/")
+       ,label_escala = "mm", resta = 0, brewer = "YlGnBu", revert = "no", niveles = 9, contour = "si", lon2, lat2,seq(0, 500, by = 50),"/salidas/ensemble/")
   
   # SD
   
   mapa(lista = v[[4]], titulo = paste("SD Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-pp_",nombres2[i], sep = ""), escala = c(0, 150) 
-       ,label_escala = "mm", resta = 0, brewer = "Spectral", revert = "si", niveles = 9, contour = "si", lon2, lat2, seq(0, 150, by = 25),"/salidas/ensemble/")
+       ,label_escala = "mm", resta = 0, brewer = "YlGn", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 150, by = 25),"/salidas/ensemble/")
  
 }
 
@@ -121,6 +121,7 @@ sigma_alpha_2 = ss_temp[[1]]/((t-1))
 sigma_epsilon_2 = ss_temp[[4]]/(t*(sum(k_t)-1))
 
 pred_temp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
+pp_temp = sig_temp[[5]]/(sig_temp[[5]] + sig_temp[[8]])
 
 k_pp = c(10, 10, 12, 12, 4, 28, 10, 20)   # por ahora igual al de temp
 sigma_alpha_2 = ss_pp[[1]]/((t-1)) 
@@ -128,7 +129,6 @@ sigma_alpha_2 = ss_pp[[1]]/((t-1))
 sigma_epsilon_2 = ss_pp[[4]]/(t*(sum(k_pp)-1))
 
 pred_pp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
-
 
 
 
