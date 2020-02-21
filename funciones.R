@@ -929,6 +929,11 @@ test_cos = function(SS){
   sig[[2]] = beta
   sig[[3]] = gamma
   sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
+  
+  sig[[5]] = sigma_alpha_2
+  sig[[6]] = sigma_beta_2
+  sig[[7]] = sigma_gamma_2
+  sig[[8]] = sigma_epsilon_2
   return(sig)
 }
 #### MAPA_SIG ####
