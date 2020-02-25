@@ -74,7 +74,7 @@ ss_pp = anova_fun()
 #SS[[5]] = TSS 
 
 
-#alpha = "\u03b1"       beta = "\u03B2"       gamma = "\u194"       epsilon = "\u03B5"
+#alpha = "\u03b1"       beta = "\u03B2"       gamma = "\u194"       epsilon = "\u03B5"
 
 letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
   
@@ -108,54 +108,76 @@ mapa_sig(lista = ss_pp[[8]]*sig_pp[[8-5]], lista2 = sig_pp[[8-5]], titulo = past
 
 
 
-###  predictibilidad.  # ver
+
+
+
+####  predictibilidad #### 
 
 anios = seq(from = 1982, to = 2010, by = 1)
 
-k_t = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
 t = 29 #anios
 m = 8 #modelos
 
-sigma_alpha_2 = ss_temp[[1]]/((t-1)) 
 
-sigma_epsilon_2 = ss_temp[[4]]/(t*(sum(k_t)-1))
+#sigma_alpha_2 calculado como ss_temp[[1]]/(t-1) es igual a sig_temp[[5]], sig_temp[[5]] se uso para testear los cocientes
 
+# temp
+sigma_alpha_2 = ss_temp[[1]]/(t-1) 
+sigma_epsilon_2 = ss_temp[[4]]/(t*(sum(k)-1))
 pred_temp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
-pp_temp = sig_temp[[5]]/(sig_temp[[5]] + sig_temp[[8]])
 
-k_pp = c(10, 10, 12, 12, 4, 28, 10, 20)   # por ahora igual al de temp
+
+# precip
 sigma_alpha_2 = ss_pp[[1]]/((t-1)) 
-
-sigma_epsilon_2 = ss_pp[[4]]/(t*(sum(k_pp)-1))
-
+sigma_epsilon_2 = ss_pp[[4]]/(t*(sum(k)-1))
 pred_pp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
 
+# valor critico
+f = qf(0.95, t-1, t*106)
+pp_f = 1/(1+m*sum(k)*(f-1))
 
 
-r = sum(k_t)
-m = 8
-t = 29
 
-pp_f = 1/(1+(8*r)/qf(0.95, t-1, t*106)-1)
+# hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+
 
 aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
-pp_temp = 1/(1+((m*r)/(aux_pp_temp-1)))
-pp_temp[which(pp_temp<pp_f)] = NA
-pp_temp[which(!is.na(pp_temp))] = 1
-pp_temp = pp_temp*mask_arr
+pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
+
+image.plot(pp_temp[,,4]*mask) # parece dar valores mas razonables
+
+# testear y mascara
+pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+pp_temp[which(!is.na(pp_temp))] = 1 # los significativos = 1
+
+image.plot(pp_temp[,,4]*mask) #da todo significativo
+
+pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
+
+#ideam pp
 
 aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
-pp_pp = 1/(1+((m*r)/(aux_pp_pp-1)))
+pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+
+image.plot(pp_pp[,,4]*mask) 
+
 pp_pp[which(pp_pp<pp_f)] = NA
 pp_pp[which(!is.na(pp_pp))] = 1
+
+image.plot(pp_pp[,,4]*mask) 
+
 pp_pp = pp_pp*mask_arr
 
-image.plot(pp_temp[,,4])
 
-# variaciones minimas.
+# ahora la idea es multiplicar estas mascaras de significancia con los valores de pred_temp y pred_temp
+# pero los pred_* tienen valores muy cercanos a uno ya que sigma_alpha_2 >> sigma_epsilon_2, de 2 o 3 ordenes mayor
 
-mapa_sig(lista = pred_pp*pp_pp, lista2 = pp_pp, titulo = paste("prueba",  by = "")  , nombre_fig = paste("probando"), escala = c(0,1) 
-         ,label_escala = "", resta = 0, brewer = "Spectral", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0.86, 1, by = 0.01),"/salidas/ensemble/anova/pred/")
+prueba = pred_temp*pp_temp
+
+image.plot(prueba[,,4]) #valores altos y rango muy chic
 
 
+#mapa_sig(lista = pred_temp*pp_temp, lista2 = pp_temp, titulo = paste("prueba",  by = "")  , nombre_fig = paste("probando"), escala = c(0,1.2) 
+#         ,label_escala = "", resta = 0, brewer = "Spectral", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1.2, by = 0.2),"/salidas/ensemble/anova/pred/")
 
