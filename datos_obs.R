@@ -47,7 +47,7 @@ for( i in 1:4){
 #estaciones_prom_t[which(estaciones_prom_t>310)] = NA
 #estaciones_prom_t[which(estaciones_prom_t<265)] = NA
 
-mapa(lista = estaciones_prom_t, titulo = "Temperatura - NMME", nombre_fig = "temp_nmme", escala = c(-5,40 ) 
+mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC - URD", nombre_fig = "temp_nmme", escala = c(-5,40 ) 
          ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40), "/salidas/observado/")
 
 mask = estaciones_prom_t[,,1]  
@@ -111,8 +111,8 @@ for( i in 1:4){
 
 
 
-mapa(lista = estaciones_prom_pp, titulo = "PP - NMME", nombre_fig = "pp-nmme", escala = c(0,500)
-         , label_escala = "mm", resta = 0, brewer = "GnBu",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,100,200,300,400,500),"/salidas/observado/")
+mapa(lista = estaciones_prom_pp, titulo = "PP - CPC - URD", nombre_fig = "pp-CPC", escala = c(0,500)
+         , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
@@ -124,7 +124,7 @@ for( i in 1:4 ){
 
 satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
-mapa(lista = standar_d_pp, titulo = "sd - PP - NMME", nombre_fig = "sd_PP_nmme", escala = c(0,150)
+mapa(lista = standar_d_pp, titulo = "sd - PP - CPC - URD", nombre_fig = "sd_PP_CPC", escala = c(0,150)
          , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,25,50,75,100,150),"/salidas/observado/")
 
 
@@ -184,7 +184,7 @@ source("mapa_obs.R")
 
 
 mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
-     ,label_escala = "mm", resta = 0, brewer = "GnBu", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
+     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
@@ -198,6 +198,84 @@ satandar_d_pp2 = standar_d_pp2[which(standar_d_pp2>=100)]=150   # veeer # contou
 
 mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,150)
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100,150),"/salidas/observado/")
+
+
+
+# pp3 cmap
+# el nc va desde enero '82 hasta dic 2012
+
+aux = nc_open("/home/luciano.andrian/X190.191.242.210.56.5.48.49.nc")
+#aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+aux2 = ncvar_get(aux, "precip")[,,27:387]
+nc_close(aux)
+
+lon2 = lon
+lat2 = lat
+
+pp3_int = array(NA, dim = c(58, 78, 361))
+
+for(i in 1:361){
+  
+  mod = list(x = lon2, y = lat2, z = aux2[,,i])
+  
+  grid = list(x=seq(min(lon2), max(lon2), by = 1), y = seq(min(lat2), max(lat2), by = 1))
+  
+  pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
+  
+  pp3_int[,,i] = pp_aux$z  
+}
+
+
+pp3_estaciones = array(NA, dim = c(58, 78, 30, 12))
+
+for(j in 1:12){
+  for (i in 0:29){
+    pp3_estaciones[,,1+i,j] = pp3_int[1:58 , 1:78, j+12*i]
+  }
+}
+
+
+estaciones_p_a_pp3 = array(NA, dim = c(58, 78, 30, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_pp3[,,,i] = apply(pp3_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)*30 # esta en mm/day
+  i = i + 1
+}
+
+# mascara de 58,78.
+mask2 = mask
+
+a1 = array(NA, dim = c(76,1))
+mask2 = rbind(t(a1),mask2,t(a1))
+
+c1 = array(NA, dim = c(58,1))
+mask2 = cbind(c1,mask2,c1)
+
+
+estaciones_prom_pp3 = array(NA, dim = c(58, 78, 4))
+
+for( i in 1:4){
+  estaciones_prom_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), mean)*mask2
+}
+
+
+mapa(lista = estaciones_prom_pp2, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500) 
+     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
+
+
+## sd
+standar_d_pp2 = array(NA, dim = c(58, 78, 4))
+for( i in 1:4 ){
+  standar_d_pp2[,,i] = apply(estaciones_p_a_pp2[,,,i], c(1,2), sd)*mask2*30
+}
+
+
+mapa(lista = standar_d_pp2, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
+     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100),"/salidas/observado/")
+
+
 
 
 dif_pp = estaciones_prom_pp -  estaciones_prom_pp2
