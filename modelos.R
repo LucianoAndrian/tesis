@@ -74,7 +74,7 @@ ss_pp = anova_fun()
 #SS[[5]] = TSS 
 
 
-#alpha = "\u03b1"       beta = "\u03B2"       gamma = "\u194"       epsilon = "\u03B5"
+#alpha = "\u03b1"       beta = "\u03B2"       gamma = "\u194"       epsilon = "\u03B5"
 
 letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
   
@@ -107,77 +107,26 @@ mapa_sig(lista = ss_pp[[8]]*sig_pp[[8-5]], lista2 = sig_pp[[8-5]], titulo = past
      ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04),"/salidas/ensemble/anova/")
 
 
+##-------------------------------------------------------------------------PREDICTIBILIDAD----------------------------------------------------------------##
+
+#funcion pp_test
+#pp[[1]] = pp_temp
+#pp[[2]] = pp_temp_sig
+#pp[[3]] = pp_pp
+#pp[[4]] = pp_pp_sig
+
+pp = pp_test(ss_temp, ss_pp)
 
 
+mapa_sig(lista = pp[[1]]*pp[[2]], lista2 = pp[[2]], titulo = paste("Predictabilidad - T",  by = "")  , nombre_fig = paste("pred_temp"), escala = c(0,1) 
+         ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/pred/")
 
 
-####  predictibilidad #### 
+mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictabilidad - PP",  by = "")  , nombre_fig = paste("pred_pp_01"), escala = c(0,1) 
+         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/pred/")
 
-anios = seq(from = 1982, to = 2010, by = 1)
+#precip con otra escala, 0 --> 0.4
 
-k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-t = 29 #anios
-m = 8 #modelos
-
-
-#sigma_alpha_2 calculado como ss_temp[[1]]/(t-1) es igual a sig_temp[[5]], sig_temp[[5]] se uso para testear los cocientes
-
-# temp
-sigma_alpha_2 = ss_temp[[1]]/(t-1) 
-sigma_epsilon_2 = ss_temp[[4]]/(t*(sum(k)-1))
-pred_temp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
-
-
-# precip
-sigma_alpha_2 = ss_pp[[1]]/((t-1)) 
-sigma_epsilon_2 = ss_pp[[4]]/(t*(sum(k)-1))
-pred_pp = sigma_alpha_2/(sigma_alpha_2+sigma_epsilon_2)*mask_arr 
-
-# valor critico
-f = qf(0.95, t-1, t*106)
-pp_f = 1/(1+m*sum(k)*(f-1))
-
-
-
-# hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
-
-
-aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
-pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
-
-image.plot(pp_temp[,,4]*mask) # parece dar valores mas razonables
-
-# testear y mascara
-pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
-pp_temp[which(!is.na(pp_temp))] = 1 # los significativos = 1
-
-image.plot(pp_temp[,,4]*mask) #da todo significativo
-
-pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
-
-#ideam pp
-
-aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
-pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
-
-image.plot(pp_pp[,,4]*mask) 
-
-pp_pp[which(pp_pp<pp_f)] = NA
-pp_pp[which(!is.na(pp_pp))] = 1
-
-image.plot(pp_pp[,,4]*mask) 
-
-pp_pp = pp_pp*mask_arr
-
-
-# ahora la idea es multiplicar estas mascaras de significancia con los valores de pred_temp y pred_temp
-# pero los pred_* tienen valores muy cercanos a uno ya que sigma_alpha_2 >> sigma_epsilon_2, de 2 o 3 ordenes mayor
-
-prueba = pred_temp*pp_temp
-
-image.plot(prueba[,,4]) #valores altos y rango muy chic
-
-
-#mapa_sig(lista = pred_temp*pp_temp, lista2 = pp_temp, titulo = paste("prueba",  by = "")  , nombre_fig = paste("probando"), escala = c(0,1.2) 
-#         ,label_escala = "", resta = 0, brewer = "Spectral", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1.2, by = 0.2),"/salidas/ensemble/anova/pred/")
+mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictabilidad - PP",  by = "")  , nombre_fig = paste("pred_pp"), escala = c(0,0.5) 
+         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.4, by = 0.1),"/salidas/ensemble/anova/pred/")
 
