@@ -118,15 +118,15 @@ mapa_sig(lista = ss_pp[[8]]*sig_pp[[8-5]], lista2 = sig_pp[[8-5]], titulo = past
 pp = pp_test(ss_temp, ss_pp)
 
 
-mapa_sig(lista = pp[[1]]*pp[[2]], lista2 = pp[[2]], titulo = paste("Predictabilidad - T",  by = "")  , nombre_fig = paste("pred_temp"), escala = c(0,1) 
+mapa_sig(lista = pp[[1]]*pp[[2]], lista2 = pp[[2]], titulo = paste("Predictibilidad - T",  by = "")  , nombre_fig = paste("pred_temp"), escala = c(0,1) 
          ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/pred/")
 
 
-mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictabilidad - PP",  by = "")  , nombre_fig = paste("pred_pp_01"), escala = c(0,1) 
+mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictibilidad - PP",  by = "")  , nombre_fig = paste("pred_pp_01"), escala = c(0,1) 
          ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),"/salidas/ensemble/anova/pred/")
 
 #precip con otra escala, 0 --> 0.4
 
-mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictabilidad - PP",  by = "")  , nombre_fig = paste("pred_pp"), escala = c(0,0.5) 
+mapa_sig(lista = pp[[3]]*pp[[4]], lista2 = pp[[4]], titulo = paste("Predictibilidad - PP",  by = "")  , nombre_fig = paste("pred_pp"), escala = c(0,0.5) 
          ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.4, by = 0.1),"/salidas/ensemble/anova/pred/")
 
