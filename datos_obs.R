@@ -3,7 +3,7 @@ require(here)
 #setwd("/home/auri/Facultad/")
 library(ncdf4)
 
-source("mapa_obs.R")
+source("funciones.R")
 ruta = "/datos/osman/nmme/monthly"
 
 tref = nc_open(paste(ruta,"tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
@@ -47,7 +47,7 @@ for( i in 1:4){
 #estaciones_prom_t[which(estaciones_prom_t>310)] = NA
 #estaciones_prom_t[which(estaciones_prom_t<265)] = NA
 
-mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC - URD", nombre_fig = "temp_nmme", escala = c(-5,40 ) 
+mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
          ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40), "/salidas/observado/")
 
 mask = estaciones_prom_t[,,1]  
@@ -62,7 +62,7 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_t, titulo = "SD - TEMP - NMME", nombre_fig = "sd_TEMP_nmme", escala = c(0,2)
+mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
          , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,0.5,1,1.5,2),"/salidas/observado/")
 
 
@@ -138,16 +138,16 @@ aux = nc_open("/home/luciano.andrian/X157.92.36.193.339.11.29.13.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
-aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:397]
+aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:386]
 require(fields)
 
 
 lon2 = lon[which(lon==275.25):which(lon==330.25)]
 lat2 = lat[which(lat==-60.25):which(lat==15.25)]
 
-pp2_int = array(NA, dim = c(56, 76, 371))
+pp2_int = array(NA, dim = c(56, 76, 360))
 
-for(i in 1:371){
+for(i in 1:360){
   
   mod = list(x = lon2, y = lat2, z = aux2[,,i])
   
@@ -180,8 +180,6 @@ for( i in 1:4){
   estaciones_prom_pp2[,,i] = apply(estaciones_p_a_pp2[,,,i], c(1,2), mean)
 }
 
-source("mapa_obs.R")
-
 
 mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
      ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
@@ -208,15 +206,15 @@ aux = nc_open("/home/luciano.andrian/X190.191.242.210.56.5.48.49.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
-aux2 = ncvar_get(aux, "precip")[,,27:387]
+aux2 = ncvar_get(aux, "precip")[,,27:386]
 nc_close(aux)
 
 lon2 = lon
 lat2 = lat
 
-pp3_int = array(NA, dim = c(58, 78, 361))
+pp3_int = array(NA, dim = c(58, 78, 360)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
 
-for(i in 1:361){
+for(i in 1:360){
   
   mod = list(x = lon2, y = lat2, z = aux2[,,i])
   
@@ -261,22 +259,22 @@ for( i in 1:4){
 }
 
 
-mapa(lista = estaciones_prom_pp2, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500) 
+mapa(lista = estaciones_prom_pp3, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500) 
      ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
-standar_d_pp2 = array(NA, dim = c(58, 78, 4))
+standar_d_pp3 = array(NA, dim = c(58, 78, 4))
 for( i in 1:4 ){
-  standar_d_pp2[,,i] = apply(estaciones_p_a_pp2[,,,i], c(1,2), sd)*mask2*30
+  standar_d_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), sd)*mask2
 }
 
 
-mapa(lista = standar_d_pp2, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
+mapa(lista = standar_d_pp3, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100),"/salidas/observado/")
 
 
-
+# como se analizaba esto??? promedio de las 3 y ver cual tiene mas desvio?? PREGUNTAR.
 
 dif_pp = estaciones_prom_pp -  estaciones_prom_pp2
 
