@@ -1125,3 +1125,56 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
   
 }
 
+
+#### PP_TEST ####
+pp_test = function(ss_temp, ss_pp){
+  
+  anios = seq(from = 1982, to = 2010, by = 1)
+  
+  k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+  t = 29 #anios
+  m = 8 #modelos
+  
+  f = qf(0.95, t-1, t*106)
+  pp_f = 1/(1+m*sum(k)*(f-1))
+  
+  # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+  
+  aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+  pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
+  
+  pp_temp_sig = pp_temp
+  
+  # testear y mascara
+  pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+  
+  pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
+  pp_temp_sig[which(!is.na(pp_temp))] = 1 
+  
+  pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
+  pp_temp_sig = pp_temp_sig*mask_arr 
+  
+  #ideam pp
+  
+  aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+  pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+  
+  pp_pp_sig = pp_pp
+  
+  pp_pp[which(pp_pp<pp_f)] = NA
+  
+  pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
+  pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
+  
+  pp_pp = pp_pp*mask_arr
+  pp_pp_sig = pp_pp_sig*mask_arr
+  
+  pp = list()
+  pp[[1]] = pp_temp
+  pp[[2]] = pp_temp_sig
+  pp[[3]] = pp_pp
+  pp[[4]] = pp_pp_sig
+  
+ return(pp)
+  
+}
