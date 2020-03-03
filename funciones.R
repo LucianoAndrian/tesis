@@ -786,7 +786,7 @@ anova_fun = function(){
       aux[,,i,,] = (xt00[,,i,]-x000)**2
     }
     
-    SSa = apply(sum(k, na.rm = T)*aux, c(1,2,4), sum)
+    SSa = apply(sum(k, na.rm = T)*aux, c(1,2,4), sum, na.rm = T)
     
     
     ########################################### SSb ########################################### 
@@ -800,7 +800,7 @@ anova_fun = function(){
       aux[,,,i] = aux[,,,i]*k[i]*t # ver si esto funca.. NAxNA
     }
     
-    SSb = apply(aux, c(1,2,3), sum)
+    SSb = apply(aux, c(1,2,3), sum, na.rm = T)
     
     
     ########################################### SSe ########################################### 
@@ -871,6 +871,8 @@ anova_fun = function(){
 #test cocientes de anova_fun
 test_cos = function(SS){
   
+  ensemble_total = readline("Todos los modelos?(si, no): ")
+  
   #### testeos ####
   
   # crea una mascara para graficar los cocientes SS
@@ -885,6 +887,8 @@ test_cos = function(SS){
   #SS[[7]] = c_b
   #SS[[8]] = c_g
   #SS[[9]] = c_e
+  
+  if( ensemble_total == "si"){
   
   mask=as.matrix(read.table("mascara.txt"))
   mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
@@ -935,6 +939,61 @@ test_cos = function(SS){
   sig[[7]] = sigma_gamma_2
   sig[[8]] = sigma_epsilon_2
   return(sig)
+  
+  } else {
+    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+    
+    mask=as.matrix(read.table("mascara.txt"))
+    mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+    for(i in 1:4){
+      mask_arr[,,i] = mask
+    }
+     
+    
+    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    t = 29 #anios
+    k[nomodel] = NA
+    m = 7 #modelos
+    
+    alpha_f = qf(0.95,t-1,t*sum(k, na.rm = T))
+    beta_f = qf(0.95, m-1, t*sum(k, na.rm = T))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k, na.rm = T)) 
+    
+    sigma_alpha_2 = SS[[1]]/((t-1)) 
+    
+    sigma_beta_2 = SS[[2]]/(m-1) 
+    
+    sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
+    
+    sigma_epsilon_2 = SS[[4]]/(t*(sum(k, na.rm = T)-1))     
+    
+    alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
+    beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
+    gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
+    
+    # esta OK.
+    
+    alpha[which(alpha<alpha_f)] = NA
+    alpha[which(!is.na(alpha))] = 1
+    
+    beta[which(beta<beta_f)] = NA
+    beta[which(!is.na(beta))] = 1
+    
+    gamma[which(gamma<gamma_f)] = NA
+    gamma[which(!is.na(gamma))] = 1
+    
+    sig = list()
+    sig[[1]] = alpha
+    sig[[2]] = beta
+    sig[[3]] = gamma
+    sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
+    
+    sig[[5]] = sigma_alpha_2
+    sig[[6]] = sigma_beta_2
+    sig[[7]] = sigma_gamma_2
+    sig[[8]] = sigma_epsilon_2
+    return(sig)
+  }
 }
 #### MAPA_SIG ####
 #mapas con zonas no significativas marcadas con puntos
@@ -951,7 +1010,12 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
   library(mapproj)
   library(metR)
   ruta = getwd()
-  mask=read.table("mascara.txt")
+  mask= as.matrix(read.table("mascara.txt"))
+  
+  mask_arr = array(NA, dim = c(length(lon), length(lat), 4))
+  for(i in 1:4){
+    mask_arr[,,i] = mask
+  }
   
   sig = lista2 # mascara significativa
   
