@@ -889,67 +889,67 @@ test_cos = function(SS){
   #SS[[9]] = c_e
   
   if( ensemble_total == "si"){
-  
-  mask=as.matrix(read.table("mascara.txt"))
-  mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
-  for(i in 1:4){
-    mask_arr[,,i] = mask
-  }
-  # 
-  
-  k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-  t = 29 #anios
-  m = 8 #modelos
-  
-  alpha_f = qf(0.95,t-1,t*sum(k))
-  beta_f = qf(0.95, m-1, t*sum(k))
-  gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k)) 
-  
-  sigma_alpha_2 = SS[[1]]/((t-1)) 
-  
-  sigma_beta_2 = SS[[2]]/(m-1) 
-  
-  sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
-  
-  sigma_epsilon_2 = SS[[4]]/(t*(sum(k)-1))     
-  
-  alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
-  beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
-  gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
-  
-  # esta OK.
-  
-  alpha[which(alpha<alpha_f)] = NA
-  alpha[which(!is.na(alpha))] = 1
-  
-  beta[which(beta<beta_f)] = NA
-  beta[which(!is.na(beta))] = 1
-  
-  gamma[which(gamma<gamma_f)] = NA
-  gamma[which(!is.na(gamma))] = 1
-  
-  sig = list()
-  sig[[1]] = alpha
-  sig[[2]] = beta
-  sig[[3]] = gamma
-  sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
-  
-  sig[[5]] = sigma_alpha_2
-  sig[[6]] = sigma_beta_2
-  sig[[7]] = sigma_gamma_2
-  sig[[8]] = sigma_epsilon_2
-  return(sig)
+    
+    mask = as.matrix(read.table("mascara.txt"))
+    mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+    for(i in 1:4){
+      mask_arr[,,i] = mask
+    }
+    # 
+    
+    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    t = 29 #anios
+    m = 8 #modelos
+    
+    alpha_f = qf(0.95,t-1,t*sum(k))
+    beta_f = qf(0.95, m-1, t*sum(k))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k)) 
+    
+    sigma_alpha_2 = SS[[1]]/((t-1)) 
+    
+    sigma_beta_2 = SS[[2]]/(m-1) 
+    
+    sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
+    
+    sigma_epsilon_2 = SS[[4]]/(t*(sum(k)-1))     
+    
+    alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
+    beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
+    gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
+    
+    # esta OK.
+    
+    alpha[which(alpha<alpha_f)] = NA
+    alpha[which(!is.na(alpha))] = 1
+    
+    beta[which(beta<beta_f)] = NA
+    beta[which(!is.na(beta))] = 1
+    
+    gamma[which(gamma<gamma_f)] = NA
+    gamma[which(!is.na(gamma))] = 1
+    
+    sig = list()
+    sig[[1]] = alpha
+    sig[[2]] = beta
+    sig[[3]] = gamma
+    sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
+    
+    sig[[5]] = sigma_alpha_2
+    sig[[6]] = sigma_beta_2
+    sig[[7]] = sigma_gamma_2
+    sig[[8]] = sigma_epsilon_2
+    return(sig)
   
   } else {
+    
     nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
     
-    mask=as.matrix(read.table("mascara.txt"))
+    mask = as.matrix(read.table("mascara.txt"))
     mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
     for(i in 1:4){
       mask_arr[,,i] = mask
     }
      
-    
     k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
     t = 29 #anios
     k[nomodel] = NA
@@ -1010,7 +1010,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
   library(mapproj)
   library(metR)
   ruta = getwd()
-  mask= as.matrix(read.table("mascara.txt"))
+  mask = as.matrix(read.table("mascara.txt"))                  # esto antes andaba sin as.matrix porque ya estaba definida mask arr en el codigo modelos.
   
   mask_arr = array(NA, dim = c(length(lon), length(lat), 4))
   for(i in 1:4){
@@ -1195,50 +1195,112 @@ pp_test = function(ss_temp, ss_pp){
   
   anios = seq(from = 1982, to = 2010, by = 1)
   
-  k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-  t = 29 #anios
-  m = 8 #modelos
+  mask=as.matrix(read.table("mascara.txt"))
+  mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+  for(i in 1:4){
+    mask_arr[,,i] = mask
+  }
   
-  f = qf(0.95, t-1, t*106)
-  pp_f = 1/(1+m*sum(k)*(f-1))
   
-  # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+  ensemble_total = readline("Todos los modelos?(si, no): ")
   
-  aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
-  pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
-  
-  pp_temp_sig = pp_temp
-  
-  # testear y mascara
-  pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
-  
-  pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
-  pp_temp_sig[which(!is.na(pp_temp))] = 1 
-  
-  pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
-  pp_temp_sig = pp_temp_sig*mask_arr 
-  
-  #ideam pp
-  
-  aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
-  pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
-  
-  pp_pp_sig = pp_pp
-  
-  pp_pp[which(pp_pp<pp_f)] = NA
-  
-  pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
-  pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
-  
-  pp_pp = pp_pp*mask_arr
-  pp_pp_sig = pp_pp_sig*mask_arr
-  
-  pp = list()
-  pp[[1]] = pp_temp
-  pp[[2]] = pp_temp_sig
-  pp[[3]] = pp_pp
-  pp[[4]] = pp_pp_sig
-  
- return(pp)
-  
+  if(ensemble_total == "si"){
+    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    t = 29 #anios
+    m = 8 #modelos
+    
+    f = qf(0.95, t-1, t*106)
+    pp_f = 1/(1+m*sum(k)*(f-1))
+    
+    # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+    
+    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+    pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
+    
+    pp_temp_sig = pp_temp
+    
+    # testear y mascara
+    pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+    
+    pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
+    pp_temp_sig[which(!is.na(pp_temp))] = 1 
+    
+    pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
+    pp_temp_sig = pp_temp_sig*mask_arr 
+    
+    #ideam pp
+    
+    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+    pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+    
+    pp_pp_sig = pp_pp
+    
+    pp_pp[which(pp_pp<pp_f)] = NA
+    
+    pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
+    pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
+    
+    pp_pp = pp_pp*mask_arr
+    pp_pp_sig = pp_pp_sig*mask_arr
+    
+    pp = list()
+    pp[[1]] = pp_temp
+    pp[[2]] = pp_temp_sig
+    pp[[3]] = pp_pp
+    pp[[4]] = pp_pp_sig
+    
+    return(pp)
+  } else {
+    
+    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+    
+    k[nomodel] = NA
+    t = 29 #anios
+    m = 7 #modelos
+    
+    f = qf(0.95, t-1, t*106)
+    pp_f = 1/(1+m*sum(k, na.rm = T)*(f-1))
+    
+    # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+    
+    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+    pp_temp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_temp-1)))
+    
+    pp_temp_sig = pp_temp
+    
+    # testear y mascara
+    pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+    
+    pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
+    pp_temp_sig[which(!is.na(pp_temp))] = 1 
+    
+    pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
+    pp_temp_sig = pp_temp_sig*mask_arr 
+    
+    #ideam pp
+    
+    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+    pp_pp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_pp-1)))
+    
+    pp_pp_sig = pp_pp
+    
+    pp_pp[which(pp_pp<pp_f)] = NA
+    
+    pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
+    pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
+    
+    pp_pp = pp_pp*mask_arr
+    pp_pp_sig = pp_pp_sig*mask_arr
+    
+    pp = list()
+    pp[[1]] = pp_temp
+    pp[[2]] = pp_temp_sig
+    pp[[3]] = pp_pp
+    pp[[4]] = pp_pp_sig
+    
+    return(pp)
+  }
+  #
+
 }
