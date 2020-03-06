@@ -623,23 +623,18 @@ anova_fun = function(){
   variable = as.character(readline("Variable (pp), (temp): "))
   ensemble_total = readline("Todos los modelos?(si, no): ")
   
-  # cm2p1 tiene 10 miembros en temp y 28 en pp entonces: (ver estos 28 de pp, tomo todos o 24????) ######
-  
-  #if(variable == "temp"){
-  #  k = c(10, 10, 12, 12, 4, 28, 10, 20) 
-  #} else {
-  #  k = c(10, 28, 12, 12, 4, 28, 10, 20)
-  #}
   k = c(10, 10, 12, 12, 4, 28, 10, 20)
   t = 29 #anios
-  
-  
   lon2 = read.table("lon2.txt")[,1]
   lat2 = read.table("lat2.txt")[,1]
+  
   anios = seq(from = 1982, to = 2010, by = 1)
+  
   library(ncdf4)
   
   if(ensemble_total == "si"){
+    
+    m = 8 #modelos
     
     nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
     v_seasons = ncvar_get(nc, variable) # lon lat members years seasons models 
@@ -659,7 +654,7 @@ anova_fun = function(){
       xtm0[,,,i,] = apply(v_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
     }
     
-    m = 8 #modelos
+    
     
     # calculo de los estimadores SS's
     
@@ -751,127 +746,271 @@ anova_fun = function(){
     return(SS)
     
   } else {
-    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
     
-    nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
-    v_seasons = ncvar_get(nc, variable) 
-    nc_close(nc)
-    
-    v_seasons[,,,,,nomodel] = NA
-    
-    mask = as.matrix(read.table("mascara.txt"))
-    
-    x000 = array(NA, dim = c(length(lon2), length(lat2), 4))
-    xt00 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
-    x0m0 = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
-    xtm0 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
-    
-    for(i in 1:4){
-      x000[,,i] = apply(v_seasons[,,,,i,],c(1,2), mean, na.rm = T)         
-      xt00[,,,i] = apply(v_seasons[,,,,i,],c(1,2,4), mean, na.rm = T)
-      x0m0[,,i,] = apply(v_seasons[,,,,i,], c(1,2,5), mean, na.rm = T) 
-      xtm0[,,,i,] = apply(v_seasons[,,,,i,],c(1,2,4,5), mean, na.rm = T)
-    }
-    
-    k[nomodel] = NA
-
-    m = 7 #modelos
-    
-    # calculo de los estimadores SS's
-    
-    ########################################### SSa ########################################### 
-    
-    aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4,8))
-    for(i in 1:length(anios)){
-      aux[,,i,,] = (xt00[,,i,]-x000)**2
-    }
-    
-    SSa = apply(sum(k, na.rm = T)*aux, c(1,2,4), sum, na.rm = T)
-    
-    
-    ########################################### SSb ########################################### 
-    
-    aux = array(NA, dim = c(length(lon2), length(lat2), 4, 8))
-    for(i in 1:8){
-      aux[,,,i] = (x0m0[,,,i]-x000)**2
-    }
-    
-    for(i in 1:8){ 
-      aux[,,,i] = aux[,,,i]*k[i]*t # ver si esto funca.. NAxNA
-    }
-    
-    SSb = apply(aux, c(1,2,3), sum, na.rm = T)
-    
-    
-    ########################################### SSe ########################################### 
-    
-    aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 8))
-    for(i in 1:28){
-      aux[,, i,,,] = (v_seasons[,,i,,,]-xtm0)**2
-    }
-    
-    SSe = apply(aux, c(1,2,5), sum, na.rm = T)  
-    
-    
-    ########################################### SSg ########################################### 
-    
-    aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
-    for(i in 1:8){
-      aux[,,,,i] = xtm0[,,,,i] - xt00
-    }
-    
-    aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
-    for(i in 1:length(anios)){
-      aux2[,,i,,] = aux[,,i,,] - x0m0
-    }
-    
-    aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 8))
-    for(i in 1:length(anios)){
-      for(j in 1:8){
-        aux3[,,i,,j] = (aux2[,,i,,j] + x000)**2
+    todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
+    if(todos == 1){
+      
+      mask = as.matrix(read.table("mascara.txt"))
+      
+      m = 7 #modelos
+      
+      nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
+      v_seasons = ncvar_get(nc, variable) # lon lat members years seasons models 
+      nc_close(nc)
+      
+      ss_v = list() # lista para guardar cada SS al omitir cada modelo
+      
+      for(f in 1:8){
+        
+        nomodel = seq(1:8)
+        nomodel = nomodel[nomodel!=f]  #esto para eliminar la dimencion correspondiente al modelo en v_seasons ya que traer errores en apply
+        
+        v_seasons2 = v_seasons[,,,,,nomodel]   #ok
+        
+        
+        #igual que antes. pero ahora con 7 modelos
+        x000 = array(NA, dim = c(length(lon2), length(lat2), 4))
+        xt00 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
+        x0m0 = array(NA, dim = c(length(lon2), length(lat2), 4, 7))
+        xtm0 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+        
+        for(i in 1:4){
+          x000[,,i] = apply(v_seasons2[,,,,i,],c(1,2), mean, na.rm = T)         
+          xt00[,,,i] = apply(v_seasons2[,,,,i,],c(1,2,4), mean, na.rm = T)
+          x0m0[,,i,] = apply(v_seasons2[,,,,i,], c(1,2,5), mean, na.rm = T) 
+          xtm0[,,,i,] = apply(v_seasons2[,,,,i,],c(1,2,4,5), mean, na.rm = T)
+        }
+        # para lo proximo es necesario un nuevo k, que no tenga la cantidad de miembros que le corresponden al modelo omitido
+        
+        k = c(10, 10, 12, 12, 4, 28, 10, 20) # es necesario q se defina para cada j
+        k[f] = NA # eliminando el correspondiente al modelo omitido
+        k = k[!is.na(k)] # lenght = 7
+        
+        
+        # calculo de los estimadores SS's
+        
+        ########################################### SSa ###########################################
+        
+        aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4,7))  #7 en lugar de 8
+        for(i in 1:length(anios)){
+          aux[,,i,,] = (xt00[,,i,]-x000)**2
+        }
+        
+        SSa = apply(sum(k)*aux, c(1,2,4), sum)
+        
+        
+        ########################################### SSb ###########################################
+        
+        aux = array(NA, dim = c(length(lon2), length(lat2), 4, 7)) #7 en lugar de 8
+        for(i in 1:7){
+          aux[,,,i] = (x0m0[,,,i]-x000)**2
+        }
+        
+        for(i in 1:7){ 
+          aux[,,,i] = aux[,,,i]*k[i]*t   ## aca va k. y por esto es necesario cambiarlo
+        }
+        
+        SSb = apply(aux, c(1,2,3), sum)
+        
+        
+        ########################################### SSe ###########################################
+        
+        aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 7)) #7 en lugar de 8
+        for(i in 1:28){
+          aux[,, i,,,] = (v_seasons2[,,i,,,]-xtm0)**2
+        }
+        
+        SSe = apply(aux, c(1,2,5), sum, na.rm = T)  
+        
+        
+        ########################################### SSg ########################################### 
+        
+        aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+        for(i in 1:7){
+          aux[,,,,i] = xtm0[,,,,i] - xt00
+        }
+        
+        aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+        for(i in 1:length(anios)){
+          aux2[,,i,,] = aux[,,i,,] - x0m0
+        }
+        
+        aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+        for(i in 1:length(anios)){
+          for(j in 1:7){
+            aux3[,,i,,j] = (aux2[,,i,,j] + x000)**2
+          }
+        }
+        
+        for(i in 1:7){ 
+          aux3[,,,,i] = aux3[,,,,i]*k[i]    
+        }
+        
+        SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   
+        
+        
+        TSS = SSa + SSb + SSg + SSe
+        
+        SS = list()
+        SS[[1]] = SSa
+        SS[[2]] = SSb
+        SS[[3]] = SSg
+        SS[[4]] = SSe
+        SS[[5]] = TSS 
+        
+        #cocientes
+        
+        c_b = (SSb - (m-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSb
+        
+        c_a = (SSa - (t-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSa 
+        
+        c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k)-1))*SSe)/TSS  #fraccion de TSS explicada por SSg   
+        
+        c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
+        
+        SS[[6]] = c_a
+        SS[[7]] = c_b
+        SS[[8]] = c_g
+        SS[[9]] = c_e
+        
+        ss_v[[f]] = SS
+        
+        rm(SS)
+        
       }
+      
+      return(ss_v)
+      
+    } else {
+      
+      f = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+      
+      mask = as.matrix(read.table("mascara.txt"))
+      
+      m = 7 #modelos
+      
+      nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
+      v_seasons = ncvar_get(nc, variable) # lon lat members years seasons models 
+      nc_close(nc)
+      
+      
+      nomodel = seq(1:8)
+      nomodel = nomodel[nomodel!=f]  #esto para eliminar la dimencion correspondiente al modelo en v_seasons ya que traer errores en apply
+      v_seasons2 = v_seasons[,,,,,nomodel]   #ok
+      
+      k[f] = NA # eliminando el correspondiente al modelo omitido
+      k = k[!is.na(k)] # lenght = 7
+      
+      #igual que antes. pero ahora con 7 modelos
+      x000 = array(NA, dim = c(length(lon2), length(lat2), 4))
+      xt00 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
+      x0m0 = array(NA, dim = c(length(lon2), length(lat2), 4, 7))
+      xtm0 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      
+      for(i in 1:4){
+        x000[,,i] = apply(v_seasons2[,,,,i,],c(1,2), mean, na.rm = T)         
+        xt00[,,,i] = apply(v_seasons2[,,,,i,],c(1,2,4), mean, na.rm = T)
+        x0m0[,,i,] = apply(v_seasons2[,,,,i,], c(1,2,5), mean, na.rm = T) 
+        xtm0[,,,i,] = apply(v_seasons2[,,,,i,],c(1,2,4,5), mean, na.rm = T)
+      }  
+      
+      # calculo de los estimadores SS's
+      
+      ########################################### SSa ###########################################
+      
+      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4,7))  #7 en lugar de 8
+      for(i in 1:length(anios)){
+        aux[,,i,,] = (xt00[,,i,]-x000)**2
+      }
+      
+      SSa = apply(sum(k)*aux, c(1,2,4), sum)
+      
+      
+      ########################################### SSb ###########################################
+      
+      aux = array(NA, dim = c(length(lon2), length(lat2), 4, 7)) #7 en lugar de 8
+      for(i in 1:7){
+        aux[,,,i] = (x0m0[,,,i]-x000)**2
+      }
+      
+      for(i in 1:7){ 
+        aux[,,,i] = aux[,,,i]*k[i]*t   ## aca va k. y por esto es necesario cambiarlo
+      }
+      
+      SSb = apply(aux, c(1,2,3), sum)
+      
+      
+      ########################################### SSe ###########################################
+      
+      aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 7)) #7 en lugar de 8
+      for(i in 1:28){
+        aux[,, i,,,] = (v_seasons2[,,i,,,]-xtm0)**2
+      }
+      
+      SSe = apply(aux, c(1,2,5), sum, na.rm = T)  
+      
+      
+      ########################################### SSg ########################################### 
+      
+      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      for(i in 1:7){
+        aux[,,,,i] = xtm0[,,,,i] - xt00
+      }
+      
+      aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      for(i in 1:length(anios)){
+        aux2[,,i,,] = aux[,,i,,] - x0m0
+      }
+      
+      aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      for(i in 1:length(anios)){
+        for(j in 1:7){
+          aux3[,,i,,j] = (aux2[,,i,,j] + x000)**2
+        }
+      }
+      
+      for(i in 1:7){ 
+        aux3[,,,,i] = aux3[,,,,i]*k[i]    
+      }
+      
+      SSg = apply(aux3, c(1,2,4), sum, na.rm = T)   
+      
+      
+      TSS = SSa + SSb + SSg + SSe
+      
+      SS = list()
+      SS[[1]] = SSa
+      SS[[2]] = SSb
+      SS[[3]] = SSg
+      SS[[4]] = SSe
+      SS[[5]] = TSS 
+      
+      #cocientes
+      
+      c_b = (SSb - (m-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSb
+      
+      c_a = (SSa - (t-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSa 
+      
+      c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k)-1))*SSe)/TSS  #fraccion de TSS explicada por SSg   
+      
+      c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
+      
+      SS[[6]] = c_a
+      SS[[7]] = c_b
+      SS[[8]] = c_g
+      SS[[9]] = c_e
+      
+      return(SS)
+      
     }
-    
-    for(i in 1:8){ 
-      aux3[,,,,i] = aux3[,,,,i]*k[i]*t
-    }
-    
-    SSg = apply(aux3, c(1,2,4), sum, na.rm = T)
-    
-    TSS = SSa + SSb + SSg + SSe
-    
-    SS = list()
-    SS[[1]] = SSa
-    SS[[2]] = SSb
-    SS[[3]] = SSg
-    SS[[4]] = SSe
-    SS[[5]] = TSS 
-    
-    #cocientes
-    
-    c_b = (SSb - (m-1)/(t*106)*SSe)/TSS   #fraccion de TSS explicada por SSb
-    
-    c_a = (SSa - (t-1)/(t*106)*SSe)/TSS   #fraccion de TSS explicada por SSa 
-    
-    c_g = (SSg - (t*m-1)/(t*106)*SSe)/TSS  #fraccion de TSS explicada por SSg   
-    
-    c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
-    
-    SS[[6]] = c_a
-    SS[[7]] = c_b
-    SS[[8]] = c_g
-    SS[[9]] = c_e
-    
-    
-    return(SS)
-  } 
-}
+  }  
+} 
 
 #### TEST_COS ####
 #test cocientes de anova_fun
-test_cos = function(SS){
+test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
   
-  ensemble_total = readline("Todos los modelos?(si, no): ")
+  
   
   #### testeos ####
   
@@ -942,6 +1081,9 @@ test_cos = function(SS){
   
   } else {
     
+    todos = nomodel_selec
+    if(todos == "si"){
+    
     nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
     
     mask = as.matrix(read.table("mascara.txt"))
@@ -993,6 +1135,62 @@ test_cos = function(SS){
     sig[[7]] = sigma_gamma_2
     sig[[8]] = sigma_epsilon_2
     return(sig)
+    
+    } else {
+      
+      nomodel = no_model
+      
+      mask = as.matrix(read.table("mascara.txt"))
+      mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+      for(i in 1:4){
+        mask_arr[,,i] = mask
+      }
+      
+      k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+      t = 29 #anios
+      k[nomodel] = NA
+      m = 7 #modelos
+      
+      alpha_f = qf(0.95,t-1,t*sum(k, na.rm = T))
+      beta_f = qf(0.95, m-1, t*sum(k, na.rm = T))
+      gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k, na.rm = T)) 
+      
+      sigma_alpha_2 = SS[[1]]/((t-1)) 
+      
+      sigma_beta_2 = SS[[2]]/(m-1) 
+      
+      sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
+      
+      sigma_epsilon_2 = SS[[4]]/(t*(sum(k, na.rm = T)-1))     
+      
+      alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
+      beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
+      gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
+      
+      # esta OK.
+      
+      alpha[which(alpha<alpha_f)] = NA
+      alpha[which(!is.na(alpha))] = 1
+      
+      beta[which(beta<beta_f)] = NA
+      beta[which(!is.na(beta))] = 1
+      
+      gamma[which(gamma<gamma_f)] = NA
+      gamma[which(!is.na(gamma))] = 1
+      
+      sig = list()
+      sig[[1]] = alpha
+      sig[[2]] = beta
+      sig[[3]] = gamma
+      sig[[4]] = array(data = 1, dim = c(56, 76, 4))*mask_arr
+      
+      sig[[5]] = sigma_alpha_2
+      sig[[6]] = sigma_beta_2
+      sig[[7]] = sigma_gamma_2
+      sig[[8]] = sigma_epsilon_2
+      return(sig)
+      
+    }
   }
 }
 #### MAPA_SIG ####
@@ -1252,55 +1450,119 @@ pp_test = function(ss_temp, ss_pp){
     return(pp)
   } else {
     
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
-    
-    k[nomodel] = NA
-    t = 29 #anios
-    m = 7 #modelos
-    
-    f = qf(0.95, t-1, t*106)
-    pp_f = 1/(1+m*sum(k, na.rm = T)*(f-1))
-    
-    # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
-    
-    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
-    pp_temp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_temp-1)))
-    
-    pp_temp_sig = pp_temp
-    
-    # testear y mascara
-    pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
-    
-    pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
-    pp_temp_sig[which(!is.na(pp_temp))] = 1 
-    
-    pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
-    pp_temp_sig = pp_temp_sig*mask_arr 
-    
-    #ideam pp
-    
-    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
-    pp_pp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_pp-1)))
-    
-    pp_pp_sig = pp_pp
-    
-    pp_pp[which(pp_pp<pp_f)] = NA
-    
-    pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
-    pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
-    
-    pp_pp = pp_pp*mask_arr
-    pp_pp_sig = pp_pp_sig*mask_arr
-    
-    pp = list()
-    pp[[1]] = pp_temp
-    pp[[2]] = pp_temp_sig
-    pp[[3]] = pp_pp
-    pp[[4]] = pp_pp_sig
-    
-    return(pp)
+    todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
+    if(todos == 2){
+      
+      k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+      nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+      
+      k[nomodel] = NA
+      t = 29 #anios
+      m = 7 #modelos
+      
+      f = qf(0.95, t-1, t*106)
+      pp_f = 1/(1+m*sum(k, na.rm = T)*(f-1))
+      
+      # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+      
+      aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+      pp_temp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_temp-1)))
+      
+      pp_temp_sig = pp_temp
+      
+      # testear y mascara
+      pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+      
+      pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
+      pp_temp_sig[which(!is.na(pp_temp))] = 1 
+      
+      pp_temp = pp_temp*mask_arr #agrego mascara de continente a todas las estaciones
+      pp_temp_sig = pp_temp_sig*mask_arr 
+      
+      #ideam pp
+      
+      aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+      pp_pp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_pp-1)))
+      
+      pp_pp_sig = pp_pp
+      
+      pp_pp[which(pp_pp<pp_f)] = NA
+      
+      pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
+      pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
+      
+      pp_pp = pp_pp*mask_arr
+      pp_pp_sig = pp_pp_sig*mask_arr
+      
+      pp = list()
+      pp[[1]] = pp_temp
+      pp[[2]] = pp_temp_sig
+      pp[[3]] = pp_pp
+      pp[[4]] = pp_pp_sig
+      
+      return(pp)
+    } else {
+      
+      t = 29 #anios  
+      m = 7 #modelos
+      
+      ss_v = list()
+      
+      for(l in 1:8){
+        
+        k = c(10, 10, 12, 12, 4, 28, 10, 20) # es necesario q se defina para cada j
+        k[l] = NA # eliminando el correspondiente al modelo omitido
+        k = k[!is.na(k)] # lenght = 7
+        
+        f = qf(0.95, t-1, t*sum(k)-1)
+        pp_f = 1/(1+m*sum(k)*(f-1))
+        
+        aux_pp_temp = (ss_temp[[l]][[1]]/ss_temp[[l]][[4]])*((t*sum(k)-1)/(t-1))
+        pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))   
+        
+        pp_temp_sig = pp_temp
+        
+        # testear y mascara
+        pp_temp[which(pp_temp<pp_f)] = NA # saco los que no son significativos
+        
+        pp_temp_sig[which(pp_temp_sig<pp_f)] = NA
+        pp_temp_sig[which(!is.na(pp_temp))] = 1 
+        
+        pp_temp = pp_temp*mask_arr 
+        pp_temp_sig = pp_temp_sig*mask_arr 
+        
+        
+        #ideam pp
+        
+        aux_pp_pp = (ss_pp[[l]][[1]]/ss_pp[[l]][[4]])*((t*sum(k))/(t-1))
+        pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+        
+        pp_pp_sig = pp_pp
+        
+        pp_pp[which(pp_pp<pp_f)] = NA
+        
+        pp_pp_sig[which(pp_pp_sig<pp_f)] = NA
+        pp_pp_sig[which(!is.na(pp_pp_sig))] = 1
+        
+        pp_pp = pp_pp*mask_arr
+        pp_pp_sig = pp_pp_sig*mask_arr
+        
+        pp = list()
+        pp[[1]] = pp_temp
+        pp[[2]] = pp_temp_sig
+        pp[[3]] = pp_pp
+        pp[[4]] = pp_pp_sig
+        
+        
+        ss_v[[l]] = pp
+        
+        rm(pp)
+        
+      }
+      
+      return(ss_v)
+      
+      # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
+    }
   }
-  #
-
-}
+}  
