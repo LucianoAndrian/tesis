@@ -1,10 +1,10 @@
 rm(list=ls()) 
-require(here)
+#require(here)
 #setwd("/home/auri/Facultad/")
 library(ncdf4)
 
 source("funciones.R")
-ruta = "/datos/osman/nmme/monthly"
+ruta = "/pikachu/datos/osman/nmme/monthly"
 
 tref = nc_open(paste(ruta,"tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
 names(tref$var)
@@ -15,7 +15,7 @@ temp = ncvar_get(tref, "tref")
 # TOMAR DESDE MARZO DEL '82 HASTA NOV DEL 2011?? ---> uso feb del 2012 asi me quedan misma cantidad de estaciones.  ES IMPORTANTE O DA IGUAL??
 lat = ncvar_get(tref, "Y")
 lon = ncvar_get(tref, "X")
-
+nc_close(tref)
 temp = temp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:371] 
 
 lon2 = lon[which(lon==275):which(lon==330)]
@@ -47,8 +47,8 @@ for( i in 1:4){
 #estaciones_prom_t[which(estaciones_prom_t>310)] = NA
 #estaciones_prom_t[which(estaciones_prom_t<265)] = NA
 
-mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
-         ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40), "/salidas/observado/")
+#mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
+#         ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40), "/salidas/observado/")
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
@@ -62,8 +62,8 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
-         , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,0.5,1,1.5,2),"/salidas/observado/")
+#mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
+#         , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,0.5,1,1.5,2),"/salidas/observado/")
 
 
 
@@ -111,8 +111,8 @@ for( i in 1:4){
 
 
 
-mapa(lista = estaciones_prom_pp, titulo = "PP - CPC - URD", nombre_fig = "pp-CPC", escala = c(0,500)
-         , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,100,200,300,400,500),"/salidas/observado/")
+#mapa(lista = estaciones_prom_pp, titulo = "PP - CPC - URD", nombre_fig = "pp-CPC", escala = c(0,500)
+#         , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
@@ -124,8 +124,8 @@ for( i in 1:4 ){
 
 satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
-mapa(lista = standar_d_pp, titulo = "sd - PP - CPC - URD", nombre_fig = "sd_PP_CPC", escala = c(0,150)
-         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,25,50,75,100,150),"/salidas/observado/")
+#mapa(lista = standar_d_pp, titulo = "sd - PP - CPC - URD", nombre_fig = "sd_PP_CPC", escala = c(0,150)
+#         , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,25,50,75,100,150),"/salidas/observado/")
 
 
 
@@ -134,7 +134,7 @@ mapa(lista = standar_d_pp, titulo = "sd - PP - CPC - URD", nombre_fig = "sd_PP_C
 require(fields)
 library(ncdf4)
 
-aux = nc_open("/home/luciano.andrian/X157.92.36.193.339.11.29.13.nc")
+aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
@@ -181,8 +181,8 @@ for( i in 1:4){
 }
 
 
-mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
-     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
+#mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
+#     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
@@ -194,15 +194,15 @@ for( i in 1:4 ){
 
 satandar_d_pp2 = standar_d_pp2[which(standar_d_pp2>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
-mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,150)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100,150),"/salidas/observado/")
+#mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,150)
+#     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100,150),"/salidas/observado/")
 
 
 
 # pp3 cmap
 # el nc va desde enero '82 hasta dic 2012
 
-aux = nc_open("/home/luciano.andrian/X190.191.242.210.56.5.48.49.nc")
+aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
@@ -259,8 +259,8 @@ for( i in 1:4){
 }
 
 
-mapa(lista = estaciones_prom_pp3, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500) 
-     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
+#mapa(lista = estaciones_prom_pp3, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500) 
+#     ,label_escala = "mm", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y, c(0,100,200,300,400,500),"/salidas/observado/")
 
 
 ## sd
@@ -270,14 +270,23 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_pp3, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100),"/salidas/observado/")
+#mapa(lista = standar_d_pp3, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
+#     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(0,25,50,75,100),"/salidas/observado/")
 
 
 # como se analizaba esto??? promedio de las 3 y ver cual tiene mas desvio?? PREGUNTAR.
 
-dif_pp = estaciones_prom_pp -  estaciones_prom_pp2
+dif_pp1_2 = estaciones_prom_pp -  estaciones_prom_pp2
+dif_pp1_3 = estaciones_prom_pp -  estaciones_prom_pp3[1:56,1:76,]  
+# ver esto, ya que tienen distinta dimenciones!!! habria q probar descagar otra vez y ver si se consigue la misma dim. 
+                                                       # no era facil debido a la grilla.
+dif_pp2_3 = estaciones_prom_pp2 -  estaciones_prom_pp3[1:56,1:76,]  
 
-mapa(lista = dif_pp, titulo = "PP - NMME vs GPCC", nombre_fig = "dif_pp_escala2", escala = c(-50, 50)
-     , label_escala = "mm", resta = 0, brewer = "RdBu",revert = "si", niveles = 9, contour = "si", pp_aux$x, pp_aux$y,c(-50,-20, 10, 0, 10, 25, 50),"/salidas/observado/")
+mapa(lista = dif_pp1_2, titulo = "PP - CPC vs GPCC", nombre_fig = "dif_pp_cpc-gpcc", escala = c(-100, 100),
+     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),"/salidas/observado/")
 
+mapa(lista = dif_pp1_3, titulo = "PP - CPC vs CMAP", nombre_fig = "dif_pp_cpc-cmap", escala = c(-100, 100),
+     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),"/salidas/observado/")
+
+mapa(lista = dif_pp2_3, titulo = "PP - GPCC vs CMAP", nombre_fig = "dif_pp_gpcc-cmap", escala = c(-100, 100),
+     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9, contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),"/salidas/observado/")
