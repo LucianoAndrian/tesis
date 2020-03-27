@@ -606,6 +606,8 @@ mean_sd = function(nombre){
   T_PP[[2]] = sd_t
   T_PP[[3]] = PP1
   T_PP[[4]] = sd_pp
+  T_PP[[5]] = T2
+  T_PP[[6]] = PP2
   return(T_PP)
   
   nc_close(nc)
