@@ -2,15 +2,19 @@
 # Anomaly Correlation
 
 
-# observaciones. O(j,m) j años, m estaciones.
+### Observaciones. O(j,m) j años, m estaciones. ###
+
 # necesito "estaciones_p_a_t" de datos_obs.R  (ahora se va a llamar prom_est)
 # los años y latitudes se mantienen igual que en datos_obs.R
-
-# DUDAS: temp y pp?? 
 
 library(ncdf4)
 source("funciones.R")
 mask = as.matrix(read.table("mascara.txt"))
+
+
+# O == prom_est-...
+# O' == O - c_v_....
+
 
 ## CPC ## #sin mascara
 # Temp
@@ -47,14 +51,15 @@ while(i<=4){
 
 # PP
 
-prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
+#prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
+prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")
 names(prec$var)
 pp = ncvar_get(prec, "prec")
 lat = ncvar_get(prec, "Y")
 lon = ncvar_get(prec, "X")
 nc_close(prec)
 
-pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:350]    # aca falta un año.
+pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:362]    # aca falta un año.
 
 lon2 = lon[which(lon==275):which(lon==330)]
 lat2 = lat[which(lat==-60):which(lat==15)]
@@ -62,7 +67,7 @@ lat2 = lat[which(lat==-60):which(lat==15)]
 pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) # le pongo 30 igual. va tener NA pero sino complica los calculos mas adelante
 
 for(j in 1:12){
-  for (i in 0:28){
+  for (i in 0:29){
     pp_estaciones[,,1+i,j] = pp[ , , j+12*i]
   }
 }
@@ -187,7 +192,7 @@ for(i in 1:30){
  aux2_cpc_t[,,,,i] = aux2[,,,,i]*prom_est_cpc_t 
  aux2_cpc_pp[,,,,i] = aux2[,,,,i]*prom_est_cpc_pp 
  aux2_gpcc_pp[,,,,i] = aux2[,,,,i]*prom_est_cpc_t 
- aux2_cmap_pp[,,,,i] =aux2[,,,,i]*prom_est_cmap_pp[2:57,2:77,,] 
+ aux2_cmap_pp[,,,,i] =aux2[,,,,i]*prom_est_cmap_pp[2:57,2:77,,] # *** tener en cuenta esta seleccion de lat y lon
  
  # promedio sacando cada año.
  c_v_cpc_t[,,i,] = apply(aux2_cpc_t[,,,,i], c(1,2,4), mean, na.rm = T)
@@ -197,7 +202,61 @@ for(i in 1:30){
 }
 
 
+Op_cpc_t = prom_est_cpc_t - c_v_cpc_t
+Op_cpc_pp = prom_est_cpc_pp - c_v_cpc_pp
+Op_gpcc_pp = prom_est_gpcc_pp - c_v_gpcc_pp
+Op_cmap_pp = prom_est_cmap_pp[2:57, 2:77,,] - c_v_cmap_pp # ***
 
 
+### Modelos F(j,m) j años, m estaciones. ###
+# necesito el array intermedio para crear sd que tiene la funcion mean_sd. 
+# modificada la funcion, devuelve lista que en las dim [[5]] = se encuetnra la temp y  [[6]] la pp. h
+# la funcion funciona de a un modelo, ya que estaba pensada para usar en conjunto con la funcion de graficado.
+# la funcion necesita, estas lon y lat (56, 76)
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2") 
+
+# uso misma denominacion que para las obserbaciones.
+# esto es F 
+prom_est_mods_t = array(data = NA, dim = c(56, 76, 29, 4, 8)) # recordar, los modelos 1982-2010 (29 años)
+prom_est_mods_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+for(i in 1:length(modelos)){
+  v = mean_sd(modelos[i])
+  prom_est_mods_t[,,,,i] = v[[5]]
+  prom_est_mods_pp[,,,,i] = v[[6]]
+}  
+
+# cross-validation
 
 
+aux = diag(30)
+aux[which(aux == 1)] = NA ; aux[which(aux == 0)] = 1
+
+aux2 = array(data = 1, dim = c(56, 76, 29, 4, 29, 8))
+aux2_pp = array(data = 1, dim = c(56, 76, 29, 4, 29, 8))
+
+aux2_mod_t = array(data = 1, dim = c(56, 76, 29, 4, 29, 8))
+aux2_mod_pp = array(data = 1, dim = c(56, 76, 29, 4, 29, 8))
+
+c_v_mod_t = array(data = NA, dim = c(56, 76, 29, 4, 8))
+c_v_mod_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+
+for(i in 1:29){
+  aux2[,,i,,i,] = aux2[,,i,,i,]*aux[i,i]  # una especie de matriz identidad inversa con NA y 1 pero en 4 dim.
+  
+  aux2_mod_t[,,,,i,] = aux2[,,,,i,]*prom_est_mods_t 
+  aux2_mod_pp[,,,,i,] = aux2[,,,,i,]*prom_est_mods_pp
+  
+  
+  # promedio sacando cada año.
+  c_v_mod_t[,,i,,] = apply(aux2_mod_t[,,,,i,], c(1,2,4,5), mean, na.rm = T)
+  c_v_mod_pp[,,i,,] = apply(aux2_mod_pp[,,,,i,], c(1,2,4,5), mean, na.rm = T)
+}
+
+Fp_t = prom_est_mods_t - c_v_mod_t
+Fp_pp = prom_est_mods_pp - c_v_mod_pp
+
+
+### ec 3 becker ### 
