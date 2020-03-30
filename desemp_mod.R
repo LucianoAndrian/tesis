@@ -2,8 +2,9 @@
 # Anomaly Correlation
 
 
+###################################################
 ### Observaciones. O(j,m) j años, m estaciones. ###
-
+###################################################
 # necesito "estaciones_p_a_t" de datos_obs.R  (ahora se va a llamar prom_est)
 # los años y latitudes se mantienen igual que en datos_obs.R
 
@@ -16,8 +17,11 @@ mask = as.matrix(read.table("mascara.txt"))
 # O' == O - c_v_....
 
 
-## CPC ## #sin mascara
+##------------------------ CPC ------------------------ ## 
+#sin mascara
+
 # Temp
+
 ruta = "/pikachu/datos/osman/nmme/monthly"
 
 tref = nc_open(paste(ruta,"tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
@@ -29,8 +33,8 @@ nc_close(tref)
 
 temp = temp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:371] 
 
-lon2 = lon[which(lon==275):which(lon==330)]
-lat2 = lat[which(lat==-60):which(lat==15)]
+lon2 = lon[which(lon==275):which(lon==330)]  # se usan las mismas en PP
+lat2 = lat[which(lat==-60):which(lat==15)]   #
 
 temp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12))
 
@@ -49,20 +53,19 @@ while(i<=4){
   i = i + 1
 }
 
+
+
 # PP
 
 #prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
-prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")
+prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")  # nuevo
 names(prec$var)
-pp = ncvar_get(prec, "prec")
-lat = ncvar_get(prec, "Y")
-lon = ncvar_get(prec, "X")
+pp = ncvar_get(prec, "precip")
+lat = ncvar_get(prec, "lat")
+lon = ncvar_get(prec, "lon")
 nc_close(prec)
 
 pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:362]    # aca falta un año.
-
-lon2 = lon[which(lon==275):which(lon==330)]
-lat2 = lat[which(lat==-60):which(lat==15)]
 
 pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) # le pongo 30 igual. va tener NA pero sino complica los calculos mas adelante
 
@@ -83,7 +86,8 @@ while(i<=4){
 }
 
 
-## GPCC ## #con mascara
+
+## ------------------------ GPCC ------------------------ ## #con mascara
 # solo pp
 
 aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
@@ -124,7 +128,9 @@ while(i<=4){
   i = i + 1
 }
 
-## CMAP ## # sin mascara
+
+
+## ------------------------ CMAP ------------------------ ## # sin mascara
 # solo pp
 
 aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
@@ -167,48 +173,55 @@ while(i<=4){
   i = i + 1
 }
 
+# O
+prom_est_obs = array(data = NA, dim = c(56, 76, 30, 4, 4))
+prom_est_obs[,,,,1] = prom_est_cpc_t
+prom_est_obs[,,,,2] = prom_est_cpc_pp
+prom_est_obs[,,,,3] = prom_est_gpcc_pp
+prom_est_obs[,,,,4] = prom_est_cmap_pp[2:57,2:77,,]
 
-# para hacer cross validation.
+
+
+########################## Cross Validation ##########################
+# 
 # para cada año tengo q tener promedio de todos los años menos ese año.
 
 aux = diag(30)
 aux[which(aux == 1)] = NA ; aux[which(aux == 0)] = 1
 
-aux2 = array(data = 1, dim = c(56, 76, 30, 4, 30))
+aux2 = array(data = 1, dim = c(56, 76, 30, 4, 30, 4))
+aux2_obs = array(data = 1, dim = c(56, 76, 30, 4, 30, 4))
 
-aux2_cpc_t = array(data = 1, dim = c(56, 76, 30, 4, 30))
-aux2_gpcc_pp = array(data = 1, dim = c(56, 76, 30, 4, 30))
-aux2_cmap_pp = array(data = 1, dim = c(56, 76, 30, 4, 30))
-aux2_cpc_pp = array(data = 1, dim = c(56, 76, 30, 4, 30))
-
-c_v_cpc_t = array(data = NA, dim = c(56, 76, 30, 4))
-c_v_cpc_pp = array(data = NA, dim = c(56, 76, 30, 4))
-c_v_gpcc_pp = array(data = NA, dim = c(56, 76, 30, 4))
-c_v_cmap_pp = array(data = NA, dim = c(56, 76, 30, 4))
+c_v_obs = array(data = NA, dim = c(56, 76, 30, 4, 4))
 
 for(i in 1:30){
- aux2[,,i,,i] = aux2[,,i,,i]*aux[i,i]  # una especie de matriz identidad inversa con NA y 1 pero en 4 dim.
+  
+  aux2[,,i,,i,] = aux2[,,i,,i,]*aux[i,i] # como matriz identidad inversa con NA en la diagonal y 1 pero en 4 dimenciones.
+  
+  aux2_obs[,,,,i,] = aux2[,,,,i,]*prom_est_obs[,,,,] 
  
- aux2_cpc_t[,,,,i] = aux2[,,,,i]*prom_est_cpc_t 
- aux2_cpc_pp[,,,,i] = aux2[,,,,i]*prom_est_cpc_pp 
- aux2_gpcc_pp[,,,,i] = aux2[,,,,i]*prom_est_cpc_t 
- aux2_cmap_pp[,,,,i] =aux2[,,,,i]*prom_est_cmap_pp[2:57,2:77,,] # *** tener en cuenta esta seleccion de lat y lon
- 
- # promedio sacando cada año.
- c_v_cpc_t[,,i,] = apply(aux2_cpc_t[,,,,i], c(1,2,4), mean, na.rm = T)
- c_v_cpc_pp[,,i,] = apply(aux2_cpc_pp[,,,,i], c(1,2,4), mean, na.rm = T)
- c_v_gpcc_pp[,,i,] = apply(aux2_gpcc_pp[,,,,i], c(1,2,4), mean, na.rm = T)
- c_v_cmap_pp[,,i,] = apply(aux2_cmap_pp[,,,,i], c(1,2,4), mean, na.rm = T)
+  # promedio sacando cada año.
+  
+  c_v_obs[,,i,,] = apply(aux2_obs[,,,,i,], c(1,2,4,5), mean, na.rm = T)
+  
 }
 
 
-Op_cpc_t = prom_est_cpc_t - c_v_cpc_t
-Op_cpc_pp = prom_est_cpc_pp - c_v_cpc_pp
-Op_gpcc_pp = prom_est_gpcc_pp - c_v_gpcc_pp
-Op_cmap_pp = prom_est_cmap_pp[2:57, 2:77,,] - c_v_cmap_pp # ***
+
+### O' 
+Op_obs = array(data = NA, dim = c(56, 76, 30, 4, 4))
+for(i in 1:4){
+  
+  Op_obs[,,,,i] = prom_est_obs[,,,,i]-c_v_obs[,,,,i]
+  
+}
 
 
-### Modelos F(j,m) j años, m estaciones. ###
+
+###################################################
+###    Modelos. F(j,m) j años, m estaciones.    ###
+###################################################
+
 # necesito el array intermedio para crear sd que tiene la funcion mean_sd. 
 # modificada la funcion, devuelve lista que en las dim [[5]] = se encuetnra la temp y  [[6]] la pp. h
 # la funcion funciona de a un modelo, ya que estaba pensada para usar en conjunto con la funcion de graficado.
@@ -228,8 +241,9 @@ for(i in 1:length(modelos)){
   prom_est_mods_pp[,,,,i] = v[[6]]
 }  
 
-# cross-validation
 
+########################## Cross Validation ##########################
+# T y PP
 
 aux = diag(30)
 aux[which(aux == 1)] = NA ; aux[which(aux == 0)] = 1
@@ -251,12 +265,56 @@ for(i in 1:29){
   
   
   # promedio sacando cada año.
-  c_v_mod_t[,,i,,] = apply(aux2_mod_t[,,,,i,], c(1,2,4,5), mean, na.rm = T)
-  c_v_mod_pp[,,i,,] = apply(aux2_mod_pp[,,,,i,], c(1,2,4,5), mean, na.rm = T)
+  c_v_mod_t[,,i,,] = apply(aux2_mod_t[,,,,i,], c(1, 2, 4, 5), mean, na.rm = T)
+  c_v_mod_pp[,,i,,] = apply(aux2_mod_pp[,,,,i,], c(1, 2, 4, 5), mean, na.rm = T)
 }
 
 Fp_t = prom_est_mods_t - c_v_mod_t
 Fp_pp = prom_est_mods_pp - c_v_mod_pp
 
+##--- OK ---##
+
+
+
+
 
 ### ec 3 becker ### 
+
+# revisar, dan valores medios raros. sobre todo AC_pp
+
+
+# AC. Temp
+
+AC_t = array(data = NA, dim = c(56, 76, 4, 8))
+
+for(i in 1:8){
+  
+  #numerador
+  aux = Op_obs[,,1:29,,1]*Fp_t[,,,,i] # Op_obs[,,,,,1] solo temp
+  num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  #denominador
+  den = ((apply(Op_obs[,,1:29,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_t**2, c(1, 2, 4), sum, na.rm = T))/29) 
+  
+  AC_t[,,,i] = num/den
+  
+}
+
+
+
+# AC PP
+
+AC_pp = array(data = NA, dim = c(56, 76, 4, 8, 3))
+
+for(i in 1:8){
+  for(j in 2:4){
+    aux = Op_obs[,,1:29,,j]*Fp_pp[,,,,i]
+    num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+    
+    den = ((apply(Op_obs[,,1:29,,j]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_pp**2, c(1, 2, 4), sum, na.rm = T))/29)
+    
+    AC_pp[,,,i,j-1] = num/den
+  }
+}
+
+
