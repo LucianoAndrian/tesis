@@ -198,7 +198,7 @@ for(i in 1:29){
   
   aux2[,,i,,i,] = aux2[,,i,,i,]*aux[i,i] # como matriz identidad inversa con NA en la diagonal y 1 pero en 4 dimenciones.
   
-  aux2_obs[,,,,i,] = aux2[,,,,i,]*prom_est_obs[,,,,] 
+  aux2_obs[,,,,i,] = aux2[,,,,i,]*prom_est_obs
  
   # promedio sacando cada año.
   
@@ -299,7 +299,7 @@ num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29
 #denominador
 den = ((apply(Op_obs[,,,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_t**2, c(1, 2, 4), sum, na.rm = T))/29) 
   
-AC_t = num/den
+AC_t = num/sqrt(den)
   
 
 
@@ -313,13 +313,13 @@ for(j in 2:4){
     
   den = ((apply(Op_obs[,,,,j]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_pp**2, c(1, 2, 4), sum, na.rm = T))/29)
     
-  AC_pp[,,,j-1] = num/den
+  AC_pp[,,,j-1] = num/sqrt(den)
 }
 
 
 #####-----------------------------######
-mapa(lista = AC_t, titulo = paste("AC Temp MODS y CPC ", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 5) 
-     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 5, by = 1), "/salidas/desemp_mods/")
+mapa(lista = AC_t, titulo = paste("AC Temp MODS y CPC ", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 1) 
+     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
 
 nombres2 = c("CPC", "GPCC", "CMAP")
 
@@ -331,8 +331,8 @@ for(i in 1:4){
 AC_pp[,,,3] = AC_pp[,,,3]*mask_arr
 for(i in 1:3){
 
-mapa(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_temp_", nombres2[i], sep = ""), escala = c(0, 0.16) 
-       ,label_escala = "", resta = 0, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, seq(0, 0.16, by = 0.02), "/salidas/desemp_mods/")
+mapa(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
+       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
 }
 
 
