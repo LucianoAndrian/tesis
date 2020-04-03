@@ -1,5 +1,6 @@
 # desempeño de modelos.
-# Anomaly Correlation
+
+### Anomaly Correlation ###
 
 
 ###################################################
@@ -213,8 +214,6 @@ Op_obs = prom_est_obs - c_v_obs
   
 
 
-
-
 ###################################################
 ###    Modelos. F(j,m) j años, m estaciones.    ###
 ###################################################
@@ -274,17 +273,7 @@ for(i in 1:29){
 Fp_t = prom_est_mods_t - c_v_mod_t
 Fp_pp = prom_est_mods_pp - c_v_mod_pp
 
-
-
-##--- OK ---##
-
-
-
-
-
 ### ec 3 becker ### 
-
-# revisar, dan valores medios raros. sobre todo AC_pp
 
 
 # AC. Temp
@@ -319,7 +308,7 @@ for(j in 2:4){
 
 #####-----------------------------######
 mapa(lista = AC_t, titulo = paste("AC Temp MODS y CPC ", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 1) 
-     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
+     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11, contour = "no", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
 
 nombres2 = c("CPC", "GPCC", "CMAP")
 
@@ -332,10 +321,105 @@ AC_pp[,,,3] = AC_pp[,,,3]*mask_arr
 for(i in 1:3){
 
 mapa(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
-       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
+       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11, contour = "no", lon2, lat2, seq(0, 1, by = 0.2), "/salidas/desemp_mods/")
+}
+####################################################################################################################################################################
+
+
+### BIAS ###
+
+b_t = apply((prom_est_mods_t - prom_est_obs[,,,,1]), c(1,2,4), sum, na.rm = T)/29
+
+mapa(lista = b_t*mask_arr, titulo = paste("Bias T - CPC ", sep = ""), nombre_fig = paste("bias_t_cpc", sep = ""), escala = c(-10,10) 
+     ,label_escala = "", resta = 0, brewer = "RdBu", revert = "si", niveles = 11, contour = "no", lon2, lat2, seq(-10, 10, by = 2), "/salidas/desemp_mods/")
+
+nombres2 = c("CPC", "GPCC", "CMAP")
+
+b_pp = array(data = NA, dim = c(56,76,4,3))
+
+for(i in 2:4){
+  
+  b_pp[,,,i-1] = (apply(prom_est_mods_pp - prom_est_obs[,,,,i], c(1,2,4), sum, na.rm = T)/29)
+  
+}
+
+for(i in 1:3){
+ 
+   mapa(lista = b_pp[,,,i]*mask_arr, titulo = paste("Bias PP - ", nombres2[i], sep = ""), nombre_fig = paste("bias_pp_",nombres2[i], sep = ""), escala = c(-100,100) 
+       ,label_escala = "", resta = 0, brewer = "BrBG", revert = "no", niveles = 11, contour = "no", lon2, lat2, seq(-100, 100, by = 20), "/salidas/desemp_mods/")
 }
 
 
 
 
-#
+### MAE ###
+
+mae_t = (apply(abs(prom_est_mods_t - prom_est_obs[,,,,1]), c(1,2,4), sum, na.rm = T)/29) 
+
+mapa(lista = mae_t*mask_arr, titulo = paste("MAE T - CPC ", sep = ""), nombre_fig = paste("mae_t_cpc", sep = ""), escala = c(0,5) 
+     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9, contour = "no", lon2, lat2, seq(0, 5, by = 0.5), "/salidas/desemp_mods/")
+
+
+mae_pp = array(data = NA, dim = c(56,76,4,3))
+
+for(i in 2:4){
+  
+  mae_pp[,,,i-1] = apply(abs(prom_est_mods_pp - prom_est_obs[,,,,i]), c(1,2,4), sum, na.rm = T)/29
+  
+}
+
+for(i in 1:3){
+  
+  mapa(lista = mae_pp[,,,i]*mask_arr, titulo = paste("MAE PP -  ", nombres2[i], sep = ""), nombre_fig = paste("mae_pp_", nombres2[i], sep = ""), escala = c(0,100) 
+       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11, contour = "no", lon2, lat2, seq(0, 100, by = 10), "/salidas/desemp_mods/")
+}
+
+
+
+
+
+### RMSE ###
+
+rmse_t = sqrt(apply(( prom_est_mods_t - prom_est_obs[,,,,1] )**2, c(1,2,4), sum, na.rm = T)/29)
+
+mapa(lista = rmse_t*mask_arr, titulo = paste("RMSE T - CPC", sep = ""), nombre_fig = paste("rmse_t_cpc", sep = ""), escala = c(0,6) 
+     ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11, contour = "no", lon2, lat2, seq(0, 6, by = 0.5), "/salidas/desemp_mods/")
+
+
+rmse_pp = array(data = NA, dim = c(56,76,4,3))
+
+for(i in 2:4){
+  
+  rmse_pp[,,,i-1] = sqrt(apply((prom_est_mods_pp - prom_est_obs[,,,,i] )**2, c(1,2,4), sum, na.rm = T)/29)
+  
+}
+
+for(i in 1:3){
+  
+  mapa(lista = rmse_pp[,,,i]*mask_arr, titulo = paste("RMSE PP - ", nombres2[i], sep = ""), nombre_fig = paste("rmse_pp_", nombres2[i], sep = ""), escala = c(0,25) 
+       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "no", lon2, lat2, seq(0, 150, by = 25), "/salidas/desemp_mods/")
+  
+}
+
+
+
+####
+# geom_contour_fill en la funcion mapa, parece no poder distinguir entre cierto rango de valores
+###
+
+
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
