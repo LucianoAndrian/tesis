@@ -1,6 +1,6 @@
 #rm(list=ls())
 
-require(here)
+
 library(ncdf4)
 
 source("funciones.R")
@@ -41,21 +41,25 @@ for(i in 1:length(nombres2)){
   # imagenes
   # T
   mapa(lista = v[[1]], titulo = paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("temp_",nombres2[i], sep = ""), escala = c(-5,40 ) 
-       ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), "/salidas/ensemble/")
+       , label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11
+       , contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), "/salidas/ensemble/")
   
   # SD - T
   mapa(lista = v[[2]], titulo = paste(" SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-temp_",nombres2[i], sep = ""), escala = c(0,3) 
-       ,label_escala = "°C", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 3, by = 0.5),"/salidas/ensemble/")
+       , label_escala = "°C", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9 
+       , contour = "si", lon2, lat2, seq(0, 3, by = 0.5), seq(0, 3, by = 0.5), seq(0, 3, by = 0.5), "/salidas/ensemble/")
   
   # PP
   
   mapa(lista = v[[3]], titulo = paste("Promedio Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("pp_",nombres2[i], sep = ""), escala = c(0, 500) 
-       ,label_escala = "mm", resta = 0, brewer = "YlGnBu", revert = "no", niveles = 9, contour = "si", lon2, lat2,seq(0, 500, by = 50),"/salidas/ensemble/")
+       , label_escala = "mm", resta = 0, brewer = "YlGnBu", revert = "no", niveles = 9
+       , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50),"/salidas/ensemble/")
   
   # SD
   
   mapa(lista = v[[4]], titulo = paste("SD Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-pp_",nombres2[i], sep = ""), escala = c(0, 150) 
-       ,label_escala = "mm", resta = 0, brewer = "YlGn", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 150, by = 25),"/salidas/ensemble/")
+       , label_escala = "mm", resta = 0, brewer = "YlGn", revert = "no", niveles = 9
+       , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/ensemble/")
  
 }
 
