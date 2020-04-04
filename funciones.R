@@ -1,7 +1,7 @@
 #### Funciones ####
 
 ### MAPA ####
-mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, salida){
+mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, salida){
   
   library(ncdf4)
   library(maps)
@@ -50,48 +50,48 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
       if(contour == "si"){
         g = ggplot() + theme_minimal()+
           xlab("Longitud") + ylab("Latitud") + 
-          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
           
-          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          geom_tile(data = data, aes(x = lon, y = lat, fill = temp), alpha=0.9, na.rm = T) +
           
-          geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+          geom_contour_fill(data = data, aes(x = lon, y = lat, z = temp),alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis)+
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = rev(brewer.pal(n=niveles,brewer)), na.value = "white", guide = "legend", breaks = escala_dis) +
           
-          guides(fill = guide_legend(reverse = TRUE))+
+          guides(fill = guide_legend(reverse = TRUE)) +
           
-          geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
+          geom_polygon(data = mapa, aes(x = long,y = lat, group =group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
           scale_x_continuous(limits = c(-85, -33))+
-          theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
-                axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill=NA, size=3),
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
                 panel.ontop = TRUE,
-                plot.title = element_text(hjust=0.5))
+                plot.title = element_text(hjust = 0.5))
         
         
-        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg", sep = ""), plot = g, width = 15, height = 15  , units = "cm")
       } else {
-        g = ggplot() + theme_minimal()+
+        g = ggplot() + theme_minimal() +
           xlab("Longitud") + ylab("Latitud") + 
           theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
           
-          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          geom_tile(data=data,aes(x = lon, y = lat,fill = temp),alpha=0.9, na.rm = T) +
           
-          #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+          #geom_contour_fill(data=data, aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000, breaks = breaks_c_f)
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis) +
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = rev(brewer.pal(n = niveles, brewer)), na.value = "white", guide = "legend", breaks = escala_dis) +
           
-          guides(fill = guide_legend(reverse = TRUE))+
+          guides(fill = guide_legend(reverse = TRUE)) +
           
-          geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
-          ggtitle(paste(titulo, " - " , est[i], sep = ""))+
-          scale_x_continuous(limits = c(-85, -33))+
-          theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
-                axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill=NA, size=3),
+          geom_polygon(data = mapa, aes(x = long,y = lat, group = group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = "")) +
+          scale_x_continuous(limits = c(-85, -33)) +
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
                 panel.ontop = TRUE,
-                plot.title = element_text(hjust=0.5))
+                plot.title = element_text(hjust = 0.5))
         
         ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
         
@@ -100,49 +100,49 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
     } else {
       if(contour == "si"){
         
-        g = ggplot() + theme_minimal()+
+        g = ggplot() + theme_minimal() +
           xlab("Longitud") + ylab("Latitud") + 
-          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
           
-          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          geom_tile(data = data,aes(x = lon, y = lat, fill = temp), alpha = 0.9, na.rm = T) +
           
-          geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+          geom_contour_fill(data = data, aes(x = lon, y = lat, z = temp), alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours=brewer.pal(n=niveles,brewer),na.value = "white", guide = "legend",breaks = escala_dis)+
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = brewer.pal(n = niveles,brewer), na.value = "white", guide = "legend",breaks = escala_dis) +
           
-          guides(fill = guide_legend(reverse = TRUE))+
+          guides(fill = guide_legend(reverse = TRUE)) +
           
-          geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
+          geom_polygon(data = mapa, aes(x = long,y = lat, group = group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
           scale_x_continuous(limits = c(-85, -33))+
-          theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
-                axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill=NA, size=3),
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
                 panel.ontop = TRUE,
-                plot.title = element_text(hjust=0.5))
+                plot.title = element_text(hjust = 0.5))
         
         ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
       } else {
-        g = ggplot() + theme_minimal()+
+        g = ggplot() + theme_minimal() +
           xlab("Longitud") + ylab("Latitud") + 
-          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
           
-          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          geom_tile(data = data,aes(x = lon, y = lat,fill = temp),alpha = 0.9, na.rm = T) +
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          scale_fill_gradientn(limits=escala,name=label_escala,colours= brewer.pal(n=niveles,brewer),na.value = "white", guide = "legend",breaks = escala_dis)+
+          scale_fill_gradientn(limits = escala,name = label_escala, colours = brewer.pal(n = niveles, brewer), na.value = "white", guide = "legend",breaks = escala_dis)+
           
           guides(fill = guide_legend(reverse = TRUE))+
           
-          geom_polygon(data=mapa, aes(x=long,y=lat, group =group),fill = NA, color = "black") +
+          geom_polygon(data = mapa, aes(x=long,y = lat, group = group),fill = NA, color = "black") +
           ggtitle(paste(titulo, " - " , est[i], sep = ""))+
           scale_x_continuous(limits = c(-85, -33))+
-          theme(axis.text.y   = element_text(size=14), axis.text.x   = element_text(size=14), axis.title.y  = element_text(size=14),
-                axis.title.x  = element_text(size=14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill=NA, size=3),
+          theme(axis.text.y = element_text(size = 14), axis.text.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+                axis.title.x  = element_text( size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
                 panel.ontop = TRUE,
-                plot.title = element_text(hjust=0.5))
+                plot.title = element_text(hjust = 0.5))
         
         ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
         
