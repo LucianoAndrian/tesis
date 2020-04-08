@@ -108,6 +108,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           
           geom_contour_fill(data = data, aes(x = lon, y = lat, z = temp), alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
           
+          #stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= rc), shape = 20, size = 1, color = "black", alpha = 0.3, geom = "point")+
+          #geom_contour(data = data, aes(x = lon, y = lat, z = temp), color = "blue", size = 0.666, breaks = rc )+
+          
           scale_fill_gradientn(limits = escala, name = label_escala, colours = brewer.pal(n = niveles,brewer), na.value = "white", guide = "legend",breaks = escala_dis) +
           
           guides(fill = guide_legend(reverse = TRUE)) +
@@ -1198,7 +1201,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
 #### MAPA_SIG ####
 #mapas con zonas no significativas marcadas con puntos
 #se complementa con anova_fun y test_cos
-mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, salida){
+mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, salida){
   
   library(ncdf4)
   library(maps)
@@ -1210,11 +1213,11 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
   library(mapproj)
   library(metR)
   ruta = getwd()
-  mask = as.matrix(read.table("mascara.txt"))                  # esto antes andaba sin as.matrix porque ya estaba definida mask arr en el codigo modelos.
+  mask = as.matrix(read.table("mascara.txt"))                  
   
   mask_arr = array(NA, dim = c(length(lon), length(lat), 4))
   for(i in 1:4){
-    mask_arr[,,i] = mask
+    mask_arr[,,i] <- mask
   }
   
   sig = lista2 # mascara significativa
@@ -1276,7 +1279,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           
           geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
           
-          geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+          geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000, breaks =  breaks_c_f)+
           
           geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
           
@@ -1334,7 +1337,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           
           geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha = 0.9, na.rm = T) +
           
-          geom_contour_fill(data=data,aes(x = lon, y = lat, z = temp),alpha=1, na.fill = -10000) +
+          geom_contour_fill(data=data,aes(x = lon, y = lat, z = temp),alpha=1, na.fill = -10000, breaks =  breaks_c_f) +
           
           geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
           
@@ -1568,3 +1571,170 @@ pp_test = function(ss_temp, ss_pp){
     }
   }
 }  
+#### MAPA_SIG2.0 ####
+# la funcion es igual mapa, con opciones de puntos sobre el sombreados para marcar niveles significativo.
+# remplazaria mapa_sig, pero aunb hay q reemplazarla en los codigos donde se uso.
+
+mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, alpha, size, color, v, salida){
+  
+  
+  library(ncdf4)
+  library(maps)
+  library(ncdf4)
+  require(fields)
+  require(mapdata)
+  library(ggplot2)
+  library(RColorBrewer)
+  library(mapproj)
+  library(metR)
+  ruta = getwd()
+  mask=read.table("mascara.txt")
+  
+  est=c("MAM", "JJA", "SON", "DJF")
+  g = list()
+  for(i in 1:4){
+    value = array(lista[,,i], dim = length(lon)*length(lat))
+    data = matrix(data = NA, nrow = length(lon)*length(lat), ncol = 3)
+    
+    l=0
+    while(l<length(lon)*length(lat)){
+      data[seq(l:l+length(lon)),1]<-lon
+      l=l+length(lon)
+    }
+    
+    for(j in 1:length(lat)){
+      lat_v = array(lat[j],dim=length(lon))
+      data[(length(lon)*j-(length(lon)-1)):(j*length(lon)),2]<-lat_v
+    } 
+    
+    
+    data[,3]<-value-resta
+    data<-as.data.frame(data)
+    
+    colnames(data)<-c("lon", "lat", "temp")
+    
+    data[which(data$lon>180),][,1]<-data[which(data$lon>180),][,1]-360  
+    
+    
+    mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French Guiana", "Suriname", "Colombia", "Venezuela",
+                                          "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua", "falkland islands",
+                                          "Martinique"), 
+                     colour = "black")
+    
+    if(revert == "si"){
+      if(contour == "si"){
+        g = ggplot() + theme_minimal()+
+          xlab("Longitud") + ylab("Latitud") + 
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
+          
+          geom_tile(data = data, aes(x = lon, y = lat, fill = temp), alpha=0.9, na.rm = T) +
+          
+          geom_contour_fill(data = data, aes(x = lon, y = lat, z = temp),alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
+          
+          stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= v), shape = 20, size = size, color = color, alpha = alpha, geom = "point")+
+          
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = rev(brewer.pal(n=niveles,brewer)), na.value = "white", guide = "legend", breaks = escala_dis) +
+          
+          guides(fill = guide_legend(reverse = TRUE)) +
+          
+          geom_polygon(data = mapa, aes(x = long,y = lat, group =group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+          scale_x_continuous(limits = c(-85, -33))+
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
+                panel.ontop = TRUE,
+                plot.title = element_text(hjust = 0.5))
+        
+        
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg", sep = ""), plot = g, width = 15, height = 15  , units = "cm")
+      } else {
+        g = ggplot() + theme_minimal() +
+          xlab("Longitud") + ylab("Latitud") + 
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
+          
+          geom_tile(data=data,aes(x = lon, y = lat,fill = temp),alpha=0.9, na.rm = T) +
+          
+          stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= v), shape = 20, size = size, color = color, alpha = alpha, geom = "point")+
+          
+          #geom_contour_fill(data=data, aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000, breaks = breaks_c_f)
+          
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = rev(brewer.pal(n = niveles, brewer)), na.value = "white", guide = "legend", breaks = escala_dis) +
+          
+          guides(fill = guide_legend(reverse = TRUE)) +
+          
+          geom_polygon(data = mapa, aes(x = long,y = lat, group = group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = "")) +
+          scale_x_continuous(limits = c(-85, -33)) +
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
+                panel.ontop = TRUE,
+                plot.title = element_text(hjust = 0.5))
+        
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        
+      }
+      
+    } else {
+      if(contour == "si"){
+        
+        g = ggplot() + theme_minimal() +
+          xlab("Longitud") + ylab("Latitud") + 
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
+          
+          geom_tile(data = data,aes(x = lon, y = lat, fill = temp), alpha = 0.9, na.rm = T) +
+          
+          geom_contour_fill(data = data, aes(x = lon, y = lat, z = temp), alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
+          
+          
+          stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= v), shape = 20, size = size, color = color, alpha = alpha, geom = "point")+
+          #geom_contour(data = data, aes(x = lon, y = lat, z = temp), color = "blue", size = 0.666, breaks = rc )+
+          
+          scale_fill_gradientn(limits = escala, name = label_escala, colours = brewer.pal(n = niveles,brewer), na.value = "white", guide = "legend",breaks = escala_dis) +
+          
+          guides(fill = guide_legend(reverse = TRUE)) +
+          
+          geom_polygon(data = mapa, aes(x = long,y = lat, group = group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+          scale_x_continuous(limits = c(-85, -33))+
+          theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+                axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
+                panel.ontop = TRUE,
+                plot.title = element_text(hjust = 0.5))
+        
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+      } else {
+        g = ggplot() + theme_minimal() +
+          xlab("Longitud") + ylab("Latitud") + 
+          theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
+          
+          geom_tile(data = data,aes(x = lon, y = lat,fill = temp),alpha = 0.9, na.rm = T) +
+          
+          #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
+      
+          stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= v), shape = 20, size = size, color = color, alpha = alpha, geom = "point")+
+          
+          scale_fill_gradientn(limits = escala,name = label_escala, colours = brewer.pal(n = niveles, brewer), na.value = "white", guide = "legend",breaks = escala_dis)+
+          
+          guides(fill = guide_legend(reverse = TRUE))+
+          
+          geom_polygon(data = mapa, aes(x=long,y = lat, group = group),fill = NA, color = "black") +
+          ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+          scale_x_continuous(limits = c(-85, -33))+
+          theme(axis.text.y = element_text(size = 14), axis.text.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+                axis.title.x  = element_text( size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 3),
+                panel.ontop = TRUE,
+                plot.title = element_text(hjust = 0.5))
+        
+        ggsave(paste(ruta, salida, nombre_fig, "_", est[i], ".jpg",sep =""), plot = g, width = 15, height = 15  , units = "cm")
+        
+      }
+      
+    }
+  }
+  
+  
+}
