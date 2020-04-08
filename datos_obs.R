@@ -47,8 +47,9 @@ for( i in 1:4){
 #estaciones_prom_t[which(estaciones_prom_t>310)] = NA
 #estaciones_prom_t[which(estaciones_prom_t<265)] = NA
 
-#mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
-#         ,label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11, contour = "si", lon2, lat2, c(-5,0,5,10,15,20,25,30,35,40), "/salidas/observado/")
+mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
+     , label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si"
+     , niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), "/salidas/observado/")
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
@@ -62,32 +63,28 @@ for( i in 1:4 ){
 }
 
 
-#mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
-#         , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2,c(0,0.5,1,1.5,2),"/salidas/observado/")
+mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
+     , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 2, by = 0.2), seq(0, 2, by = 0.2),"/salidas/observado/")
 
 
 
 ### PP ###
 
-prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
+#prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
+prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")  # nuevo
 names(prec$var)
-pp = ncvar_get(prec, "prec")
+pp = ncvar_get(prec, "precip")
+lat = ncvar_get(prec, "lat")
+lon = ncvar_get(prec, "lon")
+nc_close(prec)
 
-# serie desde enero '82 -> noviembre 2012 
-# NO FALTAN MESES, SOLO LO LEE RARO NCVIEW ---> USAR NCDUMP POR TERMINAL
-# TOMAR DESDE MARZO DEL '82 HASTA NOV DEL 2011?? ---> uso feb del 2012 asi me quedan misma cantidad de estaciones.  ES IMPORTANTE O DA IGUAL??
-lat = ncvar_get(prec, "Y")
-lon = ncvar_get(prec, "X")
+pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:362]   
 
-pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:350] 
-
-lon2 = lon[which(lon==275):which(lon==330)]
-lat2 = lat[which(lat==-60):which(lat==15)]
-
-pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 28, 12)) # CON ESTA DIMENCION YA CUMPLE LO DE ARRIBA.
+pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) # le pongo 30 igual. va tener NA pero sino complica los calculos mas adelante
 
 for(j in 1:12){
-  for (i in 0:27){
+  for (i in 0:29){
     pp_estaciones[,,1+i,j] = pp[ , , j+12*i]
   }
 }
@@ -95,7 +92,7 @@ for(j in 1:12){
 
 # Estaciones
 
-estaciones_p_a_pp = array(NA, dim = c(length(lon2), length(lat2), 28, 4))
+estaciones_p_a_pp = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
 i=1
 while(i<=4){
   estaciones_p_a_pp[,,,i] = apply(pp_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)
@@ -113,7 +110,7 @@ for( i in 1:4){
 
 mapa(lista = estaciones_prom_pp, titulo = "PP - CPC - URD", nombre_fig = "pp-CPC", escala = c(0,500)
      , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 500, by = 100), seq(0, 500, by = 100), "/salidas/observado/")
+     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
 
 
 ## sd
@@ -144,16 +141,16 @@ aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat
 require(fields)
 
 
-lon2 = lon[which(lon==275.25):which(lon==330.25)]
-lat2 = lat[which(lat==-60.25):which(lat==15.25)]
+lon3 = lon[which(lon==275.25):which(lon==330.25)]
+lat3 = lat[which(lat==-60.25):which(lat==15.25)]
 
 pp2_int = array(NA, dim = c(56, 76, 360))
 
 for(i in 1:360){
   
-  mod = list(x = lon2, y = lat2, z = aux2[,,i])
+  mod = list(x = lon3, y = lat3, z = aux2[,,i])
   
-  grid = list(x=seq(min(lon2), max(lon2), by = 1), y = seq(min(lat2), max(lat2), by = 1))
+  grid = list(x=seq(min(lon3), max(lon3), by = 1), y = seq(min(lat3), max(lat3), by = 1))
   
   pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
   
@@ -185,7 +182,7 @@ for( i in 1:4){
 
 mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
 
 
 
@@ -265,9 +262,9 @@ for( i in 1:4){
 }
 
 
-mapa(lista = estaciones_prom_pp3, titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500)
+mapa(lista = estaciones_prom_pp3[2:57, 2:77,], titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500)
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
 
 
 
@@ -278,28 +275,28 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_pp3, titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,100)
+mapa(lista = standar_d_pp3[2:57, 2:77,], titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,150)
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
 
 
 
 
 
 dif_pp1_2 = estaciones_prom_pp -  estaciones_prom_pp2
-dif_pp1_3 = estaciones_prom_pp -  estaciones_prom_pp3[1:56,1:76,]  
+dif_pp1_3 = estaciones_prom_pp -  estaciones_prom_pp3[2:57,2:77,]  
 # ver esto, ya que tienen distinta dimenciones!!! habria q probar descagar otra vez y ver si se consigue la misma dim. 
                                                        # no era facil debido a la grilla.
-dif_pp2_3 = estaciones_prom_pp2 -  estaciones_prom_pp3[1:56,1:76,]  
+dif_pp2_3 = estaciones_prom_pp2 -  estaciones_prom_pp3[2:57,2:77,]
 
 mapa(lista = dif_pp1_2, titulo = "PP - CPC vs GPCC", nombre_fig = "dif_pp_cpc-gpcc", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 20), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
 
 mapa(lista = dif_pp1_3, titulo = "PP - CPC vs CMAP", nombre_fig = "dif_pp_cpc-cmap", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 20), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
 
 mapa(lista = dif_pp2_3, titulo = "PP - GPCC vs CMAP", nombre_fig = "dif_pp_gpcc-cmap", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 20), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
