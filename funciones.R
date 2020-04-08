@@ -1014,8 +1014,7 @@ anova_fun = function(){
 #### TEST_COS ####
 #test cocientes de anova_fun
 test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
-  
-  
+
   
   #### testeos ####
   
@@ -1062,6 +1061,8 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
     
     # esta OK.
+    
+
     
     alpha[which(alpha<alpha_f)] = NA
     alpha[which(!is.na(alpha))] = 1
@@ -1201,7 +1202,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
 #### MAPA_SIG ####
 #mapas con zonas no significativas marcadas con puntos
 #se complementa con anova_fun y test_cos
-mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, salida){
+mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, alpha, salida){
   
   library(ncdf4)
   library(maps)
@@ -1264,7 +1265,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
     
     puntos2 <- data.frame(lon=lon2[puntos[,1]], lat=lat2[puntos[,2]])
     puntos2[which(puntos2$lon>180),][,1]<-puntos2[which(puntos2$lon>180),][,1]-360 
-    
+   
     
     mapa <- map_data("world", regions = c("Brazil", "Uruguay", "Argentina", "French Guiana", "Suriname", "Colombia", "Venezuela",
                                           "Bolivia", "Ecuador", "Chile", "Paraguay", "Peru", "Guyana", "Panama", "Costa Rica", "Nicaragua", "falkland islands",
@@ -1277,11 +1278,11 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           xlab("Longitud") + ylab("Latitud") + 
           theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank())+
           
-          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T)+
+          geom_tile(data=data,aes(x = lon, y= lat,fill = temp),alpha=0.9, na.rm = T) +
           
           geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000, breaks =  breaks_c_f)+
           
-          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
+          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5, alpha = alpha)+
           
           scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis)+
           
@@ -1307,7 +1308,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
+          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5, alpha = alpha)+
           
           scale_fill_gradientn(limits=escala,name=label_escala,colours=rev(brewer.pal(n=niveles,brewer)),na.value = "white", guide = "legend",breaks = escala_dis) +
           
@@ -1339,7 +1340,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           
           geom_contour_fill(data=data,aes(x = lon, y = lat, z = temp),alpha=1, na.fill = -10000, breaks =  breaks_c_f) +
           
-          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
+          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5, alpha = alpha)+
           
           scale_fill_gradientn(limits=escala,name=label_escala,colours = brewer.pal(n=niveles, brewer), na.value = "white", guide = "legend", breaks = escala_dis)+
           
@@ -1366,7 +1367,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
           
           #geom_contour_fill(data=data,aes(x = lon, y= lat, z = temp),alpha=1, na.fill = -10000)+
           
-          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5)+
+          geom_point(data=puntos2, aes(x = lon, y = lat), col="black",size=0.5, alpha = alpha)+
           
           scale_fill_gradientn(limits=escala,name=label_escala,colours= brewer.pal(n=niveles,brewer),na.value = "white", guide = "legend",breaks = escala_dis)+
           
@@ -1573,7 +1574,7 @@ pp_test = function(ss_temp, ss_pp){
 }  
 #### MAPA_SIG2.0 ####
 # la funcion es igual mapa, con opciones de puntos sobre el sombreados para marcar niveles significativo.
-# remplazaria mapa_sig, pero aunb hay q reemplazarla en los codigos donde se uso.
+# NO reemplaza a mapa_sig.
 
 mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, alpha, size, color, v, salida){
   
