@@ -237,10 +237,29 @@ for(i in 1:length(modelos)){
   prom_est_mods_pp[,,,,i] = v[[6]]
 }  
 
-######!!!!!!!!!!!!!#######
+
+########################## Sacando modelos  ##########################
+
+prom_est_mods_out_t = array(data = NA, dim = c(56, 76, 29, 4, 8)) # 8 promedios sacando cada modelo
+prom_est_mods_out_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+
+for(i in 1:8){
+  aux_t = prom_est_mods_t
+  aux_t[,,,,i] = NA
+  prom_est_mods_out_t[,,,,i] = apply(aux_t, c(1, 2, 3, 4), mean, na.rm = T)
+  
+  aux_pp = prom_est_mods_pp
+  aux_pp[,,,,i] = NA
+  prom_est_mods_out_pp[,,,,i] = apply(aux_pp, c(1, 2, 3, 4), mean, na.rm = T)
+}
+
+########################## Ensamble completo #########################
+
 prom_est_mods_t  = apply(prom_est_mods_t, c(1, 2, 3, 4), mean, na.rm = T)
 prom_est_mods_pp = apply(prom_est_mods_pp, c(1, 2, 3, 4), mean, na.rm = T)
-######!!!!!!!!!!!!!#######
+
+
+
 
 ########################## Cross Validation ##########################
 # T y PP
@@ -259,7 +278,7 @@ c_v_mod_pp = array(data = NA, dim = c(56, 76, 29, 4))
 
 for(i in 1:29){
   aux2[,,i,,i] = aux2[,,i,,i]*aux[i,i]  # una especie de matriz identidad inversa con NA y 1 pero en 4 dim.
-  
+
   aux2_mod_t[,,,,i] = aux2[,,,,i]*prom_est_mods_t 
   aux2_mod_pp[,,,,i] = aux2[,,,,i]*prom_est_mods_pp
   
@@ -272,9 +291,6 @@ for(i in 1:29){
 ### F'
 Fp_t = prom_est_mods_t - c_v_mod_t
 Fp_pp = prom_est_mods_pp - c_v_mod_pp
-
-### ec 3 becker ### 
-
 
 # AC. Temp
 
@@ -334,6 +350,107 @@ mapa_sig2(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep 
      , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/")
 }
 ####################################################################################################################################################################
+########################## Cross Validation sacando modelos ##########################
+# T y PP
+
+aux = diag(29)
+aux[which(aux == 1)] = NA ; aux[which(aux == 0)] = 1
+
+aux2 = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
+
+aux2_mod_out_t = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
+aux2_mod_out_pp = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
+
+c_v_mod_out_t = array(data = NA, dim = c(56, 76, 29, 4, 8))
+c_v_mod_out_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+
+for(i in 1:29){
+  aux2[,,i,,,i] = aux2[,,i,,,i]*aux[i,i]  # una especie de matriz identidad inversa con NA y 1 pero en 4 dim.
+
+  aux2_mod_out_t[,,,,,i] = aux2[,,,,,i]*prom_est_mods_out_t
+  aux2_mod_out_pp[,,,,,i] = aux2[,,,,,i]*prom_est_mods_out_pp
+  
+  
+  # promedio sacando cada año.
+  c_v_mod_out_t[,,i,,] = apply(aux2_mod_out_t[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+  c_v_mod_out_pp[,,i,,] = apply(aux2_mod_out_pp[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+}
+
+### F'
+Fp_out_t = prom_est_mods_out_t - c_v_mod_out_t
+Fp_out_pp = prom_est_mods_out_pp - c_v_mod_out_pp
+
+# AC. Temp
+
+AC_out_t = array(data = NA, dim = c(56, 76, 4, 8))
+
+num_out = array(data = NA, dim = c(56, 76, 4, 8))
+den_out = array(data = NA, dim = c(56, 76, 4, 8))
+#numerador
+for(i in 1:8){
+  aux = Op_obs[,,1:29,,1]*Fp_out_t[,,,,i] 
+  num_out[,,,i] = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  den_out[,,,i] = ((apply(Op_obs[,,,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_out_t[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
+}
+
+
+AC_out_t = num_out/sqrt(den_out)
+
+
+# AC PP
+
+AC_out_pp = array(data = NA, dim = c(56, 76, 4, 8, 3))
+for(i in 1:8){
+  
+  for(j in 2:4){
+    
+    aux = Op_obs[,,1:29,,j]*Fp_out_pp[,,,,i]
+    num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+    
+    den = ((apply(Op_obs[,,,,j]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_out_pp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29)
+    
+    AC_out_pp[,,,i,j-1] = num/sqrt(den)
+    
+  }
+}
+
+#r critico
+# de t -student
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+
+#####-----------------------------######
+source("funciones.R")
+for(i in 1:8){
+  
+  mapa_sig2(lista = AC_out_t[,,,i], titulo = paste("AC Temp MODS y CPC sin ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_sin_", modelos[i], sep = ""), escala = c(0, 1) 
+            , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/AC_sin_mods/")
+  
+}
+
+
+nombres2 = c("CPC", "GPCC", "CMAP")
+
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+#AC_out_pp[,,,3] = AC_pp[,,,,3]*mask_arr
+for(j in 1:8){
+  
+  for(i in 1:3){
+    
+    mapa_sig2(lista = AC_out_pp[,,,j,i]*mask_arr, titulo = paste("AC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_", nombres2[i],"sin_", modelos[j], sep = ""), escala = c(0, 1) 
+              , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
+              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/AC_sin_mods/")
+  }
+  
+}
+
+####################################################################################################################################################################
+
 
 
 ### BIAS ###
@@ -411,9 +528,9 @@ for(i in 2:4){
 
 for(i in 1:3){
   
-  mapa(lista = rmse_pp[,,,i]*mask_arr, titulo = paste("RMSE PP - ", nombres2[i], sep = ""), nombre_fig = paste("rmse_pp_", nombres2[i], sep = ""), escala = c(0,150) 
+  mapa(lista = rmse_pp[,,,i]*mask_arr, titulo = paste("RMSE PP - ", nombres2[i], sep = ""), nombre_fig = paste("rmse_pp_", nombres2[i], sep = ""), escala = c(0,160) 
        ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9
-       , contour = "si", lon2, lat2, seq(0, 150, by = 20), seq(0, 150, by = 10) ,"/salidas/desemp_mods/")
+       , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10) ,"/salidas/desemp_mods/")
   
 }
 
