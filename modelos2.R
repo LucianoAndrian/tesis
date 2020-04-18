@@ -47,11 +47,13 @@ for(m in 1:8){
   for(i in 6:9){  
     
     mapa_sig(lista = ss_T[[m]][[i]]*mask_arr, lista2 = sig_temp[[m]][[i-5]], titulo = paste("T - SS", letras[i-5], " sin ", nombres2[m] , by = "")  , nombre_fig = paste("temp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-             ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), 0.7, "/salidas/ensemble/anova/sin_mod/")
+             ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5
+             , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
     
     
     mapa_sig(lista = ss_PP[[m]][[i]]*mask_arr, lista2 = sig_pp[[m]][[i-5]], titulo = paste("PP - SS", letras[i-5], " sin ", nombres2[m]  , by = "")  , nombre_fig = paste("pp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-             ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 1, by = 0.2),  seq(0, 1, by = 0.2), 0.7,"/salidas/ensemble/anova/sin_mod/")
+             ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5
+             , contour = "si", lon2, lat2, seq(0, 1, by = 0.2),  seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
     
   }
 }
@@ -61,10 +63,11 @@ for(m in 1:8){
 for(m in 1:8){
 
   mapa_sig(lista = ss_T[[m]][[8]]*mask_arr, lista2 = sig_temp[[m]][[8-5]], titulo = paste("T - SS", letras[8-5], " sin ", nombres2[m], by = "")  , nombre_fig = paste("esc_temp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), escala = c(0,0.2) 
-         ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7, "/salidas/ensemble/anova/sin_mod/")
+         ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7,  15, 1500, "/salidas/ensemble/anova/sin_mod/")
 
   mapa_sig(lista = ss_PP[[m]][[8]]*mask_arr, lista2 = sig_pp[[m]][[8-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5],  "_no_", nombres2[m], by = "")  , nombre_fig = paste("esc_pp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), escala = c(0,0.2) 
-         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7,"/salidas/ensemble/anova/sin_mod/")
+         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5
+         , contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
 
 }
 
@@ -74,11 +77,13 @@ pp=pp_test(ss_T,ss_PP)
 for(m in 1:8){
   
   mapa_sig(lista = pp[[m]][[1]]*mask_arr, lista2 = pp[[m]][[2]], titulo = paste("Predictibilidad - T", " sin ", nombres2[m], by = "")  , nombre_fig = paste("pred_temp", "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-           ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, "/salidas/ensemble/anova/sin_mod/pred_sinmod/")
+           ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 6
+           , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
   
   
   mapa_sig(lista = pp[[m]][[3]]*mask_arr, lista2 = pp[[m]][[4]], titulo = paste("Predictibilidad - PP", " sin ", nombres2[m], by = "")  , nombre_fig = paste("pred_pp", "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-           ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 6, contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, "/salidas/ensemble/anova/sin_mod/pred_sinmod/")
+           ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 6
+           , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
   
   
 }

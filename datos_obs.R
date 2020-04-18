@@ -49,7 +49,7 @@ for( i in 1:4){
 
 mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
      , label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si"
-     , niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), "/salidas/observado/")
+     , niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), 15, 1500,  "/salidas/observado/")
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
@@ -65,7 +65,7 @@ for( i in 1:4 ){
 
 mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
      , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 2, by = 0.2), seq(0, 2, by = 0.2),"/salidas/observado/")
+     , contour = "si", lon2, lat2, seq(0, 2, by = 0.2), seq(0, 2, by = 0.1), 15, altura = 1500, "/salidas/observado/")
 
 
 
@@ -108,9 +108,10 @@ for( i in 1:4){
 
 
 
-mapa(lista = estaciones_prom_pp, titulo = "PP - CPC - URD", nombre_fig = "pp-CPC", escala = c(0,500)
+mapa(lista = estaciones_prom_pp, titulo = "PP - CPC", nombre_fig = "pp-CPC", escala = c(0,500)
      , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
+     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
+
 
 
 ## sd
@@ -122,9 +123,10 @@ for( i in 1:4 ){
 
 satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
-mapa(lista = standar_d_pp, titulo = "sd - PP - CPC - URD", nombre_fig = "sd_PP_CPC", escala = c(0,150)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+mapa(lista = standar_d_pp, titulo = "sd - PP - CPC", nombre_fig = "sd_PP_CPC", escala = c(0,160)
+     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10), 15, altura = 1500, "/salidas/observado/")
+
 
 
 
@@ -182,7 +184,8 @@ for( i in 1:4){
 
 mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
+     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
+
 
 
 
@@ -195,9 +198,10 @@ for( i in 1:4 ){
 
 satandar_d_pp2 = standar_d_pp2[which(standar_d_pp2>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
 
-mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,150)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,160)
+     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10),  15, altura = 1500, "/salidas/observado/")
+
 
 
 
@@ -212,16 +216,16 @@ lat = ncvar_get(aux, "lat")
 aux2 = ncvar_get(aux, "precip")[,,27:386]
 nc_close(aux)
 
-lon2 = lon
-lat2 = lat
+lon4 = lon
+lat4 = lat
 
 pp3_int = array(NA, dim = c(58, 78, 360)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
 
 for(i in 1:360){
   
-  mod = list(x = lon2, y = lat2, z = aux2[,,i])
+  mod = list(x = lon4, y = lat4, z = aux2[,,i])
   
-  grid = list(x=seq(min(lon2), max(lon2), by = 1), y = seq(min(lat2), max(lat2), by = 1))
+  grid = list(x=seq(min(lon4), max(lon4), by = 1), y = seq(min(lat4), max(lat2), by = 1))
   
   pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
   
@@ -264,7 +268,8 @@ for( i in 1:4){
 
 mapa(lista = estaciones_prom_pp3[2:57, 2:77,], titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500)
      , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 500, by = 50), seq(0, 500, by = 50), "/salidas/observado/")
+     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
+
 
 
 
@@ -275,9 +280,10 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_pp3[2:57, 2:77,], titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,150)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 150, by = 25), seq(0, 150, by = 25), "/salidas/observado/")
+mapa(lista = standar_d_pp3[2:57, 2:77,], titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,160)
+     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10),  15, altura = 1500, "/salidas/observado/")
+
 
 
 
@@ -291,12 +297,15 @@ dif_pp2_3 = estaciones_prom_pp2 -  estaciones_prom_pp3[2:57,2:77,]
 
 mapa(lista = dif_pp1_2, titulo = "PP - CPC vs GPCC", nombre_fig = "dif_pp_cpc-gpcc", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
+
 
 mapa(lista = dif_pp1_3, titulo = "PP - CPC vs CMAP", nombre_fig = "dif_pp_cpc-cmap", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
+
 
 mapa(lista = dif_pp2_3, titulo = "PP - GPCC vs CMAP", nombre_fig = "dif_pp_gpcc-cmap", escala = c(-100, 100),
      label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10), "/salidas/observado/")
+     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
+

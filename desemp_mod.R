@@ -332,7 +332,7 @@ source("funciones.R")
 
 mapa_sig2(lista = AC_t, titulo = paste("AC Temp MODS y CPC", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 1) 
      , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/")
+     , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/")
 
 
 nombres2 = c("CPC", "GPCC", "CMAP")
@@ -347,7 +347,7 @@ for(i in 1:3){
 
 mapa_sig2(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
      , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-     , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/")
+     , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/")
 }
 ####################################################################################################################################################################
 ########################## Cross Validation sacando modelos ##########################
@@ -425,7 +425,7 @@ for(i in 1:8){
   
   mapa_sig2(lista = AC_out_t[,,,i], titulo = paste("AC Temp MODS y CPC sin ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_sin_", modelos[i], sep = ""), escala = c(0, 1) 
             , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/AC_sin_mods/")
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_sin_mods/")
   
 }
 
@@ -444,7 +444,7 @@ for(j in 1:8){
     
     mapa_sig2(lista = AC_out_pp[,,,j,i]*mask_arr, titulo = paste("AC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_", nombres2[i],"sin_", modelos[j], sep = ""), escala = c(0, 1) 
               , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, "/salidas/desemp_mods/AC_sin_mods/")
+              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_sin_mods/")
   }
   
 }
@@ -459,7 +459,7 @@ b_t = apply((prom_est_mods_t - prom_est_obs[,,,,1]), c(1,2,4), sum, na.rm = T)/2
 
 mapa(lista = b_t*mask_arr, titulo = paste("Bias T - CPC ", sep = ""), nombre_fig = paste("bias_t_cpc", sep = ""), escala = c(-10,10) 
      , label_escala = "", resta = 0, brewer = "RdBu", revert = "si", niveles = 11
-     , contour = "si", lon2, lat2, seq(-10, 10, by = 2), seq(-10, 10, by = 1), "/salidas/desemp_mods/")
+     , contour = "si", lon2, lat2, seq(-10, 10, by = 2), seq(-10, 10, by = 1), 15, 1500, "/salidas/desemp_mods/")
 
 nombres2 = c("CPC", "GPCC", "CMAP")
 
@@ -475,7 +475,7 @@ for(i in 1:3){
  
    mapa(lista = b_pp[,,,i]*mask_arr, titulo = paste("Bias PP - ", nombres2[i], sep = ""), nombre_fig = paste("bias_pp_",nombres2[i], sep = ""), escala = c(-100,100) 
        , label_escala = "", resta = 0, brewer = "BrBG", revert = "no", niveles = 11
-       , contour = "si", lon2, lat2, seq(-100, 100, by = 20), seq(-100, 100, by = 10), "/salidas/desemp_mods/")
+       , contour = "si", lon2, lat2, seq(-100, 100, by = 20), seq(-100, 100, by = 10), 15, 1500, "/salidas/desemp_mods/")
 }
 
 
@@ -487,7 +487,7 @@ mae_t = (apply(abs(prom_est_mods_t - prom_est_obs[,,,,1]), c(1,2,4), sum, na.rm 
 
 mapa(lista = mae_t*mask_arr, titulo = paste("MAE T - CPC ", sep = ""), nombre_fig = paste("mae_t_cpc", sep = ""), escala = c(0,5) 
      ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 5, by = 0.5), seq(0, 5, by = 0.25),"/salidas/desemp_mods/")
+     , contour = "si", lon2, lat2, seq(0, 5, by = 0.5), seq(0, 5, by = 0.25),15, 1500, "/salidas/desemp_mods/")
 
 
 mae_pp = array(data = NA, dim = c(56,76,4,3))
@@ -502,7 +502,7 @@ for(i in 1:3){
   
   mapa(lista = mae_pp[,,,i]*mask_arr, titulo = paste("MAE PP -  ", nombres2[i], sep = ""), nombre_fig = paste("mae_pp_", nombres2[i], sep = ""), escala = c(0,100) 
        ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-       , contour = "si", lon2, lat2, seq(0, 100, by = 10), seq(0, 100, by = 5), "/salidas/desemp_mods/")
+       , contour = "si", lon2, lat2, seq(0, 100, by = 10), seq(0, 100, by = 5), 15, 1500, "/salidas/desemp_mods/")
 }
 
 
@@ -515,7 +515,7 @@ rmse_t = sqrt(apply(( prom_est_mods_t - prom_est_obs[,,,,1] )**2, c(1,2,4), sum,
 
 mapa(lista = rmse_t*mask_arr, titulo = paste("RMSE T - CPC", sep = ""), nombre_fig = paste("rmse_t_cpc", sep = ""), escala = c(0,6) 
      ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 11
-     , contour = "si", lon2, lat2, seq(0, 6, by = 1), seq(0, 6, by = 0.5), "/salidas/desemp_mods/")
+     , contour = "si", lon2, lat2, seq(0, 6, by = 1), seq(0, 6, by = 0.5), 15, 1500, "/salidas/desemp_mods/")
 
 
 rmse_pp = array(data = NA, dim = c(56,76,4,3))
@@ -530,7 +530,7 @@ for(i in 1:3){
   
   mapa(lista = rmse_pp[,,,i]*mask_arr, titulo = paste("RMSE PP - ", nombres2[i], sep = ""), nombre_fig = paste("rmse_pp_", nombres2[i], sep = ""), escala = c(0,160) 
        ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9
-       , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10) ,"/salidas/desemp_mods/")
+       , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10) ,15, 1500, "/salidas/desemp_mods/")
   
 }
 
