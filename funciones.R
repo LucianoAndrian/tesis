@@ -1793,3 +1793,34 @@ mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, bre
   
   
 }
+
+#### MAKS_TOPO ####
+mask_topo = function(altura){
+  
+  # la topografia se baja con metR en forma de data.frame. para tener una mascara para los calculos -->  data.frame -> array
+  
+  library("metR")
+  
+  topo <- metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, 
+                              resolution = 1) # 1x1 igual q la grilla de datos
+  
+  topo$h[which(topo$h<altura)]=NA # altura para a partir de la cual se borran los datos
+
+  value_topo = topo$h  
+  lon_topo = topo$lon[1:56]
+  lat_topo = seq(range(topo$lat)[1], range(arg$lat)[2], by = 1) #esto solo con res = 1
+  
+  mask_topo = array( data = NA, dim = c(56,76))
+  for(j in 0:75){
+    mask_topo[,76-j] = value_topo[(1+56*j):(56+56*j)]  # latitud invertida en el data frame 
+  }
+  
+  #mascara
+  
+  mask_topo[which(is.na(mask_topo))] = 1
+  mask_topo[which(mask_topo != 1)] = NA
+  
+  return(mask_topo)
+  
+}
+
