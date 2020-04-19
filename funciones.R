@@ -16,7 +16,7 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
   mask=read.table("mascara.txt")
   
   
-  topo = metR::GetTopography(-85 + 360, -30 + 360, 15,  -60, resolution = 1/res) # mapa topografia
+  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
   topo2 = topo #
   topo2[which(topo2$h<altura)]=NA
                             
@@ -1242,7 +1242,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
     mask_arr[,,i] <- mask
   }
   
-  topo = metR::GetTopography(-85 + 360, -30 + 360, 15,  -60, resolution = 1/res) # mapa topografia
+  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
   topo2 = topo #
   topo2[which(topo2$h<altura)]=NA
   
@@ -1629,7 +1629,7 @@ mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, bre
   ruta = getwd()
   mask=read.table("mascara.txt")
   
-  topo = metR::GetTopography(-85 + 360, -30 + 360, 15,  -60, resolution = 1/res) # mapa topografia
+  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
   topo2 = topo #
   topo2[which(topo2$h<altura)]=NA
   
