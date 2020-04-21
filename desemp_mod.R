@@ -229,12 +229,12 @@ modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-
 
 # uso misma denominacion que para las obserbaciones.
 # esto es F 
-prom_est_mods_t = array(data = NA, dim = c(56, 76, 29, 4, 8)) # recordar, los modelos 1982-2010 (29 años)
-prom_est_mods_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+prom_mods_t = array(data = NA, dim = c(56, 76, 29, 4, 8)) # recordar, los modelos 1982-2010 (29 años)
+prom_mods_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
 for(i in 1:length(modelos)){
   v = mean_sd(modelos[i])
-  prom_est_mods_t[,,,,i] = v[[5]]
-  prom_est_mods_pp[,,,,i] = v[[6]]
+  prom_mods_t[,,,,i] = v[[5]]
+  prom_mods_pp[,,,,i] = v[[6]]
 }  
 
 
@@ -244,19 +244,19 @@ prom_est_mods_out_t = array(data = NA, dim = c(56, 76, 29, 4, 8)) # 8 promedios 
 prom_est_mods_out_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
 
 for(i in 1:8){
-  aux_t = prom_est_mods_t
+  aux_t = prom_mods_t
   aux_t[,,,,i] = NA
   prom_est_mods_out_t[,,,,i] = apply(aux_t, c(1, 2, 3, 4), mean, na.rm = T)
   
-  aux_pp = prom_est_mods_pp
+  aux_pp = prom_mods_pp
   aux_pp[,,,,i] = NA
   prom_est_mods_out_pp[,,,,i] = apply(aux_pp, c(1, 2, 3, 4), mean, na.rm = T)
 }
 
 ########################## Ensamble completo #########################
 
-prom_est_mods_t  = apply(prom_est_mods_t, c(1, 2, 3, 4), mean, na.rm = T)
-prom_est_mods_pp = apply(prom_est_mods_pp, c(1, 2, 3, 4), mean, na.rm = T)
+prom_est_mods_t  = apply(prom_mods_t, c(1, 2, 3, 4), mean, na.rm = T)
+prom_est_mods_pp = apply(prom_mods_pp, c(1, 2, 3, 4), mean, na.rm = T)
 
 
 
@@ -350,7 +350,7 @@ mapa_sig2(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep 
      , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/")
 }
 ####################################################################################################################################################################
-########################## Cross Validation sacando modelos ##########################
+########################## Cross Validation sacando modelos y con modelos individuales ##########################
 # T y PP
 
 aux = diag(29)
@@ -361,6 +361,12 @@ aux2 = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
 aux2_mod_out_t = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
 aux2_mod_out_pp = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
 
+aux2_mod_sin_t = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
+aux2_mod_sin_pp = array(data = 1, dim = c(56, 76, 29, 4, 8, 29))
+
+c_v_mod_sin_t = array(data = NA, dim = c(56, 76, 29, 4, 8))
+c_v_mod_sin_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
+
 c_v_mod_out_t = array(data = NA, dim = c(56, 76, 29, 4, 8))
 c_v_mod_out_pp = array(data = NA, dim = c(56, 76, 29, 4, 8))
 
@@ -370,10 +376,22 @@ for(i in 1:29){
   aux2_mod_out_t[,,,,,i] = aux2[,,,,,i]*prom_est_mods_out_t
   aux2_mod_out_pp[,,,,,i] = aux2[,,,,,i]*prom_est_mods_out_pp
   
-  
-  # promedio sacando cada año.
-  c_v_mod_out_t[,,i,,] = apply(aux2_mod_out_t[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+  # promedio sacando cada anio
+  # recordar: aca hay 8 ensambles a los que se les saco un modelo en cada caso
+  c_v_mod_out_t[,,i,,] = apply(aux2_mod_out_t[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)   
   c_v_mod_out_pp[,,i,,] = apply(aux2_mod_out_pp[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+  
+
+  # AC teorico ---> calculo en ## AC teorico ##
+  # recordar: aca hay 8 modelos
+  aux2_mod_sin_t[,,,,,i] = aux2[,,,,,i]*prom_mods_t
+  aux2_mod_sin_pp[,,,,,i] = aux2[,,,,,i]*prom_mods_pp
+  
+  
+  c_v_mod_sin_t[,,i,,] = apply(aux2_mod_sin_t[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+  c_v_mod_sin_pp[,,i,,] = apply(aux2_mod_sin_pp[,,,,,i], c(1, 2, 4, 5), mean, na.rm = T)
+  
+  
 }
 
 ### F'
@@ -450,8 +468,78 @@ for(j in 1:8){
 }
 
 ####################################################################################################################################################################
+########################## AC teorico ##########################
 
 
+### F'
+Fp_sin_t = prom_mods_t - c_v_mod_sin_t
+Fp_sin_pp = prom_mods_pp - c_v_mod_sin_pp
+
+# AC. Temp
+
+AC_sin_t = array(data = NA, dim = c(56, 76, 4, 8))
+
+num_sin = array(data = NA, dim = c(56, 76, 4, 8))
+den_sin = array(data = NA, dim = c(56, 76, 4, 8))
+#numerador
+for(i in 1:8){ # pasando por cada modelo
+  aux = Fp_t*Fp_sin_t[,,,,i]   # AC ensamble vs AC modelo (originalmente obs * F)
+  num_sin[,,,i] = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  den_sin[,,,i] = ((apply(Fp_t**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_sin_t[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
+}
+
+
+AC_sin_t = num_sin/sqrt(den_sin)
+
+
+# AC PP
+
+AC_sin_pp = array(data = NA, dim = c(56, 76, 4, 8))
+for(i in 1:8){
+
+    aux = Fp_pp*Fp_sin_pp[,,,,i]
+    num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+
+    den = ((apply(Fp_pp**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_sin_pp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29)
+    
+    AC_sin_pp[,,,i] = num/sqrt(den)
+  
+}
+
+#r critico
+# de t -student
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+
+#####-----------------------------######
+source("funciones.R")
+
+
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+for(i in 1:8){
+  
+  mapa_sig2(lista = AC_sin_t[,,,i]*mask_arr, titulo = paste("AC Temp Ensamble y ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_con_", modelos[i], sep = ""), escala = c(0, 1) 
+            , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_con_mods/")
+  
+}
+
+
+
+#AC_out_pp[,,,3] = AC_pp[,,,,3]*mask_arr
+for(i in 1:8){
+  
+  mapa_sig2(lista = AC_sin_pp[,,,i]*mask_arr, titulo = paste("AC PP  y ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_con_", modelos[i], sep = ""), escala = c(0, 1) 
+          , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
+          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_con_mods/")
+  
+}
+
+####################################################################################################################################################################
 
 ### BIAS ###
 
