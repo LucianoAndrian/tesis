@@ -17,6 +17,12 @@ mask = as.matrix(read.table("mascara.txt"))
 # O == prom_est-...
 # O' == O - c_v_....
 
+#descargar topografia para mapas.
+
+topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/15) # mapa topografia
+topo2 = topo #
+topo2[which(topo2$h<1500)]=NA # altura para la cual tapa el grafico
+
 
 ##------------------------ CPC ------------------------ ## 
 #sin mascara
@@ -330,7 +336,7 @@ rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
 
 source("funciones.R")
 
-mapa_sig2(lista = AC_t, titulo = paste("AC Temp MODS y CPC", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 1) 
+mapa_sig2(lista = AC_t, titulo = paste("ACC Temp MODS y CPC", sep = ""), nombre_fig = paste("AC_temp", sep = ""), escala = c(0, 1) 
      , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
      , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/")
 
@@ -345,7 +351,7 @@ for(i in 1:4){
 AC_pp[,,,3] = AC_pp[,,,3]*mask_arr
 for(i in 1:3){
 
-mapa_sig2(lista = AC_pp[,,,i], titulo = paste("AC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
+mapa_sig2(lista = AC_pp[,,,i], titulo = paste("ACC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
      , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
      , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/")
 }
@@ -441,9 +447,9 @@ rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
 source("funciones.R")
 for(i in 1:8){
   
-  mapa_sig2(lista = AC_out_t[,,,i], titulo = paste("AC Temp MODS y CPC sin ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_sin_", modelos[i], sep = ""), escala = c(0, 1) 
+  mapa_sig2(lista = AC_out_t[,,,i], titulo = paste("ACC Temp MODS y CPC sin ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_sin_", modelos[i], sep = ""), escala = c(0, 1) 
             , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_sin_mods/")
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
   
 }
 
@@ -460,9 +466,9 @@ for(j in 1:8){
   
   for(i in 1:3){
     
-    mapa_sig2(lista = AC_out_pp[,,,j,i]*mask_arr, titulo = paste("AC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_", nombres2[i],"sin_", modelos[j], sep = ""), escala = c(0, 1) 
+    mapa_sig2(lista = AC_out_pp[,,,j,i]*mask_arr, titulo = paste("ACC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_", nombres2[i],"sin_", modelos[j], sep = ""), escala = c(0, 1) 
               , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_sin_mods/")
+              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
   }
   
 }
@@ -507,6 +513,8 @@ for(i in 1:8){
   
 }
 
+AC_teo_prom_t = apply(AC_sin_t, c(1,2,3), mean, na.rm = T)
+AC_teo_prom_pp = apply(AC_sin_pp, c(1,2,3), mean, na.rm = T)
 #r critico
 # de t -student
 rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
@@ -520,24 +528,153 @@ for(i in 1:4){
   mask_arr[,,i] = mask
 }
 
+
+
 for(i in 1:8){
   
-  mapa_sig2(lista = AC_sin_t[,,,i]*mask_arr, titulo = paste("AC Temp Ensamble y ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_con_", modelos[i], sep = ""), escala = c(0, 1) 
+  
+  mapa_sig2(lista = AC_sin_t[,,,i]*mask_arr, titulo = paste("ACC Temp Ensamble y ", modelos[i], sep = ""), nombre_fig = paste("AC_temp_con_", modelos[i], sep = ""), escala = c(0, 1) 
             , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_con_mods/")
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+ 
+  mapa_sig2(lista = AC_sin_pp[,,,i]*mask_arr, titulo = paste("ACC PP  y ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_con_", modelos[i], sep = ""), escala = c(0, 1) 
+            , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+  
+}
+
+mapa_sig2(lista = AC_teo_prom_t*mask_arr, titulo = paste("ACC Teorico Temperatura", sep = ""), nombre_fig = paste("AC_teo_temp", sep = ""), escala = c(0, 1) 
+          , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
+          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+
+mapa_sig2(lista = AC_teo_prom_pp*mask_arr, titulo = paste("ACC Teorico Precipitación", sep = ""), nombre_fig = paste("AC_teo_pp", sep = ""), escala = c(0, 1) 
+          , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9
+          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+
+####################################################################################################################################################################
+############################ Fig 10 ##################################
+# AC modelos vs obs
+
+# Ac temp
+
+AC_mods_obs_t = array(data = NA, dim = c(56, 76, 4, 8))
+
+num_mods = array(data = NA, dim = c(56, 76, 4, 8))
+den_mods = array(data = NA, dim = c(56, 76, 4, 8))
+#numerador
+for(i in 1:8){ # pasando por cada modelo
+  aux = Op_obs[,,1:29,,1]*Fp_sin_t[,,,,i]   # AC ensamble vs AC modelo (originalmente obs * F)
+  num_mods[,,,i] = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  den_mods[,,,i] = ((apply(Op_obs[,,1:29,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_sin_t[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
+}
+
+AC_mods_obs_t = num_mods/sqrt(den_mods)
+
+
+# AC pp
+
+
+AC_mods_obs_pp = array(data = NA, dim = c(56, 76, 4, 8, 3))
+for(j in 2:4){
+
+  for(i in 1:8){
+    
+    aux = Op_obs[,,1:29,,j]*Fp_sin_pp[,,,,i]
+    num_mods_pp = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+    
+    den_mods_pp = ((apply(Op_obs[,,,,j]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_sin_pp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29)
+    
+    AC_mods_obs_pp[,,,i,j-1] = num_mods_pp/sqrt(den_mods_pp)
+    
+  }
+    
+}
+
+
+cajas = c("Am", "SAM", "NeB", "SACZ", "LPB")
+cajas_num = seq( 1, 5)
+
+
+cajas_lat = list()
+cajas_lat[[1]] =  seq(which(lat2 == -13), which(lat2 == 2), by = 1); cajas_lat[[2]] = seq(which(lat2 == -16), which(lat2 == 4), by = 1)
+cajas_lat[[3]] = seq(which(lat2 == -16), which(lat2 == 2), by = 1); cajas_lat[[4]] = seq(which(lat2 == -26), which(lat2 == -17), by = 1)
+cajas_lat[[5]] = seq(which(lat2 == -39), which(lat2 == -24), by = 1)
+
+cajas_lon = list()
+cajas_lon[[1]] =  seq(which(lon2 == 291), which(lon2 == 304), by = 1); cajas_lon[[2]] = seq(which(lon2 == 301), which(lon2 == 316), by = 1)
+cajas_lon[[3]] = seq(which(lon2 == 313), which(lon2 == 326), by = 1); cajas_lon[[4]] = seq(which(lon2 == 308), which(lon2 == 321), by = 1)
+cajas_lon[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1)
+
+prom_cajas_t = list()
+prom_cajas_pp = list()
+prom_ensamble_t = list()
+prom_ensamble_pp = list()
+for(i in 1:5){
+  
+  prom_ensamble_t[[i]] = apply(AC_t[cajas_lon[[i]], cajas_lat[[i]],], c(3), mean, na.rm = T)
+  prom_ensamble_pp[[i]] = apply(AC_pp[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  prom_cajas_t[[i]] = apply(AC_mods_obs_t[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  prom_cajas_pp[[i]] = apply(AC_mods_obs_pp[cajas_lon[[i]], cajas_lat[[i]],,,], c(3, 4, 5), mean, na.rm = T)
   
 }
 
 
+data_t = fig10(prom_cajas = prom_cajas_t, prom_ensamble = pprom_ensamble_t, variable = "temp")
 
-#AC_out_pp[,,,3] = AC_pp[,,,,3]*mask_arr
-for(i in 1:8){
+ggplot() + theme_minimal() +
+  geom_text(data = data_t[[1]], aes(x = cajas, y = SON, label = value), color = "green", size = 4) + 
+  geom_point(data = data_t[[2]], aes(x = cajas, y = SON), color = "red", shape = "*" , size = 8) + 
+  geom_hline(yintercept = rc, color = "grey") +
+  ggtitle(" ACC T ")+
+  scale_y_continuous(limits = c(0, 0.8)) + 
+  scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB"))+
+  theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+        axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+        panel.border = element_rect(colour = "black", fill = NA, size = 3),
+        panel.ontop = F,
+        plot.title = element_text(hjust = 0.5))
+
+
+## pp
+source("funciones.R")
+data_pp = list()
+for( i in 1:3){
+  data_pp[[i]] = fig10(prom_cajas = prom_cajas_pp, prom_ensamble = prom_ensamble_pp, variable = "pp", base_datos = i)
+}
+est = c("MAM", "JJA", "SON", "DJF")
+g = list()
+for(i in 2:5){
   
-  mapa_sig2(lista = AC_sin_pp[,,,i]*mask_arr, titulo = paste("AC PP  y ", modelos[j],  sep = ""), nombre_fig = paste("AC_pp_con_", modelos[i], sep = ""), escala = c(0, 1) 
-          , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, 15, 1500, "/salidas/desemp_mods/AC_con_mods/")
+  g = ggplot() + theme_minimal()+
+    geom_text(data = data_t[[1]], aes(x = cajas, y = data_t[[1]][,i], label = value), color = "green", size = 4) + 
+    geom_point(data = data_t[[2]], aes(x = cajas, y = data_t[[2]][,i]), color = "darkgreen", shape = "*" , size = 11) + 
+    geom_text(data = data_pp[[1]][[1]], aes(x = cajas, y = data_pp[[1]][[1]][,i], label = value), color = "blue", size = 4) + 
+    geom_point(data = data_pp[[1]][[2]], aes(x = cajas , y = data_pp[[1]][[2]][,i]), color = "navyblue", shape = "*" , size = 11) + 
+    geom_text(data = data_pp[[2]][[1]], aes(x = cajas, y = data_pp[[2]][[1]][,i], label = value), color = "purple", size = 4) + 
+    geom_point(data = data_pp[[2]][[2]], aes(x = cajas , y = data_pp[[2]][[2]][,i]), color = "purple4", shape = "*" , size = 11) + 
+    geom_text(data = data_pp[[3]][[1]], aes(x = cajas, y = data_pp[[3]][[1]][,i], label = value), color = "deepskyblue", size = 4) + 
+    geom_point(data = data_pp[[3]][[2]], aes(x = cajas , y = data_pp[[3]][[2]][,i]), color = "deepskyblue4", shape = "*" , size = 11) + 
+    
+    geom_hline(yintercept = rc, color = "grey", size = 1) +
+    #geom_hline(yintercept = 0, color = "black")+
+    ggtitle(paste("ACC - ", est[i-1], sep = ""))+
+    #scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+    scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+    scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB"),breaks = seq(1, 5, by = 1))+
+    xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-CanSIPSv2(8)" )+
+    theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
+          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+          panel.border = element_rect(colour = "black", fill = NA, size = 1),
+          panel.ontop = F,
+          plot.title = element_text(hjust = 0.5)) 
+    ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/AC_con_mods/", "ACC", "_", est[i-1], ".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
   
 }
+  
+
 
 ####################################################################################################################################################################
 
