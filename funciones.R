@@ -1,7 +1,7 @@
 #### Funciones ####
 
 ### MAPA ####
-mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, res, altura, salida){
+mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat, escala_dis, breaks_c_f, topo2, salida){
   
   library(ncdf4)
   library(maps)
@@ -16,9 +16,9 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
   mask=read.table("mascara.txt")
   
   
-  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
-  topo2 = topo #
-  topo2[which(topo2$h<altura)]=NA
+  #topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
+  #topo2 = topo #
+  #topo2[which(topo2$h<altura)]=NA
                             
   
   est=c("MAM", "JJA", "SON", "DJF")
@@ -118,11 +118,11 @@ mapa = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, 
           xlab("Longitud") + ylab("Latitud") + 
           theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
           
-          geom_tile(data = data,aes(x = lon + 360, y = lat, fill = temp), alpha = 0.7, na.rm = T) +
+          geom_tile(data = data,aes(x = lon + 360, y = lat, fill = temp), alpha = 0.9, na.rm = T) +
           
           geom_contour_fill(data = data, aes(x = lon + 360, y = lat, z = temp), alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
           
-          geom_tile(aes(fill = h ), na.rm = T, alpha = 0.1, color = "black") +
+          geom_tile(aes(fill = h ), na.rm = T, alpha = 0., color = "black") +
           
           #stat_subset(data=data, aes(x = lon, y = lat, z = temp, subset = temp <= rc), shape = 20, size = 1, color = "black", alpha = 0.3, geom = "point")+
           #geom_contour(data = data, aes(x = lon, y = lat, z = temp), color = "blue", size = 0.666, breaks = rc )+
@@ -1223,7 +1223,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
 #mapas con zonas no significativas marcadas con puntos
 #se complementa con anova_fun y test_cos
 mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat
-                    , escala_dis, breaks_c_f, alpha, res, altura, salida){
+                    , escala_dis, breaks_c_f, alpha, topo2, salida){
   
   library(ncdf4)
   library(maps)
@@ -1242,9 +1242,9 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
     mask_arr[,,i] <- mask
   }
   
-  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
-  topo2 = topo #
-  topo2[which(topo2$h<altura)]=NA
+  #topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
+  #topo2 = topo #
+  #topo2[which(topo2$h<altura)]=NA
   
   sig = lista2 # mascara significativa
   
@@ -1614,7 +1614,7 @@ pp_test = function(ss_temp, ss_pp){
 # NO reemplaza a mapa_sig.
 
 mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, brewer, revert, niveles, contour, lon, lat
-                     , escala_dis, breaks_c_f, alpha, size, color, v, res, altura, salida){
+                     , escala_dis, breaks_c_f, alpha, size, color, v, topo2 ,salida){
   
   
   library(ncdf4)
@@ -1629,9 +1629,9 @@ mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, bre
   ruta = getwd()
   mask=read.table("mascara.txt")
   
-  topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
-  topo2 = topo #
-  topo2[which(topo2$h<altura)]=NA
+  #topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/res) # mapa topografia
+  #topo2 = topo #
+  #topo2[which(topo2$h<altura)]=NA
   
   est=c("MAM", "JJA", "SON", "DJF")
   g = list()
@@ -1735,12 +1735,13 @@ mapa_sig2 = function(lista, titulo, nombre_fig, escala, label_escala, resta, bre
           geom_tile(data = data,aes(x = lon + 360, y = lat, fill = temp), alpha = 0.7, na.rm = T) +
           
           geom_contour_fill(data = data, aes(x = lon + 360, y = lat, z = temp), alpha = 1, na.fill = -10000, breaks = breaks_c_f) +
+          geom_tile(aes(fill = h ), na.rm = T, alpha = 0.1, color = "black") +
           
           
           stat_subset(data=data, aes(x = lon + 360, y = lat, z = temp, subset = temp <= v), shape = 20, size = size, color = color, alpha = alpha, geom = "point")+
           #geom_contour(data = data, aes(x = lon, y = lat, z = temp), color = "blue", size = 0.666, breaks = rc )+
           
-          geom_tile(aes(fill = h ), na.rm = T, alpha = 0.1, color = "black") +
+         
           
           scale_fill_stepsn(limits = escala, name = label_escala, colours = brewer.pal(n=niveles,brewer), na.value = "white", breaks = escala_dis,
                             guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) +
@@ -1824,3 +1825,110 @@ mask_topo = function(altura){
   
 }
 
+
+#### FIG 10 ####
+fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
+  
+  if(variable == "temp" ){
+    
+    base_datos = NA
+    
+    data_t = matrix(data = NA, nrow = 5*8, ncol = 6)
+    data_ensamble_t = matrix(data = NA, nrow = 5, ncol = 6)
+    data_t[,6] = seq(1:8)
+    data_ensamble_t[,6] = 1
+    data_ensamble_t[,1] = seq(1,5)
+    for(i in 0:3){
+      
+      data_t[(0 + 1+i*8):(8 + i*8),1] = cajas_num[i+1]
+      if((i + 1) == 4){ 
+        data_t[33:40,1] = 5
+      } else {
+        next
+      }
+      
+    }
+    
+    for(s in 1:4){
+      
+      for(i in 1:5){
+        
+        data_t[which(data_t[,1] == i ), (s + 1)] = prom_cajas_t[[i]][s,]
+        data_ensamble_t[which(data_ensamble_t[,1] == i), (s +1)] = prom_ensamble_t[[i]][s]
+        
+      }
+      
+    }
+    
+    
+    data_ensamble_t[,1] = seq(0.87, 4.87)
+    data_t[,1] = seq(0.9, 4.9)
+    
+    data_t = as.data.frame(data_t)
+    data_ensamble_t = as.data.frame(data_ensamble_t)
+    colnames(data_t) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    colnames(data_ensamble_t) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    
+    V = list()
+    V[[1]] = data_t
+    V[[2]] = data_ensamble_t
+    
+    return(V)
+    
+    
+  } else {
+    
+    data_pp = matrix(data = NA, nrow = 5*8, ncol = 6)
+    data_ensamble_pp = matrix(data = NA, nrow = 5, ncol = 6)
+    data_pp[,6] = seq(1:8)
+    data_ensamble_pp[,6] = 1
+    data_ensamble_pp[,1] = seq(1,5)
+    for(i in 0:3){
+      
+      data_pp[(0 + 1+i*8):(8 + i*8),1] = cajas_num[i+1]
+      if((i + 1) == 4){ 
+        data_pp[33:40,1] = 5
+      } else {
+        next
+      }
+      
+    }
+    
+    for(s in 1:4){
+      
+      for(i in 1:5){
+        
+        data_pp[which(data_pp[,1] == i ), (s + 1)] = prom_cajas_pp[[i]][,,base_datos][s,]
+        data_ensamble_pp[which(data_ensamble_pp[,1] == i), (s +1)] = prom_ensamble_pp[[i]][s,base_datos]
+        
+      }
+      
+    }
+    
+    
+    if(base_datos == 1){
+      data_ensamble_pp[,1] = seq(1.07,5.07)
+      data_pp[,1] = seq(1.1, 5.1)
+    } else if( base_datos == 2){
+      data_ensamble_pp[,1] = seq(1.22,5.22)
+      data_pp[,1] = seq(1.25, 5.25)
+    } else {
+      data_ensamble_pp[,1] = seq(1.37, 5.37)
+      data_pp[,1] = seq(1.4, 5.4)
+    }
+    
+    data_pp = as.data.frame(data_pp)
+    data_ensamble_pp = as.data.frame(data_ensamble_pp)
+    colnames(data_pp) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    colnames(data_ensamble_pp) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    
+    V = list()
+    V[[1]] = data_pp
+    V[[2]] = data_ensamble_pp
+    
+    return(V)
+    
+  }
+  
+  
+}
