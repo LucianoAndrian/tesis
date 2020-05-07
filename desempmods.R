@@ -288,18 +288,7 @@ pp.Fp_ens = apply(pp.Fp, c(1,2,3,4), mean, na.rm = T)
   
   den = ((apply(Op[,,,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(t.Fp_ens**2, c(1, 2, 4), sum, na.rm = T))/29) 
 
-
 t.ACC = num/sqrt(den)
-
-num = array(data = NA, dim = c(56, 76, 4, 8))
-den_out = array(data = NA, dim = c(56, 76, 4, 8))
-#numerador
-for(i in 1:8){
-  aux = Op_obs[,,1:29,,1]*Fp_out_t[,,,,i] 
-  num_out[,,,i] = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
-  
-  den_out[,,,i] = ((apply(Op_obs[,,,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(Fp_out_t[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
-}
 
 
 # AC PP
@@ -474,4 +463,318 @@ for(j in 1:8){
 
 
 #### ACC teorico ####
+
+t.ACC_ens_vs_mods = array(data = NA, c(length(lon2), length(lat2), 4, 8))
+pp.ACC_ens_vs_mods = array(data = NA, c(length(lon2), length(lat2), 4, 8))
+
+for(i in 1:8){
+  
+  aux = t.Fp_ens*t.Fp[,,,,i]
+  
+  num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  den = ((apply(t.Fp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(t.Fp_ens**2, c(1, 2, 4), sum, na.rm = T))/29) 
+  
+  t.ACC_ens_vs_mods[,,,i] = num/sqrt(den)
+  
+  aux = pp.Fp_ens*pp.Fp[,,,,i]
+  
+  num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+  
+  den = ((apply(pp.Fp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(pp.Fp_ens**2, c(1, 2, 4), sum, na.rm = T))/29) 
+  
+  pp.ACC_ens_vs_mods[,,,i] = num/sqrt(den)
+  
+}
+
+
+#--- promedio de los ACC teo ----#
+t.ACC_teo_prom = apply(t.ACC_ens_vs_mods, c(1,2,3), mean, na.rm = T)
+pp.ACC_teo_prom = apply(pp.ACC_ens_vs_mods, c(1,2,3), mean, na.rm = T)
+
+
+#--- Graficos ----#
+source("funciones.R")
+
+#topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/15) # mapa topografia
+load("topo.RData")
+topo2 = topo #
+topo2[which(topo2$h<1500)]=NA # altura para la cual tapa el grafico
+#save(topo, file = "topo.RData")
+
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+
+
+for(i in 1:8){
+  
+  mapa_sig2(lista = t.ACC_ens_vs_mods[,,,i]*mask_arr, titulo = paste("ACC Temp Ensamble y ", modelos[i], sep = ""), nombre_fig = paste("t.ACC_ens_", modelos[i], sep = ""), escala = c(0, 1) 
+            , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+  
+  
+  mapa_sig2(lista = pp.ACC_ens_vs_mods[,,,i]*mask_arr, titulo = paste("ACC PP Ensamble y ", modelos[i], sep = ""), nombre_fig = paste("pp.ACC_ens", modelos[i], sep = ""), escala = c(0, 1) 
+            , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+  
+}
+
+mapa_sig2(lista = t.ACC_teo_prom*mask_arr, titulo = "ACC Teorico Temperatura", nombre_fig = "t.ACC_teo", escala = c(0, 1) 
+          , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
+          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+
+mapa_sig2(lista = pp.ACC_teo_prom*mask_arr, titulo = "ACC Teorico Precipitacion ", nombre_fig = "pp.ACC_teo", escala = c(0, 1) 
+          , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9
+          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_con_mods/")
+
+
+
+#### Fig10 ####
+
+t.ACC_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8))
+pp.ACC_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 3))
+
+for(i in 1:8){
+  aux = Op[,,1:29,,1]*t.Fp[,,,,i] 
+  num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+
+  den = ((apply(Op[,,,,1]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(t.Fp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
+  
+  t.ACC_mod[,,,i] = num/sqrt(den)
+}
+
+
+for(i in 1:8){
+  for(j in 2:4){
+    
+    aux = Op[,,1:29,,j]*pp.Fp[,,,,i]
+    num = (apply(aux, c(1, 2, 4), sum, na.rm = T))/29 
+    den = ((apply(Op[,,,,j]**2, c(1, 2, 4), sum, na.rm = T))/29) * ((apply(pp.Fp[,,,,i]**2, c(1, 2, 4), sum, na.rm = T))/29) 
+    
+  pp.ACC_mod[,,,i,j-1] = num/sqrt(den)
+  }
+}
+
+
+cajas_lat = list()
+cajas_lat[[1]] =  seq(which(lat2 == -13), which(lat2 == 2), by = 1); cajas_lat[[2]] = seq(which(lat2 == -16), which(lat2 == 4), by = 1)
+cajas_lat[[3]] = seq(which(lat2 == -16), which(lat2 == 2), by = 1); cajas_lat[[4]] = seq(which(lat2 == -26), which(lat2 == -17), by = 1)
+cajas_lat[[5]] = seq(which(lat2 == -39), which(lat2 == -24), by = 1)
+
+cajas_lon = list()
+cajas_lon[[1]] =  seq(which(lon2 == 291), which(lon2 == 304), by = 1); cajas_lon[[2]] = seq(which(lon2 == 301), which(lon2 == 316), by = 1)
+cajas_lon[[3]] = seq(which(lon2 == 313), which(lon2 == 326), by = 1); cajas_lon[[4]] = seq(which(lon2 == 308), which(lon2 == 321), by = 1)
+cajas_lon[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1)
+
+t.ACC_box = list()
+pp.ACC_box = list()
+t.ACC_ens_box = list()
+pp.ACC_ens_box = list()
+for(i in 1:5){
+  
+  t.ACC_ens_box[[i]] = apply(t.ACC[cajas_lon[[i]], cajas_lat[[i]],], c(3), mean, na.rm = T)
+  pp.ACC_ens_box[[i]] = apply(pp.ACC[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  t.ACC_box[[i]] = apply(t.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  pp.ACC_box[[i]] = apply(pp.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,,], c(3, 4, 5), mean, na.rm = T)
+  
+}
+cajas = c("Am", "SAM", "NeB", "SACZ", "LPB")
+cajas_num = seq( 1, 5)
+
+
+t.data = fig10(prom_cajas = t.ACC_box, prom_ensamble = t.ACC_ens_box, variable = "temp")
+
+pp.data = list()
+for( i in 1:3){
+  pp.data[[i]] = fig10(prom_cajas = pp.ACC_box, prom_ensamble = pp.ACC_ens_box, variable = "pp", base_datos = i)
+}
+
+# Grafico
+est = c("MAM", "JJA", "SON", "DJF")
+g = list()
+for(i in 2:5){
+  
+  g = ggplot() + theme_minimal()+
+    geom_text(data = t.data[[1]], aes(x = cajas, y = t.data[[1]][,i], label = value), color = "green", size = 4) + 
+    geom_point(data = t.data[[2]], aes(x = cajas, y = t.data[[2]][,i]), color = "darkgreen", shape = "*" , size = 11) + 
+    geom_text(data = pp.data[[1]][[1]], aes(x = cajas, y = pp.data[[1]][[1]][,i], label = value), color = "blue", size = 4) + 
+    geom_point(data = pp.data[[1]][[2]], aes(x = cajas , y = pp.data[[1]][[2]][,i]), color = "navyblue", shape = "*" , size = 11) + 
+    geom_text(data = pp.data[[2]][[1]], aes(x = cajas, y = pp.data[[2]][[1]][,i], label = value), color = "purple", size = 4) + 
+    geom_point(data = pp.data[[2]][[2]], aes(x = cajas , y = pp.data[[2]][[2]][,i]), color = "purple4", shape = "*" , size = 11) + 
+    geom_text(data = pp.data[[3]][[1]], aes(x = cajas, y = pp.data[[3]][[1]][,i], label = value), color = "deepskyblue", size = 4) + 
+    geom_point(data = pp.data[[3]][[2]], aes(x = cajas , y = pp.data[[3]][[2]][,i]), color = "deepskyblue4", shape = "*" , size = 11) + 
+    
+    geom_hline(yintercept = rc, color = "grey", size = 1) +
+    geom_hline(yintercept = 0, color = "black")+
+    ggtitle(paste("ACC - ", est[i-1], sep = ""))+
+    scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+    #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+    scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB"),breaks = seq(1, 5, by = 1))+
+    xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-CanSIPSv2(8)" )+
+    theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
+          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+          panel.border = element_rect(colour = "black", fill = NA, size = 1),
+          panel.ontop = F,
+          plot.title = element_text(hjust = 0.5)) 
+  ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/AC_con_mods/", "ACC", "_", est[i-1], ".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+  
+}
+
+
+#### Bias ####
+
+t.bias = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8))
+for(i in 1:8){
+
+    t.bias[,,,i] = apply(t.mods[,,,,i] - datos.obs[,,,,1], c(1,2,4), sum, na.rm = T)/29
+    
+}
+t.bias_mean = apply(t.bias, c(1,2,3), mean, na.rm = T)*mask_arr
+
+
+
+pp.bias = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8, 3))
+
+for(i in 1:8){
+  for(j in 2:4){
+    
+    pp.bias[,,,i,j-1] = apply(pp.mods[,,,,i] - datos.obs[,,,,j], c(1,2,4), sum, na.rm = T)/29
+    
+  }
+  
+}
+pp.bias_mean = apply(pp.bias, c(1,2,3,5), mean, na.rm = T)
+
+
+
+#--- graficos ---#
+
+mapa(lista = t.bias_mean*mask_arr, titulo = paste("Bias T - CPC ", sep = ""), nombre_fig = paste("bias_t_cpc", sep = ""), escala = c(-5,5) 
+     , label_escala = "", resta = 0, brewer = "RdBu", revert = "si", niveles = 11
+     , contour = "si", lon2, lat2, seq(-5, 5, by = 1), seq(-5, 5, by = 1), topo2, "/salidas/desemp_mods/")
+
+
+
+nombres2 = c("CPC", "GPCC", "CMAP")
+
+for(i in 1:3){
+  
+  mapa(lista = pp.bias_mean[,,,i]*mask_arr, titulo = paste("Bias PP - ", nombres2[i], sep = ""), nombre_fig = paste("pp.bias_",nombres2[i], sep = ""), escala = c(-100,100) 
+       , label_escala = "", resta = 0, brewer = "BrBG", revert = "no", niveles = 11
+       , contour = "si", lon2, lat2, seq(-100, 100, by = 20), seq(-100, 100, by = 10), topo2, "/salidas/desemp_mods/")
+}
+
+
+
+
+#### MAE ####
+
+t.mae = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8))
+
+for(i in 1:8){
+  
+  t.mae[,,,i] = apply(abs(t.mods[,,,,i] - datos.obs[,,,,1]), c(1,2,4), sum, na.rm = T)/29
+  
+}
+t.mae_mean = apply(t.mae, c(1,2,3), mean, na.rm = T)*mask_arr
+
+
+
+pp.mae = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8, 3))
+
+for(i in 1:8){
+  for(j in 2:4){
+    
+    pp.mae[,,,i,j-1] = apply(abs(pp.mods[,,,,i] - datos.obs[,,,,j]), c(1,2,4), sum, na.rm = T)/29
+    
+  }
+  
+}
+pp.mae_mean = apply(pp.mae, c(1,2,3,5), mean, na.rm = T)
+
+
+
+#--- graficos ---#
+mapa(lista = t.mae_mean*mask_arr, titulo = paste("MAE T - CPC ", sep = ""), nombre_fig = paste("t.mae_cpc", sep = ""), escala = c(0,5) 
+     , label_escala = "", resta = 0, brewer = "Reds", revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 5, by = 1), seq(0, 5, by = 1), topo2, "/salidas/desemp_mods/")
+
+
+
+for(i in 1:3){
+  
+  mapa(lista = pp.mae_mean[,,,i]*mask_arr, titulo = paste("MAE PP - ", nombres2[i], sep = ""), nombre_fig = paste("pp.mae_",nombres2[i], sep = ""), escala = c(0,100) 
+       , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 7
+       , contour = "si", lon2, lat2, seq(0, 100, by = 20), seq(0, 100, by = 10), topo2, "/salidas/desemp_mods/")
+}
+
+
+
+#### RMSE ####
+
+t.rmse = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8))
+
+for(i in 1:8){
+  
+  t.rmse[,,,i] = sqrt(apply((t.mods[,,,,i] - datos.obs[,,,,1])**2, c(1,2,4), sum, na.rm = T)/29)
+  
+}
+t.rmse_mean = apply(t.rmse, c(1,2,3), mean, na.rm = T)*mask_arr
+
+
+pp.rmse = array(data = NA, dim =c(length(lon2), length(lat2), 4, 8, 3))
+
+for(i in 1:8){
+  for(j in 2:4){
+    
+    pp.rmse[,,,i,j-1] = sqrt(apply((pp.mods[,,,,i] - datos.obs[,,,,j])**2, c(1,2,4), sum, na.rm = T)/29)
+    
+  }
+  
+}
+pp.rmse_mean = apply(pp.rmse, c(1,2,3,5), mean, na.rm = T)
+
+
+
+#--- graficos ---#
+mapa(lista = t.rmse_mean*mask_arr, titulo = paste("RMSE T - CPC ", sep = ""), nombre_fig = paste("t.rmse_cpc", sep = ""), escala = c(0,5) 
+     , label_escala = "", resta = 0, brewer = "Reds", revert = "no", niveles = 9
+     , contour = "si", lon2, lat2, seq(0, 5, by = 1), seq(0, 5, by = 1), topo2, "/salidas/desemp_mods/")
+
+
+
+for(i in 1:3){
+  
+  mapa(lista = pp.rmse_mean[,,,i]*mask_arr, titulo = paste("RMSE PP - ", nombres2[i], sep = ""), nombre_fig = paste("pp.rmse_",nombres2[i], sep = ""), escala = c(0,100) 
+       , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 7
+       , contour = "si", lon2, lat2, seq(0, 100, by = 20), seq(0, 100, by = 10), topo2, "/salidas/desemp_mods/")
+}
+
+#####
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
