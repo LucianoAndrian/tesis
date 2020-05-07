@@ -587,7 +587,18 @@ mean_sd = function(nombre){
     T1[,,i] = apply(temp[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
   }
   
-  # SD
+  # SD # error ensamble
+  
+  # la correccion seria:
+  # promedio meses en estaciones
+  #sd_t = array(NA, dim = c(length(lon2), length(lat2),4)) 
+  #for(i in 1:4){
+  #  
+  #  aux =  apply(apply(temp[,,,,,i], c(1,2,4,5), mean, na.rm = TRUE), c(1,2,3), sd, na.rm = T)
+  #  sd_t[,,i] = apply(aux, c(1,2), mean, na.rm = T) #ensamble
+    
+  #}
+  
   
   T2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
   for(i in 1:4){
@@ -612,7 +623,17 @@ mean_sd = function(nombre){
     PP1[,,i] = apply(PP[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
   }
   
-  # SD
+  # SD # error ensamble
+  
+  # la correccion seria:
+  # promedio meses en estaciones
+  #sd_p = array(NA, dim = c(length(lon2), length(lat2),4)) 
+  #for(i in 1:4){
+  #  
+  #  aux =  apply(apply(PP[,,,,,i], c(1,2,4,5), mean, na.rm = TRUE), c(1,2,3), sd, na.rm = T)
+  #  sd_p[,,i] = apply(aux, c(1,2), mean, na.rm = T) #ensamble
+  
+  #}
   
   PP2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
   for(i in 1:4){
@@ -624,12 +645,13 @@ mean_sd = function(nombre){
     sd_pp[,,i] = apply(PP2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
   }
   
+  # anularia T2 y PP2
   T_PP = list()
   T_PP[[1]] = T1
   T_PP[[2]] = sd_t
   T_PP[[3]] = PP1
   T_PP[[4]] = sd_pp
-  T_PP[[5]] = T2
+  T_PP[[5]] = T2 
   T_PP[[6]] = PP2
   return(T_PP)
   
@@ -665,7 +687,12 @@ anova_fun = function(){
     v_seasons = ncvar_get(nc, variable) # lon lat members years seasons models 
     nc_close(nc)
     
+    # dim v_seasons[lon, lat, max_miembros*, anios, seasons, modelos]
+    # *los que tienen menos r dejan el resto en NA
+    
     mask = as.matrix(read.table("mascara.txt"))
+    
+    # Hodson - Sutton
     
     x000 = array(NA, dim = c(length(lon2), length(lat2), 4))
     xt00 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
@@ -1853,8 +1880,8 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
       
       for(i in 1:5){
         
-        data_t[which(data_t[,1] == i ), (s + 1)] = prom_cajas_t[[i]][s,]
-        data_ensamble_t[which(data_ensamble_t[,1] == i), (s +1)] = prom_ensamble_t[[i]][s]
+        data_t[which(data_t[,1] == i ), (s + 1)] = prom_cajas[[i]][s,]
+        data_ensamble_t[which(data_ensamble_t[,1] == i), (s +1)] = prom_ensamble[[i]][s]
         
       }
       
@@ -1898,8 +1925,8 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
       
       for(i in 1:5){
         
-        data_pp[which(data_pp[,1] == i ), (s + 1)] = prom_cajas_pp[[i]][,,base_datos][s,]
-        data_ensamble_pp[which(data_ensamble_pp[,1] == i), (s +1)] = prom_ensamble_pp[[i]][s,base_datos]
+        data_pp[which(data_pp[,1] == i ), (s + 1)] = prom_cajas[[i]][,,base_datos][s,]
+        data_ensamble_pp[which(data_ensamble_pp[,1] == i), (s +1)] = prom_ensamble[[i]][s,base_datos]
         
       }
       
