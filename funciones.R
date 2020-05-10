@@ -1959,3 +1959,43 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
   
   
 }
+#### FIG 8 ####
+
+fig8 = function(t.v1, t.v2, pp.v1, pp.v2, lon, lat, titulo, y.name, x.name, nombre.fig, salida){
+  
+  ruta = getwd()
+  
+  est=c("MAM", "JJA", "SON", "DJF")
+  
+  for(i in 1:4){
+    
+    data = matrix(data = NA, nrow = length(lon)*length(lat), ncol = 4)
+    
+    data[,1] = array(data = t.v1[,,i]*mask, dim = length(lon2)*length(lat2))
+    data[,2] = array(data = t.v2[,,i]*mask, dim = length(lon2)*length(lat2))
+    data[,3] = array(data = pp.v1[,,i]*mask, dim = length(lon2)*length(lat2))
+    data[,4] = array(data = pp.v2[,,i]*mask, dim = length(lon2)*length(lat2))
+    
+    data<-as.data.frame(data)
+    
+    colnames(data)<-c("Y.t", "X.t", "Y.pp", "X.pp")
+    
+    
+  g  = ggplot(data = data, mapping = aes(x = X.t, y = Y.t)) + theme_minimal()+
+      geom_point(color = "firebrick")+
+      geom_point(aes(x = X.pp, y = Y.pp), color = "royalblue4")+
+      
+      scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.20), name = x.name)+
+      scale_y_continuous(limits = c(0,1),breaks = seq(0,1,by = 0.20), name = y.name)+
+      ggtitle(paste(titulo, " - " , est[i], sep = ""))+
+      theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
+            axis.title.x  = element_text(size = 14), panel.grid.major = element_line(colour = 'grey44', size = 0.5, linetype = "dashed")
+            , panel.grid.minor = element_line(colour = 'grey44', size = 0.25, linetype = "dashed"),
+            panel.border = element_rect(colour = "black", fill = NA, size = 3),
+            panel.ontop = TRUE,
+            plot.title = element_text(hjust = 0.5))
+    
+  ggsave(paste(ruta, salida, nombre.fig, "_", est[i], ".jpg", sep = ""), plot = g, width = 18, height = 15  , units = "cm")
+  }
+  
+}
