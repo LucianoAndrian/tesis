@@ -757,24 +757,20 @@ for(i in 1:3){
        , contour = "si", lon2, lat2, seq(0, 100, by = 20), seq(0, 100, by = 10), topo2, "/salidas/desemp_mods/")
 }
 
-#####
+#### Fig.8 ####
+
+# primero correr funciones de anova para obtener la predictibilidad
+ss_temp = anova_fun()  
+ss_pp = anova_fun()
+pp = pp_test(ss_temp, ss_pp)
 
 
+fig8(t.v1 = t.ACC, t.v2 = pp[[1]], pp.v1 = pp.ACC[,,,3], pp.v2 = pp[[3]], lon = lon2, lat = lat2
+     , titulo = "ACC Observado vs Predictibiidad", y.name = "ACC", x.name = "Predictibilidad",  nombre.fig = "fig8_acc.vs.pp", salida = "/salidas/desemp_mods/")
+
+fig8(t.v1 = t.ACC, t.v2 = t.ACC_teo_prom, pp.v1 = pp.ACC[,,,3], pp.v2 = pp.ACC_teo_prom, lon = lon2, lat = lat2
+     , titulo = "ACC Observado vs Teorico", y.name = "ACC", x.name = "ACC Teorico",  nombre.fig = "fig8_acc.vs.accteo", salida = "/salidas/desemp_mods/")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fig8(t.v1 = t.ACC_teo_prom, t.v2 = pp[[1]], pp.v1 = pp.ACC_teo_prom, pp.v2 = pp[[3]], lon = lon2, lat = lat2
+     , titulo = "ACC Teorico vs Predictibilidad", y.name = "ACC Teorico", x.name = "Predictibilidad",  nombre.fig = "fig.8_acc.teo.vs.pp", salida = "/salidas/desemp_mods/")
