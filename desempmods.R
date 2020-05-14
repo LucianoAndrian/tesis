@@ -345,7 +345,7 @@ for(i in 1:4){
 
 
 #for(i in 1:3){
-i = 3 # solo CMAP
+i = 3
 mapa_sig2(lista = pp.ACC[,,,i]*mask_arr, titulo = paste("ACC PP MODS y ", nombres2[i], sep = ""), nombre_fig = paste("AC_pp_", nombres2[i], sep = ""), escala = c(0, 1) 
          , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
          , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/")
@@ -759,18 +759,10 @@ for(i in 1:3){
 
 #### Fig.8 ####
 
-# primero correr funciones de anova para obtener la predictibilidad
-ss_temp = anova_fun()  
-ss_pp = anova_fun()
-pp = pp_test(ss_temp, ss_pp)
 
 
-fig8(t.v1 = t.ACC, t.v2 = pp[[1]], pp.v1 = pp.ACC[,,,3], pp.v2 = pp[[3]], lon = lon2, lat = lat2
-     , titulo = "ACC Observado vs Predictibiidad", y.name = "ACC", x.name = "Predictibilidad",  nombre.fig = "fig8_acc.vs.pp", salida = "/salidas/desemp_mods/")
+fig8(v1 = t.ACC, v2 = t.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Temperatura: ACC Observado vs ACC Teorico", color = "firebrick", y.name = "ACC", x.name = "ACC Teorico"
+     , nombre.fig = "t.fig8_accvsteo", salida = "/salidas/desemp_mods/")
 
-fig8(t.v1 = t.ACC, t.v2 = t.ACC_teo_prom, pp.v1 = pp.ACC[,,,3], pp.v2 = pp.ACC_teo_prom, lon = lon2, lat = lat2
-     , titulo = "ACC Observado vs Teorico", y.name = "ACC", x.name = "ACC Teorico",  nombre.fig = "fig8_acc.vs.accteo", salida = "/salidas/desemp_mods/")
-
-
-fig8(t.v1 = t.ACC_teo_prom, t.v2 = pp[[1]], pp.v1 = pp.ACC_teo_prom, pp.v2 = pp[[3]], lon = lon2, lat = lat2
-     , titulo = "ACC Teorico vs Predictibilidad", y.name = "ACC Teorico", x.name = "Predictibilidad",  nombre.fig = "fig.8_acc.teo.vs.pp", salida = "/salidas/desemp_mods/")
+fig8(v1 = t.ACC, v2 = t.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Precipitación: ACC Observado vs ACC Teorico", color = "royalblue4", y.name = "ACC", x.name = "ACC Teorico"
+     , nombre.fig = "pp.fig8_accvsteo", salida = "/salidas/desemp_mods/")
