@@ -1961,7 +1961,7 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
 }
 #### FIG 8 ####
 
-fig8 = function(t.v1, t.v2, pp.v1, pp.v2, lon, lat, titulo, y.name, x.name, nombre.fig, salida){
+fig8 = function(v1, v2, lon, lat, titulo, color, y.name, x.name, nombre.fig, salida){
   
   ruta = getwd()
   
@@ -1971,19 +1971,17 @@ fig8 = function(t.v1, t.v2, pp.v1, pp.v2, lon, lat, titulo, y.name, x.name, nomb
     
     data = matrix(data = NA, nrow = length(lon)*length(lat), ncol = 4)
     
-    data[,1] = array(data = t.v1[,,i]*mask, dim = length(lon2)*length(lat2))
-    data[,2] = array(data = t.v2[,,i]*mask, dim = length(lon2)*length(lat2))
-    data[,3] = array(data = pp.v1[,,i]*mask, dim = length(lon2)*length(lat2))
-    data[,4] = array(data = pp.v2[,,i]*mask, dim = length(lon2)*length(lat2))
+    data[,1] = array(data = v1[,,i]*mask, dim = length(lon2)*length(lat2))
+    data[,2] = array(data = v2[,,i]*mask, dim = length(lon2)*length(lat2))
+
     
     data<-as.data.frame(data)
     
-    colnames(data)<-c("Y.t", "X.t", "Y.pp", "X.pp")
+    colnames(data)<-c("Y", "X")
     
     
-  g  = ggplot(data = data, mapping = aes(x = X.t, y = Y.t)) + theme_minimal()+
-      geom_point(color = "firebrick")+
-      geom_point(aes(x = X.pp, y = Y.pp), color = "royalblue4")+
+  g  = ggplot(data = data, mapping = aes(x = X, y = Y)) + theme_minimal()+
+      geom_point(color = color)+
       
       scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.20), name = x.name)+
       scale_y_continuous(limits = c(0,1),breaks = seq(0,1,by = 0.20), name = y.name)+
