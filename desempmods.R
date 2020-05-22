@@ -325,6 +325,7 @@ topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 
 topo2 = topo #
 topo2[which(topo2$h<1500)]=NA # altura para la cual tapa el grafico
 save(topo, file = "topo.RData")
+load("topo.RData")
 
 
 
@@ -437,7 +438,7 @@ for(i in 1:8){
   
   mapa_sig2(lista = t.ACC_oneless[,,,i], titulo = paste("ACC Temp MODS y CPC sin ", modelos[i], sep = ""), nombre_fig = paste("t.ACC_sin_", modelos[i], sep = ""), escala = c(0, 1) 
             , label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9
-            , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
+            , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
   
 }
 
@@ -456,7 +457,7 @@ for(j in 1:8){
    i = 3 
     mapa_sig2(lista = pp.ACC_oneless[,,,j,i]*mask_arr, titulo = paste("ACC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), nombre_fig = paste("pp.ACC_", nombres2[i],"sin_", modelos[j], sep = ""), escala = c(0, 1) 
               , label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 11
-              , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
+              , contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), alpha = 0.3, size = 1, color = "black", v = rc, topo2, "/salidas/desemp_mods/AC_sin_mods/")
   #}
   
 }
@@ -764,5 +765,5 @@ for(i in 1:3){
 fig8(v1 = t.ACC, v2 = t.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Temperatura: ACC Observado vs ACC Teorico", color = "firebrick", y.name = "ACC", x.name = "ACC Teorico"
      , nombre.fig = "t.fig8_accvsteo", salida = "/salidas/desemp_mods/")
 
-fig8(v1 = t.ACC, v2 = t.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Precipitación: ACC Observado vs ACC Teorico", color = "royalblue4", y.name = "ACC", x.name = "ACC Teorico"
+fig8(v1 = pp.ACC[,,,3], v2 = pp.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Precipitación: ACC Observado vs ACC Teorico", color = "royalblue4", y.name = "ACC", x.name = "ACC Teorico"
      , nombre.fig = "pp.fig8_accvsteo", salida = "/salidas/desemp_mods/")
