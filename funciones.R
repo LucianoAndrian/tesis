@@ -2038,8 +2038,8 @@ corr = function(mod, obs, lon, lat, cf){
 
 #### MAPA_TOPO3 ####
 # a ver si me puedo quedar con una sola q sirva para todo...
-mapa_topo3 = function(variable, variable2 = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
-                      , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.v2 = 0, nivel.v2 = NULL, color.v2 = "red", alpha.v2, sig = F
+mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
+                      , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black", color.vcont = "red", alpha.vsig, sig = F
                       , titulo = NULL, label.escala = "value", x.label = "x", y.label = "y", fill.mapa = F
                       , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL){
   
@@ -2150,10 +2150,10 @@ mapa_topo3 = function(variable, variable2 = NULL, u = NULL, v = NULL, lon, lat, 
     if(sig == T){
       
       data2 = expand.grid(lon = lon, lat = lat)
-      data2[,3] = array(variable2[,,i], dim = length(lon)*length(lat)) - resta.v2
+      data2[,3] = array(variable.sig[,,i], dim = length(lon)*length(lat)) - resta.vsig
       colnames(data2)<-c("lon", "lat", "var")
       
-      g = g +  geom_tile(data = subset(data2, is.na(var)),aes(x = lon, y = lat, fill = is.na(var)), alpha = alpha.v2, fill = color.v2, show.legend = F)
+      g = g +  geom_tile(data = subset(data2, is.na(var)),aes(x = lon, y = lat, fill = is.na(var)), alpha = alpha.vsig, fill = color.vsig, show.legend = F)
 
       
     }
@@ -2191,10 +2191,10 @@ mapa_topo3 = function(variable, variable2 = NULL, u = NULL, v = NULL, lon, lat, 
     if(contour == T){
       
       data2 = expand.grid(lon = lon, lat = lat)
-      data2[,3] = array(variable2[,,i], dim = length(lon)*length(lat)) - resta.v2
+      data2[,3] = array(variable.cont[,,i], dim = length(lon)*length(lat)) - resta.vcont
       colnames(data2)<-c("lon", "lat", "cont")
       
-      g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.v2, size = 1, breaks = nivel.v2 )
+      g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = 1, breaks = nivel.vcont )
       
     }
     
