@@ -59,7 +59,7 @@ while(i<=4){
 # PP
 ## ------------------------ CMAP ------------------------ ## # sin mascara
 # solo pp
-
+library(fields)
 aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
@@ -211,7 +211,7 @@ lons[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1); lons[[6]] = seq
 
 # para cada modelo por separado ??
 
-t.acc = array(data = NA, dim = c(29,4,8,6,2))
+acc = array(data = NA, dim = c(29,4,8,6,2))
 
 V = list()
 V[[1]] = t.Fp
@@ -241,7 +241,7 @@ for(v in 1:2){
         num = apply(aux.o*aux.m, c(3,4), sum, na.rm = T)
         den = n*sqrt((apply(aux.o**2, c(3,4), sum, na.rm = T)/n)*(apply(aux.m**2, c(3,4), sum, na.rm = T)/n))
         
-        t.acc[,,m,z,v] = num/den
+        acc[,,m,z,v] = num/den
       }
     }
     print(m)
@@ -287,5 +287,41 @@ for(v in 1:2){
    }
 }
 
+#prueba grafico
+library(ggplot2)
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+rc_b = qt(p = 0.95,df = 29-1,lower.tail = F)/sqrt((29-1)+qt(p = 0.95,df = 29-1, lower.tail = F))
 
+aux = as.data.frame(acc_ens[,,1,2])
+
+aux=cbind(aux, seq(1982, 2010))
+colnames(aux) = c("MAM", "JJA", "SON", "DJF", "Años")
+
+g = ggplot(aux, aes(x = Años))+theme_minimal()+
+  geom_line(aes(y = MAM, colour = "MAM"), size = 1) +
+  geom_line(aes(y = JJA, colour = "JJA"), size = 1) +
+  geom_line(aes(y = SON, colour = "SON"), size = 1) +
+  geom_line(aes(y = DJF, colour = "DJF"), size = 1) +
+  
+  scale_colour_manual("", 
+                      breaks = c("MAM", "JJA", "SON", "DJF"),
+                      values = c("yellow2", "royalblue", "green3", "orange2"))+
+  geom_hline(yintercept = rc, color = "grey", size = 1) +
+  geom_hline(yintercept = rc_b, color = "grey", size = 1)+
+  
+  ggtitle("ACC PP Ensamble - Amazonia")+
+  scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.2)) + 
+  scale_x_continuous(limits = c(1982, 2010), breaks = seq(1982, 2010, by = 2))+
+  
+  theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+        panel.border = element_rect(colour = "black", fill = NA, size = 1),
+        panel.ontop = F,
+        plot.title = element_text(hjust = 0.5)) 
+  
+ggsave(paste("/home/luciano.andrian/tesis/salidas/", "ACC2",".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+
+
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+rc_b = qt(p = 0.95,df = 29-1,lower.tail = F)/sqrt((29-1)+qt(p = 0.95,df = 29-1, lower.tail = F))
 
