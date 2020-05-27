@@ -2040,7 +2040,7 @@ corr = function(mod, obs, lon, lat, cf){
 # a ver si me puedo quedar con una sola q sirva para todo...
 mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
                       , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black", color.vcont = "red", alpha.vsig, sig = F
-                      , titulo = NULL, label.escala = "value", x.label = "x", y.label = "y", fill.mapa = F
+                      , titulo = NULL, label.escala = "value", x.label = "x", y.label = "y", fill.mapa = F, colorbar.pos = "right"
                       , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL){
   
   library(maps)
@@ -2129,22 +2129,46 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       
     }
     
-    
-    if(contour.fill == T & revert == T ){
+    if(colorbar.pos == "right"){
       
-      g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
-        scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                          guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
-    } else if(contour.fill == T & revert == F ){
-      g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
-        scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                          guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
-    } else if(contour.fill == F & revert == T){
-      g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
-    } else {
-      g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+      if(contour.fill == T & revert == T ){
+        
+        g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
+          scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
+                            guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T))
+      } else if(contour.fill == T & revert == F ){
+        g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
+          scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
                             guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+      } else if(contour.fill == F & revert == T){
+        g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
+                                  guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+      } else {
+        g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+                              guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+      }
+      
+      
+    } else {
+      
+      if(contour.fill == T & revert == T ){
+        
+        g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
+          scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
+                            guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+      } else if(contour.fill == T & revert == F ){
+        g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
+          scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+                            guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+      } else if(contour.fill == F & revert == T){
+        g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
+                                  guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+      } else {
+        g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+                              guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+      }
+      
+      
     }
     
     if(sig == T){
@@ -2205,7 +2229,11 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
             axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
             panel.border = element_rect(colour = "black", fill = NA, size = 3),
             panel.ontop = TRUE,
-            plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = 0, color = "black")
+            plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = 0, color = "black") 
+    if(colorbar.pos == "bottom"){
+      g = g + theme(legend.position = "bottom")
+    }
+      
     
     ggsave(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
     
