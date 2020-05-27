@@ -199,59 +199,18 @@ pp.Fp = pp.mods - aux6
 lats = list()
 lats[[1]] =  seq(which(lat2 == -13), which(lat2 == 2), by = 1); lats[[2]] = seq(which(lat2 == -16), which(lat2 == 4), by = 1)
 lats[[3]] = seq(which(lat2 == -16), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -26), which(lat2 == -17), by = 1)
-lats[[5]] = seq(which(lat2 == -39), which(lat2 == -24), by = 1); lats[[6]] = seq(which(lat2 == -45), which(lat2 == -17), by = 1)
+lats[[5]] = seq(which(lat2 == -39), which(lat2 == -24), by = 1)
 
 lons = list()
 lons[[1]] =  seq(which(lon2 == 291), which(lon2 == 304), by = 1); lons[[2]] = seq(which(lon2 == 301), which(lon2 == 316), by = 1)
 lons[[3]] = seq(which(lon2 == 313), which(lon2 == 326), by = 1); lons[[4]] = seq(which(lon2 == 308), which(lon2 == 321), by = 1)
-lons[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1); lons[[6]] = seq(which(lon2 == 292), which(lon2 == 307), by = 1)
+lons[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1)
 
 
-#### prueba ACC ####
+#### ACC ####
 
-# para cada modelo por separado ??
-
-acc = array(data = NA, dim = c(29,4,8,6,2))
-
-V = list()
-V[[1]] = t.Fp
-V[[2]] = pp.Fp
-for(v in 1:2){
-  
-  for(m in 1:8){
-    
-    for(z in 1:6){
-      
-      xp = Op[lons[[z]], lats[[z]],,,v]
-      xp_sp = apply(xp, c(3,4), mean, na.rm = T)
-      
-      fp = V[[v]][lons[[z]], lats[[z]],,,m] # cada modelo
-      fp_sp = apply(fp, c(3,4), mean, na.rm = T)
-      
-      aux.o = array(data = NA, dim = c(dim(xp),6,2))
-      aux.m = array(data = NA, dim = c(dim(fp),6,2))
-      
-      for(a in 1:29){
-        
-        aux.o[,,a,,z,v] =  xp[,,a,] - xp_sp[a,]
-        aux.m[,,a,,z,v] =  fp[,,a,] - fp_sp[a,]
-        
-        n = length(xp[,1,1,1])*length(xp[1,,1,1])
-        
-        num = apply(aux.o*aux.m, c(3,4), sum, na.rm = T)
-        den = n*sqrt((apply(aux.o**2, c(3,4), sum, na.rm = T)/n)*(apply(aux.m**2, c(3,4), sum, na.rm = T)/n))
-        
-        acc[,,m,z,v] = num/den
-      }
-    }
-    print(m)
-  }
-print(v)
-}
-
-
-#####
 # haciendo igual q en desempmods...
+
 t.Fp_ens = apply(t.Fp, c(1,2,3,4), mean, na.rm = T)
 pp.Fp_ens = apply(pp.Fp, c(1,2,3,4), mean, na.rm = T)
 acc_ens = array(data = NA, dim = c(29,4,6,2))
@@ -290,38 +249,46 @@ for(v in 1:2){
 #prueba grafico
 library(ggplot2)
 rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
-rc_b = qt(p = 0.95,df = 29-1,lower.tail = F)/sqrt((29-1)+qt(p = 0.95,df = 29-1, lower.tail = F))
 
-aux = as.data.frame(acc_ens[,,1,2])
+region = c("Amazonia", "South American Monsoon", "North-estern Brazil", "SACZ", "La Plata Basin")
+region.fig = c("Am", "SAM", "NeB", "SACZ")
+var.title = c("Temperatura", "Precipitación")
+var = c("t", "pp")
 
-aux=cbind(aux, seq(1982, 2010))
-colnames(aux) = c("MAM", "JJA", "SON", "DJF", "Años")
-
-g = ggplot(aux, aes(x = Años))+theme_minimal()+
-  geom_line(aes(y = MAM, colour = "MAM"), size = 1) +
-  geom_line(aes(y = JJA, colour = "JJA"), size = 1) +
-  geom_line(aes(y = SON, colour = "SON"), size = 1) +
-  geom_line(aes(y = DJF, colour = "DJF"), size = 1) +
-  
-  scale_colour_manual("", 
-                      breaks = c("MAM", "JJA", "SON", "DJF"),
-                      values = c("yellow2", "royalblue", "green3", "orange2"))+
-  geom_hline(yintercept = rc, color = "grey", size = 1) +
-  geom_hline(yintercept = rc_b, color = "grey", size = 1)+
-  
-  ggtitle("ACC PP Ensamble - Amazonia")+
-  scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.2)) + 
-  scale_x_continuous(limits = c(1982, 2010), breaks = seq(1982, 2010, by = 2))+
-  
-  theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
-        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
-        panel.border = element_rect(colour = "black", fill = NA, size = 1),
-        panel.ontop = F,
-        plot.title = element_text(hjust = 0.5)) 
-  
-ggsave(paste("/home/luciano.andrian/tesis/salidas/", "ACC2",".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
-
-
-rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
-rc_b = qt(p = 0.95,df = 29-1,lower.tail = F)/sqrt((29-1)+qt(p = 0.95,df = 29-1, lower.tail = F))
-
+for(v in 1:2){
+  for(z in 1:5){
+    
+    aux = as.data.frame(acc_ens[,,z,v])
+    
+    aux=cbind(aux, seq(1982, 2010))
+    colnames(aux) = c("MAM", "JJA", "SON", "DJF", "Años")
+    
+    g = ggplot(aux, aes(x = Años))+theme_minimal()+
+      geom_line(aes(y = MAM, colour = "MAM"), size = 1) +
+      geom_line(aes(y = JJA, colour = "JJA"), size = 1) +
+      geom_line(aes(y = SON, colour = "SON"), size = 1) +
+      geom_line(aes(y = DJF, colour = "DJF"), size = 1) +
+      
+      scale_colour_manual("", 
+                          breaks = c("MAM", "JJA", "SON", "DJF"),
+                          values = c("yellow2", "royalblue", "green3", "orange2")) +
+      geom_hline(yintercept = rc, color = "grey", size = 1, alpha = 1) +
+      
+      
+      ggtitle(paste("ACC ", var.title[v], " - ", region[z], sep = "")) +
+      scale_y_continuous(limits = c(-1, 1), breaks = seq(-1, 1, by = 0.2)) + 
+      scale_x_continuous(limits = c(1982, 2010), breaks = seq(1982, 2010, by = 2)) +
+      
+      theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black"), axis.title.y  = element_blank(),
+            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+            panel.border = element_rect(colour = "black", fill = NA, size = 1),
+            panel.ontop = F,
+            plot.title = element_text(hjust = 0.5),
+            legend.position = "right", legend.key.width = unit(1, "cm"), legend.key.height = unit(2, "cm"), legend.text = element_text(size = 15)) 
+    
+    ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/ACC2/", var[v], ".ACC2_", region[z],".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+    
+    
+    
+  }
+}
