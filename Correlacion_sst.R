@@ -99,10 +99,10 @@ for(i in 1:7){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.2)
-               , titulo = paste("Correlación Temperatura en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = "Longitud", y.label = "Latitud", mapa = "mundo"
+               , titulo = paste("Correlación Temperatura en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
                , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("t.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
-               , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.15, fill.mapa = T
-               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red")
+               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
+               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
     
   }
 }
@@ -127,10 +127,10 @@ for(i in 1:7){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.2)
-               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = "Longitud", y.label = "Latitud", mapa = "mundo"
+               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
                , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
-               , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.15, fill.mapa = T
-               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red")
+               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
+               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
     
   }
 }
