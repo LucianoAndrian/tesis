@@ -163,7 +163,6 @@ for(i in 1:length(modelos)){
   pp.mods[,,,,i] = aux[[6]]
 }  
 
-# ¿?¿?¿?¿?¿?¿
 ########################## Cross Validation modelos ##########################
 
 aux = diag(29)
@@ -213,13 +212,13 @@ lons[[5]] = seq(which(lon2 == 296), which(lon2 == 309), by = 1)
 
 t.Fp_ens = apply(t.Fp, c(1,2,3,4), mean, na.rm = T)
 pp.Fp_ens = apply(pp.Fp, c(1,2,3,4), mean, na.rm = T)
-acc_ens = array(data = NA, dim = c(29,4,6,2))
+acc_ens = array(data = NA, dim = c(29,4,5,2))
 V = list()
 V[[1]] = t.Fp_ens
 V[[2]] = pp.Fp_ens
 for(v in 1:2){
   
-    for(z in 1:6){
+    for(z in 1:5){
       
       xp = Op[lons[[z]], lats[[z]],,,v]
       xp_sp = apply(xp, c(3,4), mean, na.rm = T)
@@ -227,8 +226,8 @@ for(v in 1:2){
       fp = V[[v]][lons[[z]], lats[[z]],,] # cada modelo
       fp_sp = apply(fp, c(3,4), mean, na.rm = T)
       
-      aux.o = array(data = NA, dim = c(dim(xp),6,2))
-      aux.m = array(data = NA, dim = c(dim(fp),6,2))
+      aux.o = array(data = NA, dim = c(dim(xp),5,2))
+      aux.m = array(data = NA, dim = c(dim(fp),5,2))
       
       for(a in 1:29){
         
@@ -283,7 +282,7 @@ for(v in 1:2){
             panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
             panel.border = element_rect(colour = "black", fill = NA, size = 1),
             panel.ontop = F,
-            plot.title = element_text(hjust = 0.5),
+            plot.title = element_text(hjust = 0.5, size = 18),
             legend.position = "right", legend.key.width = unit(1, "cm"), legend.key.height = unit(2, "cm"), legend.text = element_text(size = 15)) 
     
     ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/ACC2/", var[v], ".ACC2_", region[z],".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
