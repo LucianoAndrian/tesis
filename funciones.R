@@ -2039,9 +2039,11 @@ corr = function(mod, obs, lon, lat, cf){
 #### MAPA_TOPO3 ####
 # a ver si me puedo quedar con una sola q sirva para todo...
 mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
-                      , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black", color.vcont = "red", alpha.vsig, sig = F
+                      , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black"
+                      , color.vcont = "red", alpha.vsig, sig = F, v.sig = 1
                       , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, colorbar.pos = "right"
-                      , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F){
+                      , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, 
+                      type.sig = "tile", size.point = 0.3){
   
   library(maps)
   library(ncdf4)
@@ -2086,7 +2088,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     breaks.lat = seq(-90, 90, by = 20); limits.lat = c(min(breaks.lat), max(breaks.lat))
     
     
-  } else if(mapa == "sa") {
+  } else if(mapa == "SA") {
     
     load("topo_sa.RData")
     topo2 = topo_sa
@@ -2121,7 +2123,6 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         xlab(x.label) + ylab(y.label) + 
         theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
         geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.8, na.rm = T) 
-      
       
     } else {
       
@@ -2171,24 +2172,48 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                               guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       }
       
-      
     }
-    
+   
     if(sig == T){
-      
-      data2 = expand.grid(lon = lon, lat = lat)
-      data2[,3] = array(variable.sig[,,i], dim = length(lon)*length(lat)) - resta.vsig
-      colnames(data2)<-c("lon", "lat", "var")
-      
-      g = g +  geom_tile(data = subset(data2, is.na(var)),aes(x = lon, y = lat, fill = is.na(var)), alpha = alpha.vsig, fill = color.vsig, show.legend = F)
+      if( type.sig == "tile"){
+        
+        data2 = expand.grid(lon = lon, lat = lat)
+        data2[,3] = array(variable.sig[,,i], dim = length(lon)*length(lat)) - resta.vsig
+        colnames(data2)<-c("lon", "lat", "var")
+        
+        g = g +  geom_tile(data = subset(data2, is.na(var)),aes(x = lon, y = lat, fill = is.na(var)), alpha = alpha.vsig, fill = color.vsig, show.legend = F)
+        
+        
+      } else if(type.sig == "point2"){
+        
+        data2 = expand.grid(lon = lon, lat = lat)
+        data2[,3] = array(variable.sig[,,i], dim = length(lon)*length(lat)) - resta.vsig
+        colnames(data2)<-c("lon", "lat", "var")
+        
+        g = g + stat_subset(data = data2, aes(x = lon , y = lat, z = var, subset = var <= v.sig), size = size.point, color = color.vsig, alpha = alpha.vsig, geom = "point")
 
+      } else {
+        sig2 = variable.sig # mascara significativa
+        
+        sig2[which((sig2==1))] = 2
+        sig2[which(is.na(sig2))] = 1
+        sig2[which((sig2==2))] = NA
+        sig2=sig2*mask_arr
+        
+        puntos = which(!is.na(sig2[,,i]), arr.ind = T)
+        
+        puntos2 <- data.frame(lon=lon2[puntos[,1]], lat=lat2[puntos[,2]])
+        puntos2[which(puntos2$lon>180),][,1]<-puntos2[which(puntos2$lon>180),][,1]-360 
+        
+        g = g + geom_point(data=puntos2, aes(x = lon + 360, y = lat), col = color.vsig, size = size.point, alpha = alpha.vsig)
+      }
       
-    }
+    } 
     
     
-    if(mapa == "sa"){
+    if(mapa == "SA"){
       
-      g = g + geom_tile(data = topo2, aes(x = lon, y = lat, fill = h ), na.rm = T, alpha = 0.4, color = "black", show.legend = F) 
+      g = g + geom_tile(data = topo2, aes(x = lon, y = lat, fill = h ), na.rm = T, alpha = 1, color = "black", show.legend = F) 
       
     }
     
@@ -2241,6 +2266,8 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       
       ggsave(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
       
+      print(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""))
+      
     } else {
    
          g = g + ggtitle(paste(titulo, nombre.estaciones[i])) +
@@ -2257,7 +2284,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         }
          
          ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
-         
+         print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
     }
     
   }
