@@ -41,26 +41,35 @@ for(i in 1:length(nombres2)){
   
   # imagenes
   # T
-  mapa(lista = v[[1]], titulo = paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("temp_",nombres2[i], sep = ""), escala = c(-5,40 ) 
-       , label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si", niveles = 11
-       , contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), 15, 1500, "/salidas/ensemble/")
+  mapa_topo3(variable = v[[1]], colorbar = "Spectral", revert = T, escala = seq(-5, 40, by = 5)
+             , titulo =  paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "ºC", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/", nombre.fig = paste("temp_",nombres2[i], sep = ""), na.fill = -1000
+             , r = 4, estaciones = T, altura.topo = 1500, resta = 273
+             , lon = lon2, lat = lat2)
+  
   
   # SD - T
-  mapa(lista = v[[2]], titulo = paste(" SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-temp_",nombres2[i], sep = ""), escala = c(0,3) 
-       , label_escala = "°C", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9 
-       , contour = "si", lon2, lat2, seq(0, 3, by = 0.5), seq(0, 3, by = 0.5), 15, 1500, "/salidas/ensemble/")
+  mapa_topo3(variable = v[[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
+             , titulo =  paste("SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "ºC", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/", nombre.fig = paste("SD-temp_",nombres2[i], sep = ""), na.fill = -1000
+             , r = 4, estaciones = T, altura.topo = 1500
+             , lon = lon2, lat = lat2)
   
+
   # PP
   
-  mapa(lista = v[[3]], titulo = paste("Promedio Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("pp_",nombres2[i], sep = ""), escala = c(0, 500) 
-       , label_escala = "mm", resta = 0, brewer = "YlGnBu", revert = "no", niveles = 9
-       , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50), 15, 1500, "/salidas/ensemble/")
-  
+  mapa_topo3(variable = v[[3]], colorbar = "YlGnBu", revert = F, escala = seq(0, 400, by = 50)
+             , titulo =  paste("Promedio Precipitacíón 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "mm", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/", nombre.fig = paste("pp_",nombres2[i], sep = ""), na.fill = -1000
+             , r = 4, estaciones = T, altura.topo = 1500
+             , lon = lon2, lat = lat2)
+
   # SD
-  
-  mapa(lista = v[[4]], titulo = paste("SD Precipitaciòn 1982 - 2010 - ", nombres2[i], sep = ""), nombre_fig = paste("SD-pp_",nombres2[i], sep = ""), escala = c(0, 150) 
-       , label_escala = "mm", resta = 0, brewer = "YlGnBu", revert = "no", niveles = 9
-       , contour = "si", lon2, lat2, seq(0, 150, by = 25), seq(0, 150, by = 25), 15, 1500, "/salidas/ensemble/")
+  mapa_topo3(variable = v[[4]], colorbar = "YlGnBu", revert = F, escala = seq(0, 100, by = 10)
+             , titulo =  paste("SD Precipitacióm 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "mm", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/", nombre.fig = paste("SD-pp_",nombres2[i], sep = ""), na.fill = -1000
+             , r = 4, estaciones = T, altura.topo = 1500
+             , lon = lon2, lat = lat2)
  
 }
 
@@ -97,24 +106,36 @@ sig_pp = test_cos(ss_pp, ensemble_total = "si", nomodel_selec = "no", no_model =
 #source("mapa_sig.R")
 for(i in 6:9){  
   
-  mapa_sig(lista = ss_temp[[i]]*mask_arr, lista2 = sig_temp[[i-5]], titulo = paste("T - Fraccion de TSS representada por SS", letras[i-5] , by = "")  , nombre_fig = paste("temp_ss", letras[i-5], sep = ""), escala = c(0,1) 
-       ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
+  mapa_topo3(variable = ss_temp[[i]]*mask_arr, variable.sig = sig_temp[[i-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
+             , titulo =  paste("T - Fraccion de TSS representada por SS", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/", nombre.fig = paste("temp_ss", letras[i-5], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , lon = lon2, lat = lat2, type.sig = "point")
   
-
-  mapa_sig(lista = ss_pp[[i]]*mask_arr, lista2 = sig_pp[[i-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[i-5] , by = "")  , nombre_fig = paste("pp_ss", letras[i-5], sep = ""), escala = c(0,1) 
-       ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 1, by = 0.1), seq(0, 1, by = 0.2), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
+  
+  mapa_topo3(variable = ss_pp[[i]]*mask_arr, variable.sig = sig_pp[[i-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
+             , titulo =  paste("PP - Fraccion de TSS representada por SS", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/", nombre.fig = paste("pp_ss", letras[i-5], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , lon = lon2, lat = lat2, type.sig = "point")
   
 }
 
 
 # ssg como otra escala # 0--> 0.2 de a 0.04
 
-mapa_sig(lista = ss_temp[[8]]*mask_arr, lista2 = sig_temp[[8-5]], titulo = paste("T - Fraccion de TSS representada por SS", letras[8-5] , by = "")  , nombre_fig = paste("esc_temp_ss", letras[8-5], sep = ""), escala = c(0,0.1) 
-         ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 0.1, by = 0.01), seq(0, 0.16, by = 0.01), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
+mapa_topo3(variable = ss_temp[[8]]*mask_arr, variable.sig = sig_temp[[8-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 0.1, by = 0.01)
+           , titulo = paste("T - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , salida = "/salidas/ensemble/anova/", nombre.fig = paste("esc_temp_ss", letras[8-5], sep = ""), na.fill = -1000
+           , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.8
+           , lon = lon2, lat = lat2, type.sig = "point")
 
-mapa_sig(lista = ss_pp[[8]]*mask_arr, lista2 = sig_pp[[8-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5] , by = "")  , nombre_fig = paste("esc_pp_ss", letras[8-5], sep = ""), escala = c(0,0.1) 
-     ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", lon2, lat2, seq(0, 0.1, by = 0.01), seq(0, 0.2, by = 0.01), 0.7, 15, 1500, "/salidas/ensemble/anova/")
 
+mapa_topo3(variable = ss_pp[[8]]*mask_arr, variable.sig = sig_pp[[8-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.1, by = 0.01)
+           , titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , salida = "/salidas/ensemble/anova/", nombre.fig = paste("esc_pp_ss", letras[8-5], sep = ""), na.fill = -1000
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , lon = lon2, lat = lat2, type.sig = "point")
 
 ##-------------------------------------------------------------------------PREDICTIBILIDAD----------------------------------------------------------------##
 
@@ -126,19 +147,20 @@ mapa_sig(lista = ss_pp[[8]]*mask_arr, lista2 = sig_pp[[8-5]], titulo = paste("PP
 
 pp = pp_test(ss_temp, ss_pp)
 
+mapa_topo3(variable = pp[[1]]*mask_arr, variable.sig = pp[[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
+           , titulo =  paste("Predictibilidad - T",  by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , salida = "/salidas/ensemble/anova/", nombre.fig = "pred_temp", na.fill = -1000
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , lon = lon2, lat = lat2, type.sig = "point")
 
-mapa_sig(lista = pp[[1]]*mask_arr, lista2 = pp[[2]], titulo = paste("Predictibilidad - T",  by = "")  , nombre_fig = paste("pred_temp"), escala = c(0, 1) 
-         ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9, contour = "si", lon2, lat2
-         , seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
-
-
-mapa_sig(lista = pp[[3]]*mask_arr, lista2 = pp[[4]], titulo = paste("Predictibilidad - PP",  by = "")  , nombre_fig = paste("pred_pp_01"), escala = c(0, 1) 
-         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", lon2, lat2
-         , seq(0, 1, by = 0.1), seq(0, 1, by = 0.1), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
 
 #precip con otra escala, 0 --> 0.4
 
-mapa_sig(lista = pp[[3]]*mask_arr, lista2 = pp[[4]], titulo = paste("Predictibilidad - PP",  by = "")  , nombre_fig = paste("pred_pp"), escala = c(0,0.4) 
-         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 9, contour = "si", lon2, lat2
-         , seq(0, 0.4, by = 0.1), seq(0, 0.5, by = 0.1), 0.7, topo2 = topo, 1500, "/salidas/ensemble/anova/")
+
+mapa_topo3(variable = pp[[3]]*mask_arr, variable.sig = pp[[4]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.4, by = 0.05)
+           , titulo =  paste("Predictibilidad - PP",  by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , salida = "/salidas/ensemble/anova/", nombre.fig = "pred_pp", na.fill = -1000
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , lon = lon2, lat = lat2, type.sig = "point")
+
 
