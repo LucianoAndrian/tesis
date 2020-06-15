@@ -46,14 +46,19 @@ for(m in 1:8){
   
   for(i in 6:9){  
     
-    mapa_sig(lista = ss_T[[m]][[i]]*mask_arr, lista2 = sig_temp[[m]][[i-5]], titulo = paste("T - SS", letras[i-5], " sin ", nombres2[m] , by = "")  , nombre_fig = paste("temp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-             ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5
-             , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.1), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
+
     
+    mapa_topo3(variable = ss_T[[m]][[i]]*mask_arr, variable.sig = sig_temp[[m]][[i-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
+               , titulo =  paste("T - Fraccion de TSS representada por SS", letras[i-5], " sin ", nombres2[m] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+               , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("temp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), na.fill = -1000
+               , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+               , lon = lon2, lat = lat2, type.sig = "point")
     
-    mapa_sig(lista = ss_PP[[m]][[i]]*mask_arr, lista2 = sig_pp[[m]][[i-5]], titulo = paste("PP - SS", letras[i-5], " sin ", nombres2[m]  , by = "")  , nombre_fig = paste("pp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-             ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5
-             , contour = "si", lon2, lat2, seq(0, 1, by = 0.2),  seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
+    mapa_topo3(variable = ss_PP[[m]][[i]]*mask_arr, variable.sig = sig_pp[[m]][[i-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
+               , titulo =  paste("PP - Fraccion de TSS representada por SS", letras[i-5], " sin ", nombres2[m]  , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+               , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("pp_ss", letras[i-5], "_no_", nombres2[m], sep = ""), na.fill = -1000
+               , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+               , lon = lon2, lat = lat2, type.sig = "point")
     
   }
 }
@@ -62,12 +67,19 @@ for(m in 1:8){
 
 for(m in 1:8){
 
-  mapa_sig(lista = ss_T[[m]][[8]]*mask_arr, lista2 = sig_temp[[m]][[8-5]], titulo = paste("T - SS", letras[8-5], " sin ", nombres2[m], by = "")  , nombre_fig = paste("esc_temp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), escala = c(0,0.2) 
-         ,label_escala = "", resta = 0, brewer = "OrRd", revert = "no", niveles = 5, contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7,  15, 1500, "/salidas/ensemble/anova/sin_mod/")
-
-  mapa_sig(lista = ss_PP[[m]][[8]]*mask_arr, lista2 = sig_pp[[m]][[8-5]], titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5],  "_no_", nombres2[m], by = "")  , nombre_fig = paste("esc_pp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), escala = c(0,0.2) 
-         ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 5
-         , contour = "si", lon2, lat2, seq(0, 0.2, by = 0.04), seq(0, 0.2, by = 0.02), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
+  mapa_topo3(variable = ss_T[[m]][[8]]*mask_arr, variable.sig = sig_temp[[m]][[8-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 0.1, by = 0.01)
+             , titulo = paste("T - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("esc_temp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.8
+             , lon = lon2, lat = lat2, type.sig = "point")
+  
+  
+  
+  mapa_topo3(variable = ss_PP[[m]][[8]]*mask_arr, variable.sig = sig_pp[[m]][[8-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.1, by = 0.01)
+             , titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("esc_pp_ss", letras[8-5], "_no_", nombres2[m], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , lon = lon2, lat = lat2, type.sig = "point")
 
 }
 
@@ -76,14 +88,20 @@ pp=pp_test(ss_T,ss_PP)
 
 for(m in 1:8){
   
-  mapa_sig(lista = pp[[m]][[1]]*mask_arr, lista2 = pp[[m]][[2]], titulo = paste("Predictibilidad - T", " sin ", nombres2[m], by = "")  , nombre_fig = paste("pred_temp", "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-           ,label_escala = "", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 6
-           , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
+  
+  mapa_topo3(variable = pp[[m]][[1]]*mask_arr, variable.sig = pp[[m]][[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
+             , titulo =  paste("Predictibilidad - T", " sin ", nombres2[m], by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("pred_temp", "_no_", nombres2[m], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , lon = lon2, lat = lat2, type.sig = "point")
   
   
-  mapa_sig(lista = pp[[m]][[3]]*mask_arr, lista2 = pp[[m]][[4]], titulo = paste("Predictibilidad - PP", " sin ", nombres2[m], by = "")  , nombre_fig = paste("pred_pp", "_no_", nombres2[m], sep = ""), escala = c(0,1) 
-           ,label_escala = "", resta = 0, brewer = "PuBuGn", revert = "no", niveles = 6
-           , contour = "si", lon2, lat2, seq(0, 1, by = 0.2), seq(0, 1, by = 0.2), 0.7, 15, 1500, "/salidas/ensemble/anova/sin_mod/")
+  mapa_topo3(variable = pp[[m]][[3]]*mask_arr, variable.sig = pp[[m]][[4]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.4, by = 0.05)
+             , titulo =  paste("Predictibilidad - PP", " sin ", nombres2[m], by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , salida = "/salidas/ensemble/anova/sin_mod/", nombre.fig = paste("pred_pp", "_no_", nombres2[m], sep = ""), na.fill = -1000
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , lon = lon2, lat = lat2, type.sig = "point")
+  
   
   
 }
