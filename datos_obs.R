@@ -47,9 +47,9 @@ for( i in 1:4){
 #estaciones_prom_t[which(estaciones_prom_t>310)] = NA
 #estaciones_prom_t[which(estaciones_prom_t<265)] = NA
 
-mapa(lista = estaciones_prom_t, titulo = "Temperatura - CPC ", nombre_fig = "temp_cpc", escala = c(-5,40 ) 
-     , label_escala = "°C", resta = 273.15, brewer = "Spectral", revert = "si"
-     , niveles = 11, contour = "si", lon2, lat2, seq(-5, 40, by = 5), seq(-5, 40, by = 5), 15, 1500,  "/salidas/observado/")
+mapa_topo3(variable = estaciones_prom_t, lon = lon2, lat = lat2, resta = 273, colorbar = "Spectral", niveles = 11
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
+           , escala = seq(-5, 35, by = 5), revert = T, titulo = "Temperatura - CPC", nombre.fig = "temp_cpc", salida = "/salidas/observado/") 
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
@@ -63,12 +63,9 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_t, titulo = "SD - TEMP - CPC", nombre_fig = "sd_TEMP_cpc", escala = c(0,2)
-     , label_escala = "ºC", resta = 0, brewer = "YlOrRd", revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 2, by = 0.2), seq(0, 2, by = 0.1), 15, altura = 1500, "/salidas/observado/")
-
-
-
+mapa_topo3(variable = standar_d_t, lon = lon2, lat = lat2, colorbar = "YlOrRd", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
+           , escala = seq(0, 1.5, by = 0.15), revert = F, titulo = "SD Temperatura - CPC", nombre.fig = "sd_TEMP_cpc", salida = "/salidas/observado/") 
 ### PP ###
 
 #prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
@@ -107,12 +104,9 @@ for( i in 1:4){
 }
 
 
-
-mapa(lista = estaciones_prom_pp, titulo = "PP - CPC", nombre_fig = "pp-CPC", escala = c(0,500)
-     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
-
-
+mapa_topo3(variable = estaciones_prom_pp, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 400, by = 50), revert = F, titulo = "Precipitación - CPC", nombre.fig = "pp-CPC", salida = "/salidas/observado/") 
 
 ## sd
 standar_d_pp = array(NA, dim = c(length(lon2), length(lat2), 4))
@@ -121,13 +115,9 @@ for( i in 1:4 ){
 }
 
 
-satandar_d_pp = standar_d_pp[which(standar_d_pp>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
-
-mapa(lista = standar_d_pp, titulo = "sd - PP - CPC", nombre_fig = "sd_PP_CPC", escala = c(0,160)
-     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10), 15, altura = 1500, "/salidas/observado/")
-
-
+mapa_topo3(variable = standar_d_pp, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 100, by = 10), revert = F, titulo = "SD Precipitación - CPC", nombre.fig = "sd_PP_CPC", salida = "/salidas/observado/") 
 
 
 # pp2
@@ -136,7 +126,6 @@ require(fields)
 library(ncdf4)
 
 aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
-#aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
 aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:386]
@@ -182,11 +171,10 @@ for( i in 1:4){
 }
 
 
-mapa(lista = estaciones_prom_pp2, titulo = "PP - GPCC", nombre_fig = "pp_gpcc", escala = c(0,500) 
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
 
-
+mapa_topo3(variable = estaciones_prom_pp2, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 400, by = 50), revert = F, titulo = "Precipitación - GPCC", nombre.fig = "pp_gpcc", salida = "/salidas/observado/") 
 
 
 ## sd
@@ -195,22 +183,16 @@ for( i in 1:4 ){
   standar_d_pp2[,,i] = apply(estaciones_p_a_pp2[,,,i], c(1,2), sd)*mask
 }
 
-
-satandar_d_pp2 = standar_d_pp2[which(standar_d_pp2>=100)]=150   # veeer # contour fill parece que requiere valores mas altos del maximos para completarel contorno
-
-mapa(lista = standar_d_pp2, titulo = "sd - PP - GPCC", nombre_fig = "sd_PP_gpcc", escala = c(0,160)
-     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10),  15, altura = 1500, "/salidas/observado/")
-
-
-
+mapa_topo3(variable = standar_d_pp2, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 100, by = 10), revert = F, titulo = "SD Precipitación - GPCC", nombre.fig = "sd_PP_gpcc", salida = "/salidas/observado/") 
 
 
 # pp3 cmap
 # el nc va desde enero '82 hasta dic 2012
 
 aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
-#aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
+
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
 aux2 = ncvar_get(aux, "precip")[,,27:386]
@@ -225,11 +207,11 @@ for(i in 1:360){
   
   mod = list(x = lon4, y = lat4, z = aux2[,,i])
   
-  grid = list(x=seq(min(lon4), max(lon4), by = 1), y = seq(min(lat4), max(lat2), by = 1))
+  grid = list(x=seq(min(lon4), max(lon4), by = 1), y = seq(min(lat4), max(lat2)+1, by = 1))
   
   pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
   
-  pp3_int[,,i] = pp_aux$z  
+  pp3_int[,,i] = pp_aux$z  # algo esta mal con esta
 }
 
 
@@ -265,11 +247,10 @@ for( i in 1:4){
   estaciones_prom_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), mean)*mask2
 }
 
-
-mapa(lista = estaciones_prom_pp3[2:57, 2:77,], titulo = "PP - CMAP", nombre_fig = "pp_cmap", escala = c(0,500)
-     , label_escala = "mm", resta = 0, brewer = "YlOrRd",revert = "no", niveles = 9
-     , contour = "si", lon2[276:331], lat2[31:106], seq(0, 500, by = 50), seq(0, 500, by = 50),  15, altura = 1500, "/salidas/observado/")
-
+                                                #### +0.5 por la interpolacion
+mapa_topo3(variable = estaciones_prom_pp2, lon = lon2+0.5, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 400, by = 50), revert = F, titulo = "Precipitación - CMAP", nombre.fig = "pp_cmap", salida = "/salidas/observado/") 
 
 
 
@@ -280,10 +261,9 @@ for( i in 1:4 ){
 }
 
 
-mapa(lista = standar_d_pp3[2:57, 2:77,], titulo = "sd - PP - CMAP", nombre_fig = "sd_PP_cmap", escala = c(0,160)
-     , label_escala = "mm", resta = 0, brewer = "PuBuGn",revert = "no", niveles = 9
-     , contour = "si", lon2, lat2, seq(0, 160, by = 20), seq(0, 160, by = 10),  15, altura = 1500, "/salidas/observado/")
-
+mapa_topo3(variable = standar_d_pp2, lon = lon2+0.5, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(0, 100, by = 10), revert = F, titulo = "SD Precipitación - CMAP", nombre.fig = "sd_PP_cmap", salida = "/salidas/observado/") 
 
 
 
@@ -295,17 +275,16 @@ dif_pp1_3 = estaciones_prom_pp -  estaciones_prom_pp3[2:57,2:77,]
                                                        # no era facil debido a la grilla.
 dif_pp2_3 = estaciones_prom_pp2 -  estaciones_prom_pp3[2:57,2:77,]
 
-mapa(lista = dif_pp1_2, titulo = "PP - CPC vs GPCC", nombre_fig = "dif_pp_cpc-gpcc", escala = c(-100, 100),
-     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
+mapa_topo3(variable = dif_pp1_2, lon = pp_aux$x[2:57], lat = pp_aux$y[2:77], resta = 0, colorbar = "BrBG", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(-50, 50, by = 10), revert = F, titulo = "PP - CPC vs GPCC", nombre.fig = "dif_pp_cpc-gpcc", salida = "/salidas/observado/") 
 
+mapa_topo3(variable = dif_pp1_3, lon = pp_aux$x[2:57], lat = pp_aux$y[2:77], resta = 0, colorbar = "BrBG", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(-50, 50, by = 10), revert = F, titulo = "PP - CPC vs CMAP", nombre.fig = "dif_pp_cpc-cmap", salida = "/salidas/observado/") 
 
-mapa(lista = dif_pp1_3, titulo = "PP - CPC vs CMAP", nombre_fig = "dif_pp_cpc-cmap", escala = c(-100, 100),
-     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
+mapa_topo3(variable = dif_pp2_3, lon = pp_aux$x[2:57], lat = pp_aux$y[2:77], resta = 0, colorbar = "BrBG", niveles = 9
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
+           , escala = seq(-50, 50, by = 10), revert = F, titulo = "PP - GPCC vs CMAP", nombre.fig = "dif_pp_gpcc-cmap", salida = "/salidas/observado/") 
 
-
-mapa(lista = dif_pp2_3, titulo = "PP - GPCC vs CMAP", nombre_fig = "dif_pp_gpcc-cmap", escala = c(-100, 100),
-     label_escala = "mm", resta = 0, brewer = "BrBG", revert = "no", niveles = 9
-     , contour = "si", pp_aux$x[2:57], pp_aux$y[2:77], seq(-100,100, by = 20),  seq(-100,100, by = 10),  15, altura = 1500, "/salidas/observado/")
 
