@@ -1091,9 +1091,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     t = 29 #anios
     m = 8 #modelos
     
-    alpha_f = qf(0.95,t-1,t*sum(k))
-    beta_f = qf(0.95, m-1, t*sum(k))
-    gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k)) 
+    alpha_f = qf(0.95,t-1,t*(sum(k)-1))
+    beta_f = qf(0.95, m-1, t*(sum(k)-1))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k)-1)) 
     
     sigma_alpha_2 = SS[[1]]/((t-1)) 
     
@@ -1150,9 +1150,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     k[nomodel] = NA
     m = 7 #modelos
     
-    alpha_f = qf(0.95,t-1,t*sum(k, na.rm = T))
-    beta_f = qf(0.95, m-1, t*sum(k, na.rm = T))
-    gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k, na.rm = T)) 
+    alpha_f = qf(0.95,t-1,t*(sum(k, na.rm = T)-1))
+    beta_f = qf(0.95, m-1, t*(sum(k, na.rm = T)-1))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k, na.rm = T)-1))
     
     sigma_alpha_2 = SS[[1]]/((t-1)) 
     
@@ -1204,9 +1204,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       k[nomodel] = NA
       m = 7 #modelos
       
-      alpha_f = qf(0.95,t-1,t*sum(k, na.rm = T))
-      beta_f = qf(0.95, m-1, t*sum(k, na.rm = T))
-      gamma_f = qf(0.95, (m-1)*(t-1), t*sum(k, na.rm = T)) 
+      alpha_f = qf(0.95,t-1,t*(sum(k, na.rm = T)-1))
+      beta_f = qf(0.95, m-1, t*(sum(k, na.rm = T)-1))
+      gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k, na.rm = T)-1))
       
       sigma_alpha_2 = SS[[1]]/((t-1)) 
       
@@ -1477,8 +1477,8 @@ pp_test = function(ss_temp, ss_pp){
     t = 29 #anios
     m = 8 #modelos
     
-    f = qf(0.95, t-1, t*106)
-    pp_f = 1/(1+m*sum(k)*(f-1))
+    f = qf(0.95, t-1, t*105)
+    pp_f = 1/(1+(m*sum(k)/(f-1)))
     
     # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
     
@@ -1530,12 +1530,12 @@ pp_test = function(ss_temp, ss_pp){
       t = 29 #anios
       m = 7 #modelos
       
-      f = qf(0.95, t-1, t*106)
-      pp_f = 1/(1+m*sum(k, na.rm = T)*(f-1))
+      f = qf(0.95, t-1, t*105)
+      pp_f = 1/(1+(m*sum(k, na.rm = T)/(f-1)))
       
       # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
       
-      aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+      aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*sum(k, na.rm = T))/(t-1))
       pp_temp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_temp-1)))
       
       pp_temp_sig = pp_temp
@@ -1551,7 +1551,7 @@ pp_test = function(ss_temp, ss_pp){
       
       #ideam pp
       
-      aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+      aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*sum(k, na.rm = T))/(t-1))
       pp_pp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_pp-1)))
       
       pp_pp_sig = pp_pp
@@ -1585,7 +1585,7 @@ pp_test = function(ss_temp, ss_pp){
         k = k[!is.na(k)] # lenght = 7
         
         f = qf(0.95, t-1, t*sum(k)-1)
-        pp_f = 1/(1+m*sum(k)*(f-1))
+        pp_f = 1/(1+(m*sum(k)/(f-1)))
         
         aux_pp_temp = (ss_temp[[l]][[1]]/ss_temp[[l]][[4]])*((t*sum(k)-1)/(t-1))
         pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))   

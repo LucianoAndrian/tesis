@@ -108,14 +108,14 @@ for(i in 6:9){
   
   mapa_topo3(variable = ss_temp[[i]]*mask_arr, variable.sig = sig_temp[[i-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
              , titulo =  paste("T - Fraccion de TSS representada por SS", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-             , salida = "/salidas/ensemble/anova/", nombre.fig = paste("temp_ss", letras[i-5], sep = ""), na.fill = -1000
+             , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("temp_ss", letras[i-5], sep = ""), na.fill = -1000
              , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2, type.sig = "point")
   
   
   mapa_topo3(variable = ss_pp[[i]]*mask_arr, variable.sig = sig_pp[[i-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
              , titulo =  paste("PP - Fraccion de TSS representada por SS", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-             , salida = "/salidas/ensemble/anova/", nombre.fig = paste("pp_ss", letras[i-5], sep = ""), na.fill = -1000
+             , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("pp_ss", letras[i-5], sep = ""), na.fill = -1000
              , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2, type.sig = "point")
   
@@ -126,14 +126,14 @@ for(i in 6:9){
 
 mapa_topo3(variable = ss_temp[[8]]*mask_arr, variable.sig = sig_temp[[8-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 0.1, by = 0.01)
            , titulo = paste("T - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/ensemble/anova/", nombre.fig = paste("esc_temp_ss", letras[8-5], sep = ""), na.fill = -1000
+           , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("esc_temp_ss", letras[8-5], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.8
            , lon = lon2, lat = lat2, type.sig = "point")
 
 
 mapa_topo3(variable = ss_pp[[8]]*mask_arr, variable.sig = sig_pp[[8-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.1, by = 0.01)
            , titulo = paste("PP - Fraccion de TSS representada por SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/ensemble/anova/", nombre.fig = paste("esc_pp_ss", letras[8-5], sep = ""), na.fill = -1000
+           , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("esc_pp_ss", letras[8-5], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2, type.sig = "point")
 
@@ -149,7 +149,7 @@ pp = pp_test(ss_temp, ss_pp)
 
 mapa_topo3(variable = pp[[1]]*mask_arr, variable.sig = pp[[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo =  paste("Predictibilidad - T",  by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/ensemble/anova/", nombre.fig = "pred_temp", na.fill = -1000
+           , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = "pred_temp", na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2, type.sig = "point")
 
@@ -159,7 +159,7 @@ mapa_topo3(variable = pp[[1]]*mask_arr, variable.sig = pp[[2]], colorbar = "YlOr
 
 mapa_topo3(variable = pp[[3]]*mask_arr, variable.sig = pp[[4]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.4, by = 0.05)
            , titulo =  paste("Predictibilidad - PP",  by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/ensemble/anova/", nombre.fig = "pred_pp", na.fill = -1000
+           , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = "pred_pp", na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2, type.sig = "point")
 
