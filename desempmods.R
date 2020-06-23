@@ -330,7 +330,7 @@ load("topo.RData")
 
 mapa_topo3(variable = t.ACC, colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo = paste("ACC Temp Ensamble y CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/desemp_mods/", nombre.fig = paste("t.ACC_ensamble", sep = ""), na.fill = -1000
+           , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("t.ACC_ensamble", sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC
            , lon = lon2, lat = lat2, type.sig = "point2")
 
@@ -349,7 +349,7 @@ i = 3
 #for(i in 1:3){
 mapa_topo3(variable = pp.ACC[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo = paste("ACC PP MODS y ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/desemp_mods/", nombre.fig = paste("AC_pp_", nombres2[i], sep = ""), na.fill = -1000
+           , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("AC_pp_", nombres2[i], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC[,,,i]*mask_arr
            , lon = lon2, lat = lat2, type.sig = "point2")
 
@@ -615,14 +615,14 @@ g = list()
 for(i in 2:5){
   
   g = ggplot() + theme_minimal()+
-    geom_text(data = t.data[[1]], aes(x = cajas, y = t.data[[1]][,i], label = value), color = "green", size = 4) + 
+    geom_text(data = t.data[[1]], aes(x = cajas, y = t.data[[1]][,i], label = value), color = "green2", size = 4) + 
     geom_point(data = t.data[[2]], aes(x = cajas, y = t.data[[2]][,i]), color = "darkgreen", shape = "*" , size = 11) + 
-    geom_text(data = pp.data[[1]][[1]], aes(x = cajas, y = pp.data[[1]][[1]][,i], label = value), color = "blue", size = 4) + 
-    geom_point(data = pp.data[[1]][[2]], aes(x = cajas , y = pp.data[[1]][[2]][,i]), color = "navyblue", shape = "*" , size = 11) + 
-    geom_text(data = pp.data[[2]][[1]], aes(x = cajas, y = pp.data[[2]][[1]][,i], label = value), color = "purple", size = 4) + 
-    geom_point(data = pp.data[[2]][[2]], aes(x = cajas , y = pp.data[[2]][[2]][,i]), color = "purple4", shape = "*" , size = 11) + 
-    geom_text(data = pp.data[[3]][[1]], aes(x = cajas, y = pp.data[[3]][[1]][,i], label = value), color = "deepskyblue", size = 4) + 
-    geom_point(data = pp.data[[3]][[2]], aes(x = cajas , y = pp.data[[3]][[2]][,i]), color = "deepskyblue4", shape = "*" , size = 11) + 
+    #geom_text(data = pp.data[[1]][[1]], aes(x = cajas, y = pp.data[[1]][[1]][,i], label = value), color = "blue", size = 4) + 
+    #geom_point(data = pp.data[[1]][[2]], aes(x = cajas , y = pp.data[[1]][[2]][,i]), color = "navyblue", shape = "*" , size = 11) + 
+    #geom_text(data = pp.data[[2]][[1]], aes(x = cajas, y = pp.data[[2]][[1]][,i], label = value), color = "purple", size = 4) + 
+    #geom_point(data = pp.data[[2]][[2]], aes(x = cajas , y = pp.data[[2]][[2]][,i]), color = "purple4", shape = "*" , size = 11) + 
+    geom_text(data = pp.data[[3]][[1]], aes(x = cajas, y = pp.data[[3]][[1]][,i], label = value), color = "navyblue", size = 4) + 
+    geom_point(data = pp.data[[3]][[2]], aes(x = cajas , y = pp.data[[3]][[2]][,i]), color = "darkblue", shape = "*" , size = 11) + 
     
     geom_hline(yintercept = rc, color = "grey", size = 1) +
     geom_hline(yintercept = 0, color = "black")+
@@ -671,7 +671,7 @@ pp.bias_mean = apply(pp.bias, c(1,2,3,5), mean, na.rm = T)
 
 mapa_topo3(variable =  t.bias_mean*mask_arr, colorbar = "RdBu", revert = T, escala = seq(-5, 5, by = 1)
            , titulo = paste("Bias T - CPC ", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/desemp_mods/", nombre.fig = paste("bias_t_cpc", sep = ""), na.fill = -1000
+           , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("bias_t_cpc", sep = ""), na.fill = -1000
            , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2)
 
@@ -683,7 +683,7 @@ for(i in 1:3){
   
   mapa_topo3(variable =  pp.bias_mean[,,,i]*mask_arr, colorbar = "BrBG", revert = F, escala = seq(-100, 100, by = 20)
              , titulo = paste("Bias PP - ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-             , salida = "/salidas/desemp_mods/", nombre.fig = paste("pp.bias_",nombres2[i], sep = ""), na.fill = -1000
+             , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("pp.bias_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2)
 }
@@ -723,7 +723,7 @@ pp.mae_mean = apply(pp.mae, c(1,2,3,5), mean, na.rm = T)
 
 mapa_topo3(variable = t.mae_mean*mask_arr, colorbar = "Reds", revert = F, escala = seq(0, 5, by = 1)
            , titulo = paste("MAE T - CPC ", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/desemp_mods/", nombre.fig = paste("t.mae_cpc", sep = ""), na.fill = -1000
+           , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("t.mae_cpc", sep = ""), na.fill = -1000
            , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2)
 
@@ -732,7 +732,7 @@ for(i in 1:3){
   
   mapa_topo3(variable = pp.mae_mean[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 100, by = 20)
              , titulo = paste("MAE PP - ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-             , salida = "/salidas/desemp_mods/", nombre.fig = paste("pp.mae_",nombres2[i], sep = ""), na.fill = -1000
+             , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("pp.mae_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2)
 }
@@ -772,7 +772,7 @@ mapa(lista = t.rmse_mean*mask_arr, titulo = paste("RMSE T - CPC ", sep = ""), no
 
 mapa_topo3(variable = t.rmse_mean*mask_arr, colorbar = "Reds", revert = F, escala = seq(0, 5, by = 1)
            , titulo = paste("RMSE T - CPC ", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-           , salida = "/salidas/desemp_mods/", nombre.fig = paste("t.rmse_cpc", sep = ""), na.fill = -1000
+           , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("t.rmse_cpc", sep = ""), na.fill = -1000
            , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2)
 
@@ -781,7 +781,7 @@ for(i in 1:3){
   
   mapa_topo3(variable = pp.rmse_mean[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 100, by = 20)
              , titulo = paste("RMSE PP - ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-             , salida = "/salidas/desemp_mods/", nombre.fig = paste("pp.rmse_",nombres2[i], sep = ""), na.fill = -1000
+             , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("pp.rmse_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2)
 }
@@ -791,7 +791,7 @@ for(i in 1:3){
 
 
 fig8(v1 = t.ACC, v2 = t.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Temperatura: ACC Observado vs ACC Teorico", color = "firebrick", y.name = "ACC", x.name = "ACC Teorico"
-     , nombre.fig = "t.fig8_accvsteo", salida = "/salidas/desemp_mods/")
+     , nombre.fig = "t.fig8_accvsteo", salida = "/salidas/desemp_mods/desemp1/")
 
 fig8(v1 = pp.ACC[,,,3], v2 = pp.ACC_teo_prom, lon = lon2, lat = lat2, titulo = "Precipitación: ACC Observado vs ACC Teorico", color = "royalblue4", y.name = "ACC", x.name = "ACC Teorico"
-     , nombre.fig = "pp.fig8_accvsteo", salida = "/salidas/desemp_mods/")
+     , nombre.fig = "pp.fig8_accvsteo", salida = "/salidas/desemp_mods/desemp1/")
