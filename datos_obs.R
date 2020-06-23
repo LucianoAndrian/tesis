@@ -49,7 +49,7 @@ for( i in 1:4){
 
 mapa_topo3(variable = estaciones_prom_t, lon = lon2, lat = lat2, resta = 273, colorbar = "Spectral", niveles = 11
            , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
-           , escala = seq(-5, 35, by = 5), revert = T, titulo = "Temperatura - CPC", nombre.fig = "temp_cpc", salida = "/salidas/observado/") 
+           , escala = seq(0, 35, by = 2.5), revert = T, titulo = "Temperatura - CPC", nombre.fig = "temp_cpc", salida = "/salidas/observado/") 
 
 mask = estaciones_prom_t[,,1]  
 mask[which(!is.na(mask))]=1
@@ -65,7 +65,7 @@ for( i in 1:4 ){
 
 mapa_topo3(variable = standar_d_t, lon = lon2, lat = lat2, colorbar = "YlOrRd", niveles = 9
            , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
-           , escala = seq(0, 1.5, by = 0.15), revert = F, titulo = "SD Temperatura - CPC", nombre.fig = "sd_TEMP_cpc", salida = "/salidas/observado/") 
+           , escala = seq(0, 1.5, by = 0.1), revert = F, titulo = "SD Temperatura - CPC", nombre.fig = "sd_TEMP_cpc", salida = "/salidas/observado/") 
 ### PP ###
 
 #prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
@@ -248,9 +248,9 @@ for( i in 1:4){
 }
 
                                                 #### +0.5 por la interpolacion
-mapa_topo3(variable = estaciones_prom_pp2, lon = lon2+0.5, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
+mapa_topo3(variable = estaciones_prom_pp2, lon = lon2+0.5, lat = lat2, resta = 0, colorbar = "YlGnBu", niveles = 9
            , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
-           , escala = seq(0, 400, by = 50), revert = F, titulo = "Precipitación - CMAP", nombre.fig = "pp_cmap", salida = "/salidas/observado/") 
+           , escala = seq(0, 250, by = 25), revert = F, titulo = "Precipitación - CMAP", nombre.fig = "pp_cmap", salida = "/salidas/observado/") 
 
 
 
@@ -263,7 +263,7 @@ for( i in 1:4 ){
 
 mapa_topo3(variable = standar_d_pp2, lon = lon2+0.5, lat = lat2, resta = 0, colorbar = "PuBuGn", niveles = 9
            , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "mm"
-           , escala = seq(0, 100, by = 10), revert = F, titulo = "SD Precipitación - CMAP", nombre.fig = "sd_PP_cmap", salida = "/salidas/observado/") 
+           , escala = seq(0, 50, by = 10), revert = F, titulo = "SD Precipitación - CMAP", nombre.fig = "sd_PP_cmap", salida = "/salidas/observado/") 
 
 
 
