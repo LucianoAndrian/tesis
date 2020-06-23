@@ -10,9 +10,9 @@ letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194")
 
 #"Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " 
 
-ss_T = anova_fun()    # ver funcion. ssgama muy alto.
+ss_T = anova_fun(variable = "temp", ensemble_total = "no")    # ver funcion. ssgama muy alto.
 
-ss_PP = anova_fun()
+ss_PP = anova_fun(variable = "pp", ensemble_total = "no")
 
 
 #como guardar esto? como un Rdata. # parece que anda.
@@ -84,7 +84,7 @@ for(m in 1:8){
 }
 
 
-#pp=pp_test(ss_T,ss_PP)
+pp=pp_test(ss_temp = ss_T, ss_pp = ss_PP, ensemble_total = "no")
 
 for(m in 1:8){
   

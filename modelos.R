@@ -15,7 +15,7 @@ mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
 for(i in 1:4){
   mask_arr[,,i] = mask
 }
-load("topo.RData")
+
 #---------------------------------------------------------------#
 
 nombres = c("COLA-CCSM4", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2")
@@ -78,8 +78,8 @@ for(i in 1:length(nombres2)){
 #source("anova_fun.R")
 
 # Anova y cocientes
-ss_temp = anova_fun()  
-ss_pp = anova_fun()
+ss_temp = anova_fun(variable = "temp", ensemble_total = "si")  
+ss_pp = anova_fun(variable = "pp", ensemble_total = "si")
 
 #SS[[1]] = SSa      SS[[6]] = c_a
 #SS[[2]] = SSb      SS[[7]] = c_b
@@ -145,7 +145,7 @@ mapa_topo3(variable = ss_pp[[8]]*mask_arr, variable.sig = sig_pp[[8-5]], colorba
 #pp[[3]] = pp_pp
 #pp[[4]] = pp_pp_sig
 
-pp = pp_test(ss_temp, ss_pp)
+pp = pp_test(ss_temp = ss_temp, ss_pp = ss_pp, ensemble_total = "si")
 
 mapa_topo3(variable = pp[[1]]*mask_arr, variable.sig = pp[[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo =  paste("Predictibilidad - T",  by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
