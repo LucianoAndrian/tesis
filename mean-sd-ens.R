@@ -1,5 +1,6 @@
 
 rm(list = ls())
+library(ncdf4)
 ruta =  "/home/luciano.andrian/tesis/ncfiles/"
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
@@ -72,8 +73,8 @@ for(v in 1:2){
   aux = v.sd1[,,,v]; aux2 = array(mask,c(dim(mask),4))
   
   mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = color[v], revert = F, escala = escala[[v]]
-             , titulo = paste("Desvio Estandar del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "sa"
-             , width = 20, height = 20, salida =  "/salidas/ensemble/", nombre.fig = paste(nombre.fig[v], ".sd_", sep = ""), na.fill = 0
+             , titulo = paste("Desvio Estandar del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "SA"
+             , width = 20, height = 20, salida =  "/salidas/ensemble/sd_mean/", nombre.fig = paste(nombre.fig[v], ".sd_", sep = ""), na.fill = 0
              , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, r = 4, estaciones = T, altura.topo = 1500)
 
 }
@@ -92,7 +93,7 @@ for(v in 1:2){
   aux = v.sd2[,,,v]; aux2 = array(mask,c(dim(mask),4))
   
   mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = color[v], revert = F, escala = escala[[v]]
-             , titulo = paste("Desvio Estandar 2 del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "sa"
+             , titulo = paste("Desvio Estandar 2 del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "SA"
              , width = 20, height = 20, salida =  "/salidas/ensemble/", nombre.fig = paste(nombre.fig[v], ".sd2_", sep = ""), na.fill = 0
              , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, r = 4, estaciones = T, altura.topo = 1500)
   
@@ -101,7 +102,7 @@ for(v in 1:2){
 
 
 
-# sd2
+
 color = c("Spectral", "YlGnBu")
 escala = list(); escala[[1]] = seq(0, 30, by = 2.5); escala[[2]] = seq(0, 250, by = 25)  
 variable = c("Temperatura", "Precipitación")
@@ -114,7 +115,7 @@ for(v in 1:2){
   aux = v.mean[,,,v]; aux2 = array(mask,c(dim(mask),4))
   
   mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = color[v], revert = revert[v], escala = escala[[v]]
-             , titulo = paste("Media del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "sa"
+             , titulo = paste("Media del Ensamble  - ", variable[v], " ", sep = ""), label.escala = lab.escala[v], x.label = NULL, y.label = NULL, mapa = "SA"
              , width = 20, height = 20, salida =  "/salidas/ensemble/", nombre.fig = paste(nombre.fig[v], ".mean_", sep = ""), na.fill = 0
              , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, r = 4, estaciones = T, altura.topo = 1500, resta = resta[v])
   
