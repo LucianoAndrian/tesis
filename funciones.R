@@ -666,9 +666,9 @@ mean_sd = function(nombre){
 
 #### ANOVA_FUN ####
 # anova, ss y cocientes (no tests)
-anova_fun = function(){
-  variable = as.character(readline("Variable (pp), (temp): "))
-  ensemble_total = readline("Todos los modelos?(si, no): ")
+anova_fun = function(variable, ensemble_total, todos = 1){
+  #variable = as.character(readline("Variable (pp), (temp): "))
+  #ensemble_total = readline("Todos los modelos?(si, no): ")
   
   k = c(10, 10, 12, 12, 4, 28, 10, 20)
   t = 29 #anios
@@ -799,7 +799,7 @@ anova_fun = function(){
     
   } else {
     
-    todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
+    #todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
     if(todos == 1){
       
       mask = as.matrix(read.table("mascara.txt"))
@@ -1459,7 +1459,7 @@ mapa_sig = function(lista,lista2, titulo, nombre_fig, escala, label_escala, rest
 
 
 #### PP_TEST ####
-pp_test = function(ss_temp, ss_pp){
+pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
   
   anios = seq(from = 1982, to = 2010, by = 1)
   
@@ -1470,7 +1470,7 @@ pp_test = function(ss_temp, ss_pp){
   }
   
   
-  ensemble_total = readline("Todos los modelos?(si, no): ")
+  #ensemble_total = readline("Todos los modelos?(si, no): ")
   
   if(ensemble_total == "si"){
     k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
@@ -1520,7 +1520,7 @@ pp_test = function(ss_temp, ss_pp){
     return(pp)
   } else {
     
-    todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
+    #todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
     if(todos == 2){
       
       k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
@@ -1940,8 +1940,8 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
       data_ensamble_pp[,1] = seq(1.22,5.22)
       data_pp[,1] = seq(1.25, 5.25)
     } else {
-      data_ensamble_pp[,1] = seq(1.37, 5.37)
-      data_pp[,1] = seq(1.4, 5.4)
+      data_ensamble_pp[,1] = seq(1.07, 5.07)
+      data_pp[,1] = seq(1.1, 5.1)
     }
     
     data_pp = as.data.frame(data_pp)
@@ -2139,17 +2139,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T))
+                            guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14)))
       } else if(contour.fill == T & revert == F ){
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+                            guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14))) 
       } else if(contour.fill == F & revert == T){
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                  guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+                                  guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14))) 
       } else {
         g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                              guide = guide_colorbar(barwidth = 1, barheight = 20, title.position = "top", title.hjust = 0.5, raster = F, ticks = T)) 
+                              guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14)))
       }
       
       
@@ -2258,10 +2258,12 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = 0, color = "black") 
+              plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
+    
       
       if(colorbar.pos == "bottom"){
         g = g + theme(legend.position = "bottom")
+
       }
       
       ggsave(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
@@ -2277,11 +2279,13 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5)) + geom_hline(yintercept = 0, color = "black") 
-      if(colorbar.pos == "bottom"){
-        g = g + theme(legend.position = "bottom")
-      
-        }
+              plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
+     
+         
+         if(colorbar.pos == "bottom"){
+           g = g + theme(legend.position = "bottom")
+       
+         }
          
          ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
          print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
