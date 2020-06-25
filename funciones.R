@@ -2038,6 +2038,8 @@ corr = function(mod, obs, lon, lat, cf){
 
 #### MAPA_TOPO3 ####
 # a ver si me puedo quedar con una sola q sirva para todo...
+#### MAPA_TOPO3 ####
+# a ver si me puedo quedar con una sola q sirva para todo...
 mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
                       , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black"
                       , color.vcont = "red", alpha.vsig, sig = F, v.sig = 1
@@ -2077,7 +2079,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
     breaks.lon = seq(40, 140, by = 10); limits.lon = c(min(breaks.lon), max(breaks.lon))
     breaks.lat = seq(-10, 55, by = 10); limits.lat = c(min(breaks.lat), max(breaks.lat))
-  
+    
     
     
   } else if(mapa == "mundo"){
@@ -2173,7 +2175,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       }
       
     }
-   
+    
     if(sig == T){
       if( type.sig == "tile"){
         
@@ -2191,15 +2193,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         colnames(data2)<-c("lon", "lat", "var")
         
         g = g + stat_subset(data = data2, aes(x = lon , y = lat, z = var, subset = var <= v.sig), size = size.point, color = color.vsig, alpha = alpha.vsig, geom = "point")
-
+        
       } else {
+        mask = array(as.matrix(read.table("mascara.txt")), dim = c(dim(variable.sig)))                  
+        
         sig2 = variable.sig # mascara significativa
         
         sig2[which((sig2==1))] = 2
         sig2[which(is.na(sig2))] = 1
         sig2[which((sig2==2))] = NA
-        sig2=sig2*mask_arr
         
+        sig2=sig2*mask ### esto no es muy general que digamos...
         puntos = which(!is.na(sig2[,,i]), arr.ind = T)
         
         puntos2 <- data.frame(lon=lon2[puntos[,1]], lat=lat2[puntos[,2]])
@@ -2259,11 +2263,11 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
               plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
-    
+      
       
       if(colorbar.pos == "bottom"){
         g = g + theme(legend.position = "bottom")
-
+        
       }
       
       ggsave(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
@@ -2271,8 +2275,8 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       print(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""))
       
     } else {
-   
-         g = g + ggtitle(paste(titulo, nombre.estaciones[i])) +
+      
+      g = g + ggtitle(paste(titulo, nombre.estaciones[i])) +
         scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
         scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
         theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
@@ -2280,16 +2284,16 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
               plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
-     
-         
-         if(colorbar.pos == "bottom"){
-           g = g + theme(legend.position = "bottom")
-       
-         }
-         
-         ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
-         print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
+      
+      
+      if(colorbar.pos == "bottom"){
+        g = g + theme(legend.position = "bottom")
+        
+      }
+      
+      ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
+      print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
     }
     
   }
-}     
+}
