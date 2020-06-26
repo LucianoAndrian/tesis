@@ -105,8 +105,10 @@ for(i in 1:11){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-               , titulo = paste("Correlación Temperatura en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
-               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("t.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , titulo = paste("Correlación Temperatura en ", region[i], " con SST - ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/"
+               , nombre.fig = paste("t.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
                , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
                , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
     
@@ -133,8 +135,10 @@ for(i in 1:11){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
-               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/"
+               , nombre.fig = paste("pp.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
                , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
                , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
     
@@ -145,8 +149,8 @@ for(i in 1:11){
 
 
 
-
-for(i in 1:11){ # i = 5 LPB, i = 8 NeB2, i = 9 SESA 2, i = 10 SESA
+#### Corr por modelos ####
+for(i in 1:11){ # i = 5 LPB, i = 8 NeB2, i = 9 SESA 2, i = 10 SESA, i = 11 SESA3
   for(m in 1 :8){ #esto va hacer 320 graficos... usar m = 2 para gdfl-cm2p1
     area = w.mask
     area[lons.area[[i]], lats.area[[i]]] = 2
@@ -161,8 +165,10 @@ for(i in 1:11){ # i = 5 LPB, i = 8 NeB2, i = 9 SESA 2, i = 10 SESA
       auxa = array(area, dim = c(dim(area), 1))
       
       mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-                 , titulo = paste("Correlación Precipitación con SST - ", nombres[m], "  ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
-                 , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr_",region.fig[i], nombres[m],"_", estaciones[j], sep = ""), na.fill = 0
+                 , titulo = paste("Correlación Precipitación con SST - ", nombres[m], "  ", estaciones[j], sep = "")
+                 , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+                 , r = 1, width = 30, height = 15, salida =  "/salidas/corr/modelos/"
+                 , nombre.fig = paste("pp.corr_",region.fig[i], nombres[m],"_", estaciones[j], sep = ""), na.fill = 0
                  , sig = T, variable.sig = aux.sig, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
                  , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
      }
@@ -175,8 +181,8 @@ for(i in 1:11){ # i = 5 LPB, i = 8 NeB2, i = 9 SESA 2, i = 10 SESA
 
 
 
-
-# Correlacion datos cmap con sst
+#--- SST con PP CMAP y CPC ---#
+# cmap
 # cambio de periodo para los dos, un año menos.
 
 #### SST ####
@@ -205,7 +211,7 @@ for(i in 1:4){
 }
 
 
-# pp cmap
+#### PP cmap ####
 require(fields)
 aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
 
@@ -213,7 +219,6 @@ lon4 = ncvar_get(aux, "lon")
 lat4 = ncvar_get(aux, "lat")
 aux2 = ncvar_get(aux, "precip")[,,27:363]
 nc_close(aux)
-
 
 
 pp3_int = array(NA, dim = c(58, 78, 336)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
@@ -246,46 +251,11 @@ while(i<=4){
   i = i + 1
 }
 
-pp.obs = estaciones_p_a_pp3
-
-
-for(i in 1:11){
-  area = w.mask
-  area[lons.area[[i]], lats.area[[i]]] = 2
-  
-  aux.prom = apply(pp.obs[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
-  
-  for(j in 1:4){
-    
-    aux.corr = corr(mod = aux.prom[,j], obs = sst.ci[,,,j], lon = 360, lat = 180, cf = 0.95)
-    
-    # prueba mapa_topo3
-    
-    aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
-    aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
-    auxa = array(area, dim = c(dim(area), 1))
-    
-    mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
-               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr.cmap_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
-               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
-               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
-    
-  }
-}
+pp.cmap = estaciones_p_a_pp3
 
 
 
-
-
-
-
-
-
-
-
-# pp cpc
-
+#### PP cpc ####
 aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
@@ -332,16 +302,18 @@ for( i in 1:4){
 }
 
 
+pp.cpc = estaciones_p_a_pp2
 
 
-pp.obs = estaciones_p_a_pp2
+#### Graficos por zonas ###
+# CMAP
 
 
 for(i in 1:11){
   area = w.mask
   area[lons.area[[i]], lats.area[[i]]] = 2
   
-  aux.prom = apply(pp.obs[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
+  aux.prom = apply(pp.cmap[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
   
   for(j in 1:4){
     
@@ -354,15 +326,44 @@ for(i in 1:11){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-               , titulo = paste("Correlación Precipitación en ", region[i], " con SST - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
-               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr.cpc_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , titulo = paste("Correlación Precipitación CMAP en ", region[i], " con SST - ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/obs/"
+               , nombre.fig = paste("pp.corr.cmap_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
                , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
                , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
     
   }
 }
 
-# da casi igual
+
+# CPC
+for(i in 1:11){
+  area = w.mask
+  area[lons.area[[i]], lats.area[[i]]] = 2
+  
+  aux.prom = apply(pp.cpc[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
+  
+  for(j in 1:4){
+    
+    aux.corr = corr(mod = aux.prom[,j], obs = sst.ci[,,,j], lon = 360, lat = 180, cf = 0.95)
+    
+    # prueba mapa_topo3
+    
+    aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+    aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+    auxa = array(area, dim = c(dim(area), 1))
+    
+    mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+               , titulo = paste("Correlación Precipitación CPC  en ", region[i], " con SST - "
+                                , estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/obs/"
+               , nombre.fig = paste("pp.corr.cpc_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T
+               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
+    
+  }
+}
 
 
 
@@ -370,21 +371,19 @@ for(i in 1:11){
 
 
 
-
-
-#
-
-
-# correlacion nino3.4 y pp SA
-# observado. SST vs PP cmap, usando lo de arriba.
-
-
+#---- Correlacion SST N3.4 y PP ----#
+# observado. 
+# SST vs PP cmap (usa la SST de antes lo de arriba.)
+aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+nc_close(aux)
 
 mask2 = as.matrix(read.table("mascara.txt"))
 mask2 = array(mask2, dim = c(56,76,28,4))
 
-pp.obs = pp.obs[2:57,2:77,,]*mask2
-pp.obs = pp.obs*mask2
+pp.cmap = pp.cmap[2:57,2:77,,]*mask2
+pp.cpc = pp.cpc*mask2
 
 lats.n34 = seq(which(lat == -4.5), which(lat == 5.5))
 lons.n34 = seq(which(lon == 190.5), which(lon == 240.5))
@@ -394,17 +393,36 @@ area[lons.n34, lats.n34] = 2
 
 aux.prom = apply(sst.ci[lons.n34, lats.n34,,], c(3,4), mean, na.rm = T)
 
-j = 3
+
 for(j in 1:4){
-  aux.corr = corr(mod = aux.prom[,j], obs = pp.obs[,,,j], lon = 56, lat = 76, cf = 0.95)
+  aux.corr = corr(mod = aux.prom[,j], obs = pp.cmap[,,,j], lon = 56, lat = 76, cf = 0.95)
   
   aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
   aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
   auxa = array(area, dim = c(dim(area), 1))
   
   mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-             , titulo = paste("Correlación Precipitación CMAP con SST Niño3.4 - " , estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
-             , r = 1, width = 20, height = 20, salida =  "/salidas/corr/", nombre.fig = paste("pp.cmap.corr.SA_", estaciones[j], sep = ""), na.fill = -1000
+             , titulo = paste("Correlación Precipitación CMAP con SST Niño3.4 - " , estaciones[j], sep = "")
+             , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+             , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/"
+             , nombre.fig = paste("pp.cmap.corr.SA_", estaciones[j], sep = ""), na.fill = -1000
+             , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.3, altura.topo = 1500, type.sig = "point", size.point = 1)
+  
+}
+
+
+for(j in 1:4){
+  aux.corr = corr(mod = aux.prom[,j], obs = pp.cpc[,,,j], lon = 56, lat = 76, cf = 0.95)
+  
+  aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+  aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+  auxa = array(area, dim = c(dim(area), 1))
+  
+  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+             , titulo = paste("Correlación Precipitación CPC con SST Niño3.4 - " , estaciones[j], sep = "")
+             , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+             , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/"
+             , nombre.fig = paste("pp.cpc.corr.SA_", estaciones[j], sep = ""), na.fill = -1000
              , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.3, altura.topo = 1500, type.sig = "point", size.point = 1)
   
 }
@@ -458,32 +476,47 @@ for(j in 1:4){
     auxa = array(area, dim = c(dim(area), 1))
     
     mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-               , titulo = paste("Correlación Precipitación ensamble con SST Niño3.4 -  ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
-               , r = 1, width = 20, height = 20, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr.ens.SA_",estaciones[j], sep = ""), na.fill = -1000
+               , titulo = paste("Correlación Precipitación ensamble con SST Niño3.4 -  ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+               , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/"
+               , nombre.fig = paste("pp.corr.ens.SA_",estaciones[j], sep = ""), na.fill = -1000
                , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.3, altura.topo = 1500, type.sig = "point", size.point = 1 )
-  }
+}
 
 
 ### contra pp de cada modelo (por ahora con gfdl-cm2p1)
 
-pp = aux3[,,,,2]*mask
 
-for(j in 1:4){
-  
-  aux.corr = corr(mod = aux.prom[,j], obs = pp[,,,j], lon = 56, lat = 76, cf = 0.95)
-  
-  # prueba mapa_topo3
-  
-  aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
-  aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
-  auxa = array(area, dim = c(dim(area), 1))
-  
-  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
-             , titulo = paste("Correlación Precipitación GFDL-CM2p1 con SST Niño3.4 - ", estaciones[j], sep = ""), label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
-             , r = 1, width = 20, height = 20, salida =  "/salidas/corr/", nombre.fig = paste("pp.corr.CM2p1.SA_",estaciones[j], sep = ""), na.fill = -1000
-             , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.3, altura.topo = 1500, type.sig = "point", size.point = 1 )
+area = w.mask
+area[lons.area[[i]], lats.area[[i]]] = 2
+aux.prom = apply(aux3[lons[[i]], lats[[i]],,,m], c(3,4), mean, na.rm = T)
+#### Corr por modelos ####
+
+
+aux.prom = apply(sst.ci[lons.n34, lats.n34,,], c(3,4), mean, na.rm = T)
+
+mask = array(as.matrix(read.table("mascara.txt")), dim = c(dim(aux3)))
+
+pp = aux3*mask
+
+for(m in 1 :8){ #esto va hacer 320 graficos... usar m = 2 para gdfl-cm2p1
+    
+    for(j in 1:4){
+      
+      aux.corr = corr(mod = aux.prom[,j], obs = pp[,,,j,m], lon = 56, lat = 76, cf = 0.95)
+      
+      aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+      aux.sig = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+      auxa = array(area, dim = c(dim(area), 1))
+      
+      mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+                 , titulo = paste("Correlación Niño3.4 con PP - ", nombres[m], "  ", estaciones[j], sep = "")
+                 , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+                 , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", altura.topo = 1500
+                 , nombre.fig = paste("corr.N34_", nombres[m],"_", estaciones[j], sep = ""), na.fill = -1000
+                 , sig = T, variable.sig = aux.sig, color.vsig = "black", alpha.vsig = 0.3
+                 , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red"
+                 , type.sig = "point", size.point = 1)
+  }
 }
-
-
-
 
