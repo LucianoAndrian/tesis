@@ -5,9 +5,9 @@ library(ncdf4)
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
 
-nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2")
+nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
 
-r = c(10, 10, 12, 12, 4, 28, 10, 20)
+r = c(10, 10, 12, 12, 4, 28, 10, 12)
 
 anios = seq(from = 1982, to = 2010, by = 1)
 
@@ -56,9 +56,9 @@ nc_close(ncout) #verificar donde guarda los nc
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
 
-nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2")
+nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
 
-r = c(10, 10, 12, 12, 4, 28, 10, 20)
+r = c(10, 10, 12, 12, 4, 28, 10, 12)
 
 anios = seq(from = 1982, to = 2010, by = 1)
 

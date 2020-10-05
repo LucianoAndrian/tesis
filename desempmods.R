@@ -224,7 +224,7 @@ Op = datos.obs - cv.obs
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
 
-modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2") 
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO") 
 
 # uso misma denominacion que para las obserbaciones.
 # esto es F 
@@ -321,10 +321,10 @@ rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
 #--- Graficos ----#
 source("funciones.R")
 
-topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/15) # mapa topografia
-topo2 = topo #
-topo2[which(topo2$h<1500)]=NA # altura para la cual tapa el grafico
-save(topo, file = "topo.RData")
+#topo = metR::GetTopography(-85 + 359.5, -29 + 359.5, 15.5,  -60.5, resolution = 1/15) # mapa topografia
+#topo2 = topo #
+#topo2[which(topo2$h<1500)]=NA # altura para la cual tapa el grafico
+#save(topo, file = "topo.RData")
 load("topo.RData")
 
 
@@ -630,7 +630,7 @@ for(i in 2:5){
     scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
     #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
     scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB"),breaks = seq(1, 5, by = 1))+
-    xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-CanSIPSv2(8)" )+
+    xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-GEM-NEMO(8)" )+
     theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
           panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
           panel.border = element_rect(colour = "black", fill = NA, size = 1),

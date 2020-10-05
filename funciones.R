@@ -190,9 +190,9 @@ modelos_rx2 = function(nombre, r){
   
   if(r<28){
     
-    ruta = "/datos/osman/nmme/monthly"
+    ruta = "/pikachu/datos/osman/nmme/monthly/hindcast"
     mask=as.matrix(read.table("mascara.txt"))
-    t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre, sep = ""))
+    t = list.files("/pikachu/datos/osman/nmme/monthly/hindcast", pattern = paste("tref_Amon_", nombre, sep = ""))
     
     tref = nc_open(paste(ruta, t[1], sep = "/"))
     temp = ncvar_get(tref, names(tref$var)[1])
@@ -221,7 +221,7 @@ modelos_rx2 = function(nombre, r){
         file_pattern = paste('tref_Amon_',nombre,"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , 
                              as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
         
-        t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+        t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
         
         for(j in 1:length(t)){
           
@@ -272,7 +272,7 @@ modelos_rx2 = function(nombre, r){
         file_pattern = paste('prec_Amon_',nombre,"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , 
                              as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
         
-        t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+        t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
         
         for(j in 1:length(t)){
           
@@ -309,9 +309,9 @@ modelos_rx2 = function(nombre, r){
     nc_close(ncout) #verificar donde guarda los nc
     
   } else {
-    ruta = "/datos/osman/nmme/monthly"
+    ruta = "/pikachu/datos/osman/nmme/monthly/hindcast"
     mask=as.matrix(read.table("mascara.txt"))
-    t = list.files("/datos/osman/nmme/monthly", pattern = paste("tref_Amon_", nombre, sep = ""))
+    t = list.files("/pikachu/datos/osman/nmme/monthly/hindcast", pattern = paste("tref_Amon_", nombre, sep = ""))
     
     tref = nc_open(paste(ruta, t[1], sep = "/"))
     temp = ncvar_get(tref, names(tref$var)[1])
@@ -338,7 +338,7 @@ modelos_rx2 = function(nombre, r){
         file_pattern = paste('tref_Amon_',nombre,"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , 
                              as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
         
-        t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+        t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
         
         for(j in 1:(length(t)-4)){
           
@@ -393,7 +393,7 @@ modelos_rx2 = function(nombre, r){
         file_pattern = paste('prec_Amon_',nombre,"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , 
                              as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
         
-        t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+        t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
         
         for(j in 1:(length(t)-4)){
           
@@ -443,9 +443,9 @@ cm2p1 = function(){
   
   r = 10
   
-  ruta = "/datos/osman/nmme/monthly"
+  ruta = "/pikachu/datos/osman/nmme/monthly/hindcast"
   mask=as.matrix(read.table("mascara.txt"))
-  t = list.files("/datos/osman/nmme/monthly", pattern = "tref_Amon_GFDL-CM2p1")
+  t = list.files("/pikachu/datos/osman/nmme/monthly/hindcast", pattern = "tref_Amon_GFDL-CM2p1")
   
   tref = nc_open(paste(ruta, t[1], sep = "/"))
   temp = ncvar_get(tref, names(tref$var)[1])
@@ -473,7 +473,7 @@ cm2p1 = function(){
       file_pattern = paste('tref_Amon_GFDL-CM2p1',"_",anios[i] , ic_format,"_r*_", as.character(anios[i]),ic_format, '-' , 
                            as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
       
-      t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+      t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
       
       for(j in 1:length(t)){
         
@@ -526,7 +526,7 @@ cm2p1 = function(){
       file_pattern = paste('prec_Amon_GFDL-CM2p1',"_",anios[i] , ic_format, "_r",r_10,"_", as.character(anios[i]),ic_format, '-' , 
                            as.character(anios[i] + 1), ic_format=formatC(final_month, width = 2, format = "d", flag = "0") ,'.nc',sep="")
       
-      t = Sys.glob(paste("/datos/osman/nmme/monthly", file_pattern, sep = "/"))
+      t = Sys.glob(paste("/pikachu/datos/osman/nmme/monthly/hindcast", file_pattern, sep = "/"))
       
       for(j in 1:length(t)){
         
@@ -670,7 +670,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
   #variable = as.character(readline("Variable (pp), (temp): "))
   #ensemble_total = readline("Todos los modelos?(si, no): ")
   
-  k = c(10, 10, 12, 12, 4, 28, 10, 20)
+  k = c(10, 10, 12, 12, 4, 28, 10, 12)
   t = 29 #anios
   lon2 = read.table("lon2.txt")[,1]
   lat2 = read.table("lat2.txt")[,1]
@@ -781,11 +781,11 @@ anova_fun = function(variable, ensemble_total, todos = 1){
     
     #cocientes
     
-    c_b = (SSb - (m-1)/(t*105)*SSe)/TSS   #fraccion de TSS explicada por SSb
+    c_b = (SSb - (m-1)/(t*97)*SSe)/TSS   #fraccion de TSS explicada por SSb
     
-    c_a = (SSa - (t-1)/(t*105)*SSe)/TSS   #fraccion de TSS explicada por SSa 
+    c_a = (SSa - (t-1)/(t*97)*SSe)/TSS   #fraccion de TSS explicada por SSa 
     
-    c_g = (SSg - ((t-1)*(m-1))/(t*105)*SSe)/TSS  #fraccion de TSS explicada por SSg   
+    c_g = (SSg - ((t-1)*(m-1))/(t*97)*SSe)/TSS  #fraccion de TSS explicada por SSg   
     
     c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
     
@@ -834,7 +834,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
         }
         # para lo proximo es necesario un nuevo k, que no tenga la cantidad de miembros que le corresponden al modelo omitido
         
-        k = c(10, 10, 12, 12, 4, 28, 10, 20) # es necesario q se defina para cada j
+        k = c(10, 10, 12, 12, 4, 28, 10, 12) # es necesario q se defina para cada j
         k[f] = NA # eliminando el correspondiente al modelo omitido
         k = k[!is.na(k)] # lenght = 7
         
@@ -935,7 +935,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
     } else {
       
-      f = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+      f = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-GEM-NEMO: " ))
       
       mask = as.matrix(read.table("mascara.txt"))
       
@@ -1087,7 +1087,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     }
     # 
     
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
     t = 29 #anios
     m = 8 #modelos
     
@@ -1137,7 +1137,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     todos = nomodel_selec
     if(todos == "si"){
     
-    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+    nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-GEM-NEMO: " ))
     
     mask = as.matrix(read.table("mascara.txt"))
     mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
@@ -1145,7 +1145,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       mask_arr[,,i] = mask
     }
      
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
     t = 29 #anios
     k[nomodel] = NA
     m = 7 #modelos
@@ -1199,7 +1199,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
         mask_arr[,,i] = mask
       }
       
-      k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+      k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
       t = 29 #anios
       k[nomodel] = NA
       m = 7 #modelos
@@ -1473,16 +1473,16 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
   #ensemble_total = readline("Todos los modelos?(si, no): ")
   
   if(ensemble_total == "si"){
-    k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
+    k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
     t = 29 #anios
     m = 8 #modelos
     
-    f = qf(0.95, t-1, t*105)
+    f = qf(0.95, t-1, t*97)
     pp_f = 1/(1+(m*sum(k)/(f-1)))
     
     # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
     
-    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*105)/(t-1))
+    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*97)/(t-1))
     pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
     
     pp_temp_sig = pp_temp
@@ -1498,7 +1498,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     
     #ideam pp
     
-    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*105)/(t-1))
+    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*97)/(t-1))
     pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
     
     pp_pp_sig = pp_pp
@@ -1523,14 +1523,14 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     #todos = as.numeric(readline("Sacar todos los modelos (1) o elegir uno (2): "))
     if(todos == 2){
       
-      k = c(10, 10, 12, 12, 4, 28, 10, 20) #miembros de cada modelo
-      nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-CanSIPSv2: " ))
+      k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
+      nomodel = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-GEM-NEM: " ))
       
       k[nomodel] = NA
       t = 29 #anios
       m = 7 #modelos
       
-      f = qf(0.95, t-1, t*105)
+      f = qf(0.95, t-1, t*97)
       pp_f = 1/(1+(m*sum(k, na.rm = T)/(f-1)))
       
       # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
@@ -1580,7 +1580,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
       
       for(l in 1:8){
         
-        k = c(10, 10, 12, 12, 4, 28, 10, 20) # es necesario q se defina para cada j
+        k = c(10, 10, 12, 12, 4, 28, 10, 12) # es necesario q se defina para cada j
         k[l] = NA # eliminando el correspondiente al modelo omitido
         k = k[!is.na(k)] # lenght = 7
         
@@ -2262,7 +2262,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
+              plot.title = element_text(hjust = 0.5, size = 20)) + geom_hline(yintercept = 0, color = "black") 
       
       
       if(colorbar.pos == "bottom"){
@@ -2283,7 +2283,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
               panel.border = element_rect(colour = "black", fill = NA, size = 3),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5, size = 18)) + geom_hline(yintercept = 0, color = "black") 
+              plot.title = element_text(hjust = 0.5, size = 20)) + geom_hline(yintercept = 0, color = "black") 
       
       
       if(colorbar.pos == "bottom"){

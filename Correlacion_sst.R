@@ -31,7 +31,7 @@ for(i in 1:4){
 
 ####  Modelos ####
 aux = list()
-nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2") 
+nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO") 
 for(i in 1:8){
   aux[[i]] = mean_sd(nombres[i]) ## para obterner T2 y PP2 de la funcion
 }

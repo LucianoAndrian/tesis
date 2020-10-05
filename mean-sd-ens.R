@@ -7,7 +7,7 @@ lat2 = read.table("lat2.txt")[,1]
 mask=as.matrix(read.table("mascara.txt"))
 anios = seq(from = 1982, to = 2010, by = 1)
 variable = c("temp", "pp")
-modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-CanSIPSv2")
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
 V.mean = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
 V.sd1 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
 
