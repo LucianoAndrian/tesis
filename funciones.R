@@ -2043,9 +2043,10 @@ corr = function(mod, obs, lon, lat, cf){
 mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
                       , colorbar = "Spectral", niveles = 9, revert = F, escala = NULL, resta = 0, resta.vsig = 0, resta.vcont = 0, nivel.vcont = NULL, color.vsig = "black"
                       , color.vcont = "red", alpha.vsig, sig = F, v.sig = 1
-                      , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, colorbar.pos = "right"
-                      , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, 
-                      type.sig = "tile", size.point = 0.3){
+                      , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, color.mapa = "black", colorbar.pos = "right"
+                      , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, estacion = NA, mostrar = F,
+                      type.sig = "tile", size.point = 0.3, letter.size = 20, save = T, cb.v.w = 1.5, cb.v.h = 30, cb.size = 14, lats.size = 14, title.size = 14, margen.zero = F
+                      , cajas = F, nombres.cajas = F){
   
   library(maps)
   library(ncdf4)
@@ -2108,10 +2109,45 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
   }
   
+  
+  # cajas
+  
+  
+  lats = list()
+  lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
+  lats[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
+  lats[[5]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1); lats[[6]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1)
+  
+  lons = list()
+  lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
+  lons[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); lons[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
+  lons[[5]] = seq(which(lon2 == 299), which(lon2 == 311), by = 1); lons[[6]] = seq(which(lon2 == 285), which(lon2 == 298), by = 1)
+  # sesa-n, sesa-s
+  
+  area = array(1, dim = c(56,76))
+  
+  for(i in 1:6){
+    if(i == 1){
+      area[lons[[i]], lats[[i]]] = 2
+    } else if(i<5){
+      area[lons[[i]], lats[[i]]] = 2.01
+    } else if(i==5){
+      area[lons[[i]], lats[[i]]] = 2.02
+    } else if(i == 6)
+      area[lons[[i]], lats[[i]]] = 2.03
+    
+  }
+  
+  
+  
   g = list()
   num = seq(1, r, by = 1)
   
   for(i in 1:r){
+    
+    if(!is.na(estacion)){
+      i = estacion
+    }
     
     data = expand.grid(lon = lon, lat = lat)
     
@@ -2123,15 +2159,15 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       
       g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
         xlab(x.label) + ylab(y.label) + 
-        theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
-        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.8, na.rm = T) 
+        theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey", size = 0.3), panel.grid.minor = element_blank()) +
+        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.5, na.rm = T) 
       
     } else {
       
       g = ggplot() + theme_minimal() +
         xlab(x.label) + ylab(y.label) + 
         theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey"), panel.grid.minor = element_blank()) +
-        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.8, na.rm = T) 
+        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.5, na.rm = T) 
       
     }
     
@@ -2141,17 +2177,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14)))
+                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size)))
       } else if(contour.fill == T & revert == F ){
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14))) 
+                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size))) 
       } else if(contour.fill == F & revert == T){
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                  guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14))) 
+                                  guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size))) 
       } else {
         g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                              guide = guide_colorbar(barwidth = 1.5, barheight = 30, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = 14)))
+                              guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size)))
       }
       
       
@@ -2215,6 +2251,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     } 
     
     
+    
     if(mapa == "SA"){
       
       g = g + geom_tile(data = topo2, aes(x = lon, y = lat, fill = h ), na.rm = T, alpha = 1, color = "black", show.legend = F) 
@@ -2237,12 +2274,21 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
     
     if(fill.mapa == T){
-      g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = "black", color = "black", alpha = 0.3) 
+      g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = "black", color = color.mapa, alpha = 0.3) 
     } else {
       g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = NA, color = "black") 
     }
     
-    
+    if(nombres.cajas){
+      
+      g = g +  geom_text(x = 300, y = -32, label = "S-SESA", aes(angle = 0), size = 5) +
+        geom_text(x = 309, y = -22, label = "N-SESA", aes(angle = 0), size = 5) +
+        geom_text(x = 290, y = -45, label = "Patagonia", aes(angle = 90), size = 5) +
+        geom_text(x = 317, y = -5, label = "NeB", aes(angle = 0), size = 5) +
+        geom_text(x = 305, y = -5, label = "CentroB", aes(angle = 0), size = 5) +
+        geom_text(x = 292, y = -5, label = "OA", aes(angle = 0), size = 5) 
+      
+    }
     
     if(contour == T){
       
@@ -2258,11 +2304,11 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       g = g + ggtitle(titulo) +
         scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
         scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
-        theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
-              axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-              panel.border = element_rect(colour = "black", fill = NA, size = 3),
+        theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
+              axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+              panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5, size = 20)) + geom_hline(yintercept = 0, color = "black") 
+              plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
       
       
       if(colorbar.pos == "bottom"){
@@ -2270,20 +2316,58 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
       }
       
+      if(save){
       ggsave(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
       
       print(paste(ruta, salida, nombre.fig, num[i], ".jpg", sep = ""))
+      }
       
     } else {
       
-      g = g + ggtitle(paste(titulo, nombre.estaciones[i])) +
-        scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
-        scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
-        theme(axis.text.y   = element_text(size = 14), axis.text.x   = element_text(size = 14), axis.title.y  = element_text(size = 14),
-              axis.title.x  = element_text(size = 14), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-              panel.border = element_rect(colour = "black", fill = NA, size = 3),
-              panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5, size = 20)) + geom_hline(yintercept = 0, color = "black") 
+      if(margen.zero){
+        g = g + ggtitle(paste(titulo)) +
+          scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
+          scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
+          theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
+                axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
+                panel.ontop = TRUE,  legend.margin=margin(0,0,0,0),  legend.box.margin=margin(-10,-10,-10,-10),
+                plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+        
+        
+        if(cajas){
+          
+          data2 = expand.grid(lon = lon, lat = lat)
+          data2[,3] = array(area, dim = length(lon)*length(lat)) - resta.vcont
+          colnames(data2)<-c("lon", "lat", "cont")
+          
+          g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = .3, breaks = nivel.vcont)
+          
+        }
+        
+      } else {
+        
+        g = g + ggtitle(paste(titulo)) +
+          scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
+          scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
+          theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
+                axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
+                panel.ontop = TRUE, 
+                plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+        
+        
+        if(cajas){
+          
+          data2 = expand.grid(lon = lon, lat = lat)
+          data2[,3] = array(area, dim = length(lon)*length(lat)) - resta.vcont
+          colnames(data2)<-c("lon", "lat", "cont")
+          
+          g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = .3, breaks = nivel.vcont )
+          
+        }
+        
+      }
       
       
       if(colorbar.pos == "bottom"){
@@ -2291,9 +2375,19 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
       }
       
-      ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
-      print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
+      if(save){
+        ggsave(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""), plot = g, width = width, height = height, units = "cm")
+        print(paste(ruta, salida, nombre.fig, "_", nombre.estaciones[i], ".jpg", sep = ""))
+      }
+
     }
+    
+    if(mostrar){
+      return(g)
+    }
+      if(!is.na(estacion)){
+        break
+      }
     
   }
 }
