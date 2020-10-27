@@ -2046,7 +2046,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                       , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, color.mapa = "black", colorbar.pos = "right"
                       , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, estacion = NA, mostrar = F,
                       type.sig = "tile", size.point = 0.3, letter.size = 20, save = T, cb.v.w = 1.5, cb.v.h = 30, cb.size = 14, lats.size = 14, title.size = 14, margen.zero = F
-                      , cajas = F, nombres.cajas = F){
+                      , cajas = F, nombres.cajas = F, h.just = 0.5){
   
   library(maps)
   library(ncdf4)
@@ -2308,7 +2308,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
               axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
               panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
               panel.ontop = TRUE,
-              plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+              plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
       
       
       if(colorbar.pos == "bottom"){
@@ -2332,7 +2332,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                 axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                 panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
                 panel.ontop = TRUE,  legend.margin=margin(0,0,0,0),  legend.box.margin=margin(-10,-10,-10,-10),
-                plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+                plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
         
         
         if(cajas){
@@ -2354,7 +2354,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                 axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                 panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
                 panel.ontop = TRUE, 
-                plot.title = element_text(hjust = 0.5, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+                plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
         
         
         if(cajas){

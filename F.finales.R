@@ -198,17 +198,26 @@ gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
 lay <- rbind(c(1,1,2,2),c(1,1,2,2),
              c(3,3,4,4),c(3,3,4,4))
 
-p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],
-                  layout_matrix = lay, top = textGrob("EMM", gp=gpar(fontsize=20,font=8))) 
+p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
+                  layout_matrix = lay
+                  , top = textGrob("a)                        EMM Completo                       " # de esta forma tan elegante no afecta los margenes
+                                   , gp=gpar(fontsize=16,font=8))) 
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
-                  layout_matrix = lay, top = textGrob("EMM - sin CFSv2", gp=gpar(fontsize=20,font=8))) 
+                  layout_matrix = lay
+                  , top = textGrob("b)                        EMM sin CFSv2                      "
+                                   , gp=gpar(fontsize=16,font=8))) 
 
 p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
-                  layout_matrix = lay, top = textGrob("EMM - sin CM2p1", gp=gpar(fontsize=20,font=8))) 
+                  layout_matrix = lay
+                  , top = textGrob("c)                        EMM sin CM2p1                      "
+                                   , gp=gpar(fontsize=16,font=8))) 
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
-                  layout_matrix = lay, top = textGrob("EMM - CM4i", gp=gpar(fontsize=20,font=8))) 
+                  layout_matrix = lay
+                  , top = textGrob("d)                        EMM sin CM4i                       "
+                                   , gp=gpar(fontsize=16,font=8))) 
+
 
 
 lay <- rbind(c(1,1,1,1,2,2,2,2,5),c(1,1,1,1,2,2,2,2,5),
@@ -233,6 +242,11 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = l
 
 
 
+
+
+
+
+### MAPA cajas ####
 # MAPA cajas y nombres. VER! que cajas usar sobre brasil.
 load("topo_sa.RData")
 topo2 = topo_sa
