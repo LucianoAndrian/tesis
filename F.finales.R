@@ -13,7 +13,9 @@ for(i in 1:4){
   mask_arr[,,i] = mask
 }
 
+
 letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
+
 #-------------------------------------------------------------------#
 
 g_legend = function(a.gplot){
@@ -37,7 +39,8 @@ sin_m = function(m, season, v){
   
   aux = list()
   aux[[1]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[6]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[6-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  paste("SS", letras[6-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                        , titulo =  "a)              SSα              " #que trucazo
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
                         , salida = "/salidas/ensemble/anova/sin_mod/sin_mod1/", na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
@@ -45,21 +48,24 @@ sin_m = function(m, season, v){
   
   
   aux[[2]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[7]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[7-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  paste("SS", letras[7-5], by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-                        , salida = "/salidas/ensemble/anova/sin_mod/sin_mod1/", na.fill = -1000
+                        , titulo =  "b)              SSβ              "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
                         , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   aux[[4]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[9]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[9-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  paste("SS", letras[9-5], by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
-                        , salida = "/salidas/ensemble/anova/sin_mod/sin_mod1/", na.fill = -1000
+                        , titulo =  "d)              SSε              "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
                         , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   aux[[3]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[8-5]], colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                        , titulo = paste("SS", letras[8-5], by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                        , titulo = "c)              SSƔ              "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F, cb.v.w = 0.7, cb.v.h = 13, cb.size = 7
@@ -119,9 +125,10 @@ for(v in c(1,3)){
       print("ESTA MAAAAL")
       break
     }
-    
+   # "SSα"  "SSβ"   "SSƔ" "SSε"
     signal = mapa_topo3(variable = EMM[[v]][[6]]*mask_arr, variable.sig = EMM[[v.sig]][[6-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  paste("SS", letras[6-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                        , titulo =  "a)              SSα              "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F,  cb.v.w = 1
                         , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
@@ -129,7 +136,8 @@ for(v in c(1,3)){
     
     
     bias = mapa_topo3(variable =  EMM[[v]][[7]]*mask_arr, variable.sig =  EMM[[v.sig]][[7-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                      , titulo =  paste("SS", letras[7-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                      , titulo = "b)              SSβ              "
+                      , label.escala = "", mapa = "SA", width = 20, height = 20
                       , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                       , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
                       ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14, lats.size = 7, letter.size = 12, color.vcont = "black"
@@ -137,7 +145,8 @@ for(v in c(1,3)){
     
     
     noise = mapa_topo3(variable =  EMM[[v]][[9]]*mask_arr, variable.sig =  EMM[[v.sig]][[9-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                       , titulo =  paste("SS", letras[9-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                       , titulo =  "d)              SSε              "
+                       , label.escala = "", mapa = "SA", width = 20, height = 20
                        , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
                        ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14, lats.size = 7, letter.size = 12, color.vcont = "black"
@@ -145,7 +154,8 @@ for(v in c(1,3)){
     
     
     structural = mapa_topo3(variable = EMM[[v]][[8]]*mask_arr, variable.sig =  EMM[[v.sig]][[8-5]], colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                            , titulo = paste("SS", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+                            , titulo = "c)              SSƔ              "
+                            , label.escala = "", mapa = "SA", width = 20, height = 20
                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                             , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
                             , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
@@ -200,22 +210,22 @@ lay <- rbind(c(1,1,2,2),c(1,1,2,2),
 
 p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
                   layout_matrix = lay
-                  , top = textGrob("a)                        EMM Completo                       " # de esta forma tan elegante no afecta los margenes
+                  , top = textGrob("1.                        EMM Completo                       " # de esta forma tan elegante no afecta los margenes
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
-                  , top = textGrob("b)                        EMM sin CFSv2                      "
+                  , top = textGrob("2.                        EMM sin CFSv2                      "
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                   layout_matrix = lay
-                  , top = textGrob("c)                        EMM sin CM2p1                      "
+                  , top = textGrob("3.                        EMM sin CM2p1                      "
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                   layout_matrix = lay
-                  , top = textGrob("d)                        EMM sin CM4i                       "
+                  , top = textGrob("4.                        EMM sin CM4i                       "
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
@@ -306,7 +316,7 @@ g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
   geom_text(x = 309, y = -22, label = "N-SESA", aes(angle = 0), size = 5) +
   geom_text(x = 290, y = -45, label = "Patagonia", aes(angle = 90), size = 5) +
   geom_text(x = 317, y = -5, label = "NeB", aes(angle = 0), size = 5) +
-  geom_text(x = 305, y = -5, label = "CentroB", aes(angle = 0), size = 5) +
+  geom_text(x = 305, y = -5, label = "CA", aes(angle = 0), size = 5) +
   geom_text(x = 292, y = -5, label = "OA", aes(angle = 0), size = 5) +
   stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = "black", size = .3, breaks = c(2,2.01,2.02,2.03)) +
   scale_x_longitude(breaks = breaks.lon, name = NULL, limits = c(270,335))+
