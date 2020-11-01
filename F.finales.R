@@ -41,7 +41,7 @@ sin_m = function(m, season, v){
   aux[[1]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[6]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[6-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
                         , titulo =  "a)              SSα              " #que trucazo
                         , label.escala = "", mapa = "SA", width = 20, height = 20
-                        , salida = "/salidas/ensemble/anova/sin_mod/sin_mod1/", na.fill = -1000
+                        , na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
                         , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
@@ -131,7 +131,7 @@ for(v in c(1,3)){
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F,  cb.v.w = 1
-                        , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
     
@@ -157,8 +157,8 @@ for(v in c(1,3)){
                             , titulo = "c)              SSƔ              "
                             , label.escala = "", mapa = "SA", width = 20, height = 20
                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
-                            , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
-                            , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                            , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F, cb.v.w = 1
+                            , cb.v.h = 32, cb.size = 10, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                             , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
     
     
@@ -175,63 +175,74 @@ for(v in c(1,3)){
     
 
 colorbar1 <- g_legend(signal)
-
+colorbar2 <- g_legend(structural)
 # panel 1 - emm
-gp1 <- signal + theme(legend.position = "none", plot.margin = unit(c(0,.5,.2,1), "lines"))
-gp2 <- bias + theme(legend.position = "none", plot.margin = unit(c(0,1,.2,.5), "lines")) 
-gp3 = structural + theme(legend.position = "right", plot.margin = unit(c(0,.5,1,1), "lines"))
-gp4 = noise + theme(legend.position = "none", plot.margin = unit(c(0,1,1,.5), "lines"))
+gp1 = signal + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp2 = bias + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp3 = structural + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp4 = noise + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
 #panel 2 - no_mod1
-gp5 = no_mod1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.5,.2,1), "lines"))
-gp6 = no_mod1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,1,.2,.5), "lines"))
-gp7 = no_mod1[[3]] + theme(legend.position = "right", plot.margin = unit(c(0,.5,1,1), "lines"))
-gp8 = no_mod1[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,1,1,.5), "lines"))
+gp5 = no_mod1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp6 = no_mod1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp7 = no_mod1[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp8 = no_mod1[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
 #panel 3 - no_mod2
-gp9 = no_mod2[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.5,.2,1), "lines"))
-gp10 = no_mod2[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,1,.2,.5), "lines"))
-gp11 = no_mod2[[3]] + theme(legend.position = "right", plot.margin = unit(c(0,.5,1,1), "lines"))
-gp12 = no_mod2[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,1,1,.5), "lines"))
+gp9 = no_mod2[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp10 = no_mod2[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp11 = no_mod2[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp12 = no_mod2[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
 
 #panel 4 - no_mod3
-gp13 = no_mod3[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.5,.2,1), "lines"))
-gp14 = no_mod3[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,1,.2,.5), "lines"))
-gp15 = no_mod3[[3]] + theme(legend.position = "right", plot.margin = unit(c(0,.5,1,1), "lines"))
-gp16 = no_mod3[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,1,1,.5), "lines"))
+gp13 = no_mod3[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp14 = no_mod3[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp15 = no_mod3[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp16 = no_mod3[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
 
 gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
                     gp11, gp12, gp13, gp14, gp15, gp16), ggplotGrob )
 
-lay <- rbind(c(1,1,2,2),c(1,1,2,2),
-             c(3,3,4,4),c(3,3,4,4))
+lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
 
 p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
                   layout_matrix = lay
-                  , top = textGrob("1.                        EMM Completo                       " # de esta forma tan elegante no afecta los margenes
+                  , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("1.                                                                                                                                                        " 
                                    , gp=gpar(fontsize=16,font=8))) 
+
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
-                  , top = textGrob("2.                        EMM sin CFSv2                      "
+                  , left = textGrob("                          EMM sin CFSv2                      "
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("2.                                                                                                                                                       " 
                                    , gp=gpar(fontsize=16,font=8))) 
+
 
 p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                   layout_matrix = lay
-                  , top = textGrob("3.                        EMM sin CM2p1                      "
+                  , left = textGrob("                          EMM sin CM2p1                      "
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("3.                                                                                                                                                       " 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                   layout_matrix = lay
-                  , top = textGrob("4.                        EMM sin CM4i                       "
+                  ,  left = textGrob("                          EMM sin CM4i                      "
+                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("4.                                                                                                                                                        " 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
 
-lay <- rbind(c(1,1,1,1,2,2,2,2,5),c(1,1,1,1,2,2,2,2,5),
-             c(3,3,3,3,4,4,4,4,5),c(3,3,3,3,4,4,4,4,5))
+lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
+             c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
+             c(3,3,3,3,3,3,3,3,6),c(3,3,3,3,3,3,3,3,6), 
+             c(4,4,4,4,4,4,4,4,6),c(4,4,4,4,4,4,4,4,6))
 
 if(v ==1){
   nombre = "T_"
@@ -242,7 +253,7 @@ if(v ==1){
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, seasons[season], ".anova", ".jpg", sep = "")
 
-ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 35 ,units = "cm")
+ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1, colorbar2) ,width = 30, height = 35 ,units = "cm")
 
   }
 }
@@ -252,7 +263,210 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = l
 
 
 
+# Predictibilidad. 
+# mismos modelos (+ GEM-NEMO en una estacion para T y PP)
+sin_m_pred = function(m, v, pred){
+  #v = 1 o 3
+  #v.sig = 2 o 4 
+  
+  if(v == 1){
+    v.sig = 2
+  } else if(v == 3){
+    v.sig = 4
+  } else {
+    print("ESTA MAAAAL")
+    break
+  }
+  
+  aux = list()
+  aux[[1]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                        , titulo =  "a)                  MAM                  "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , nombre.fig = "pred_temp", na.fill = -1000
+                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 1
+                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
+                        , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+  aux[[2]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                        , titulo =  "b)                  JJA                  "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , nombre.fig = "pred_temp", na.fill = -1000
+                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
+                        , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  aux[[3]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                        , titulo =  "c)                  SON                  "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , nombre.fig = "pred_temp", na.fill = -1000
+                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
+                        , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  aux[[4]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala =escala_pred[[v]]
+                        , titulo =  "d)                  DJF                  "
+                        , label.escala = "", mapa = "SA", width = 20, height = 20
+                        , nombre.fig = "pred_temp", na.fill = -1000
+                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
+                        , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  return(aux)
+}
 
+
+# EMM
+pred = pp_test(ss_temp = ss_temp, ss_pp = ss_pp, ensemble_total = "si")
+
+# EMM sin mod
+pred_wo =pp_test(ss_temp = ss_T, ss_pp = ss_PP, ensemble_total = "no")
+
+escala_pred = list()
+escala_pred[[1]] = seq(0,1, by = .1); escala_pred[[3]] = seq(0, .4, by = .05)
+
+for(v in c(1,3)){
+  if(v == 1){
+    v.sig = 2
+  } else if(v == 3){
+    v.sig = 4
+  } else {
+    print("ESTA MAAAAL")
+    break
+  }
+  
+  
+  MAM = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                   , titulo =  "a)                  MAM                  "
+                   , label.escala = "", mapa = "SA", width = 20, height = 20
+                   , nombre.fig = "pred_temp", na.fill = -1000
+                   , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 1
+                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
+                   , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                   , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+  JJA = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                   , titulo =  "b)                  JJA                  "
+                   , label.escala = "", mapa = "SA", width = 20, height = 20
+                   , nombre.fig = "pred_temp", na.fill = -1000
+                   , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
+                   , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                   , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  SON = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                   , titulo =  "c)                  SON                  "
+                   , label.escala = "", mapa = "SA", width = 20, height = 20
+                   , nombre.fig = "pred_temp", na.fill = -1000
+                   , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
+                   , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                   , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  DJF = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
+                   , titulo =  "d)                  DJF                  "
+                   , label.escala = "", mapa = "SA", width = 20, height = 20
+                   , nombre.fig = "pred_temp", na.fill = -1000
+                   , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
+                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
+                   , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                   , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
+  
+  no_mod1 = sin_m_pred(6, v, pred_wo)
+  
+  no_mod2 = sin_m_pred(2, v, pred_wo)
+  
+  no_mod3 = sin_m_pred(7, v, pred_wo)
+  
+  
+  
+  colorbar1 <- g_legend(MAM)
+  
+  # panel 1 - emm
+  gp1 = MAM + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp2 = JJA + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+  gp3 = SON + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp4 = DJF + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  #panel 2 - no_mod1
+  gp5 = no_mod1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp6 = no_mod1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp7 = no_mod1[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp8 = no_mod1[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  #panel 3 - no_mod2
+  gp9 = no_mod2[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp10 = no_mod2[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp11 = no_mod2[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp12 = no_mod2[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  
+  #panel 4 - no_mod3
+  gp13 = no_mod3[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp14 = no_mod3[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp15 = no_mod3[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp16 = no_mod3[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  
+  gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                      gp11, gp12, gp13, gp14, gp15, gp16), ggplotGrob )
+  
+  lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
+  
+  p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
+                    layout_matrix = lay
+                    , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
+                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("1.                                                                                                                                                        " 
+                               , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
+                    layout_matrix = lay
+                    , left = textGrob("                          EMM sin CFSv2                      "
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("2.                                                                                                                                                       " 
+                                     , gp=gpar(fontsize=16,font=8))) 
+                    
+  
+  p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
+                    layout_matrix = lay
+                    , left = textGrob("                          EMM sin CM2p1                      "
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("3.                                                                                                                                                       " 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
+                    layout_matrix = lay
+                    ,  left = textGrob("                          EMM sin CM4i                      "
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("4.                                                                                                                                                        " 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  
+  lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
+               c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
+               c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5), 
+               c(4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,5))
+  
+  if(v ==1){
+    nombre = "T_"
+  } else {
+    nombre = "PP_"
+  }
+  
+  
+  nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".PRED", ".jpg", sep = "")
+  
+  ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 35 ,units = "cm")
+
+}
 
 
 
