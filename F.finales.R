@@ -3,7 +3,415 @@ source("funciones.R")
 
 library(ggplot2)
 library(gridExtra)
+library(ncdf4)
 
+#---------------------------------------------------------------#
+g_legend = function(a.gplot){
+  tmp = ggplot_gtable(ggplot_build(a.gplot))
+  leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend = tmp$grobs[[leg]]
+  return(legend)}
+#---------------------- MEDIAS Y DESVIOS ----------------------#
+
+# OBSERVADO
+
+# Temp
+ruta = "/pikachu/datos/osman/nmme/monthly"
+
+tref = nc_open(paste(ruta,"tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
+names(tref$var)
+temp = ncvar_get(tref, "tref")
+
+lat = ncvar_get(tref, "Y")
+lon = ncvar_get(tref, "X")
+nc_close(tref)
+temp = temp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:371] 
+
+lon2 = lon[which(lon==275):which(lon==330)]
+lat2 = lat[which(lat==-60):which(lat==15)]
+
+temp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) 
+
+for(j in 1:12){
+  for (i in 0:29){
+    temp_estaciones[,,1+i,j] = temp[ , , j+12*i]
+  }
+}
+
+# Estaciones
+estaciones_p_a_t = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_t[,,,i] = apply(temp_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)
+  i = i + 1
+}
+
+estaciones_prom_t = array(NA, dim = c(length(lon2), length(lat2), 4))
+
+for( i in 1:4){
+  estaciones_prom_t[,,i] = apply(estaciones_p_a_t[,,,i], c(1,2), mean)
+}
+
+
+mapa_topo3(variable = estaciones_prom_t, lon = lon2, lat = lat2, resta = 273, colorbar = "Spectral", niveles = 11
+           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
+           , escala = seq(0, 35, by = 2.5), revert = T, titulo = "Temperatura - CPC", nombre.fig = "temp_cpc", salida = "/salidas/observado/") 
+
+titulos = list()
+titulos[[1]] = "a)              MAM              "
+titulos[[2]] = "b)              JJA              "
+titulos[[3]] = "c)              SON              "
+titulos[[4]] = "d)              DJF              "
+
+T_mean_obs = list()
+for(season in 1:4){
+  
+  T_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_t, colorbar = "Spectral", revert = T, escala = seq(0, 35, by = 2.5)
+                 , titulo =  titulos[[season]], resta = 273, niveles = 11
+                 , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                 , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                 , cajas = T, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                 , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                 , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+}
+
+
+mask = estaciones_prom_t[,,1]  
+mask[which(!is.na(mask))]=1
+
+# sd
+standar_d_t = array(NA, dim = c(length(lon2), length(lat2), 4))
+for( i in 1:4 ){
+  standar_d_t[,,i] = apply(estaciones_p_a_t[,,,i], c(1,2), sd)
+}
+
+
+T_SD_obs = list()
+for(season in 1:4){
+  
+  T_SD_obs[[season]] = mapa_topo3(variable = standar_d_t, colorbar = "YlOrRd", revert = F,escala = seq(0, 1.5, by = 0.1)
+                                    , titulo =  titulos[[season]], niveles = 9
+                                    , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                    , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                    , cajas = T, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                    , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                    , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+}
+
+
+# Precip
+
+aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+aux2 = ncvar_get(aux, "precip")[,,27:386]
+nc_close(aux)
+
+lon4 = lon
+lat4 = lat
+
+pp3_int = array(NA, dim = c(56, 76, 360)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
+
+for(i in 1:360){
+  
+  mod = list(x = lon4, y = lat4, z = aux2[,,i])
+  
+  grid = list(x=seq(min(lon4), max(lon4)-2, by = 1), y = seq(min(lat4), max(lat2)-1, by = 1))
+  
+  pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
+  
+  pp3_int[,,i] = pp_aux$z 
+}
+
+
+pp3_estaciones = array(NA, dim = c(56, 76, 30, 12))
+
+for(j in 1:12){
+  for (i in 0:29){
+    pp3_estaciones[,,1+i,j] = pp3_int[1:56 , 1:76, j+12*i]
+  }
+}
+
+
+estaciones_p_a_pp3 = array(NA, dim = c(56, 76, 30, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_pp3[,,,i] = apply(pp3_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)*30 # esta en mm/day
+  i = i + 1
+}
+
+estaciones_prom_pp3 = array(NA, dim = c(56, 76, 4))
+
+for( i in 1:4){
+  estaciones_prom_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), mean)*mask
+}
+
+
+PP_mean_obs = list()
+for(season in 1:4){
+  
+PP_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
+             , titulo =  titulos[[season]], niveles = 9,escala = seq(0, 400, by = 50)
+             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+             , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+             , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+             , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+             , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+}
+
+
+
+
+## sd
+standar_d_pp3 = array(NA, dim = c(56, 76, 4))
+for( i in 1:4 ){
+  standar_d_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), sd)*mask
+}
+
+
+PP_SD_obs = list()
+for(season in 1:4){
+  
+  PP_SD_obs[[season]] = mapa_topo3(variable = standar_d_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
+                                     , titulo =  titulos[[season]], niveles = 9,escala = seq(0, 70, by = 5)
+                                     , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                     , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                     , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                     , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                     , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+}
+
+
+mean_OBS = list(); mean_OBS[[1]] = T_mean_obs; mean_OBS[[2]] = PP_mean_obs
+SD_OBS = list(); SD_OBS[[1]] = T_SD_obs; SD_OBS[[2]] = PP_SD_obs
+
+## modelos
+
+ruta =  "/home/luciano.andrian/tesis/ncfiles/"
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+mask=as.matrix(read.table("mascara.txt"))
+anios = seq(from = 1982, to = 2010, by = 1)
+variable = c("temp", "pp")
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
+V.mean = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
+V.sd1 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
+
+
+for(v in 1:2){
+  print(v)
+  for(j in 1:8){ 
+    print(paste("inicio j = ", j))
+    
+    nc = nc_open(paste(ruta, modelos[j], "-", variable[v], ".nc",  sep = ""))
+    
+    var = ncvar_get(nc, variable[v])
+    nc_close(nc)
+    
+    V1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    for(i in 1:4){
+      V1[,,i] = apply(var[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+    }
+    
+    V.mean[,,,j,v] = V1
+    
+    # SD1
+    V2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+    for(i in 1:4){
+      V2[,,,i] =  apply(var[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    }
+    
+    
+    sd = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    for(i in 1:4){
+      sd[,,i] = apply(V2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    }
+    
+    V.sd1[,,,j,v] = sd
+    
+    print(paste("fin j = ", j))
+  }
+}
+
+v.mean = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.mean[,,,1] = apply(V.mean[,,,,1], c(1,2,3), mean, na.rm = T)
+v.mean[,,,2] = apply(V.mean[,,,,2], c(1,2,3), mean, na.rm = T)
+
+v.sd1 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.sd1[,,,1] = apply(V.sd1[,,,,1], c(1,2,3), mean, na.rm = T)
+v.sd1[,,,2] = apply(V.sd1[,,,,2], c(1,2,3), mean, na.rm = T)
+
+v.sd2 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.sd2[,,,1] = apply(V.mean[,,,,1], c(1,2,3), sd, na.rm = T)
+v.sd2[,,,2] = apply(V.mean[,,,,2], c(1,2,3), sd, na.rm = T)
+
+source("funciones.R")
+
+
+color = c("YlOrRd", "PuBuGn")
+escala = list(); escala[[1]] = seq(0, 1.5, by = 0.1); escala[[2]] = seq(0, 70, by = 5)  
+variable = c("Temperatura", "Precipitación")
+lab.escala = c("ºC", "mm")
+
+
+
+sd_mod = list()
+mean_mod = list()
+for(v in 1:2){
+  
+  for(season in 1:4){
+    
+    color = c("YlOrRd", "PuBuGn")
+    escala = list(); escala[[1]] = seq(0, 1.5, by = 0.1); escala[[2]] = seq(0, 70, by = 5)  
+    variable = c("Temperatura", "Precipitación")
+    lab.escala = c("ºC", "mm")
+    
+    aux = v.sd1[,,,v]; aux2 = array(mask,c(dim(mask),4))
+
+    sd_mod[[season]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, resta = 0, colorbar = color[v]
+                                  , titulo =  titulos[[season]], niveles = 9, escala = escala[[v]]
+                                  , label.escala = lab.escala[v], mapa = "SA", width = 20, height = 20
+                                  , na.fill = 0, r = 4, estaciones = T, altura.topo = 1500
+                                  , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1 #?¿?¿
+                                  , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                  , cb.v.h = 26, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                  , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+    
+    
+    color = c("Spectral", "PuBuGn")
+    escala = list(); escala[[1]] = seq(0, 35, by = 2.5); escala[[2]] = seq(0, 400, by = 50)  
+    variable = c("Temperatura", "Precipitación")
+    lab.escala = c("ºC", "mm")
+    nombre.fig = c("t", "pp")
+    revert = c(T,F )
+    resta = c(273,0)
+    niveles = c(11,9)
+    
+    aux = v.mean[,,,v]; aux2 = array(mask,c(dim(mask),4))
+  
+    mean_mod[[season]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, resta = resta[v], colorbar = color[v]
+                                    , titulo =  titulos[[season]], niveles = niveles[v], escala = escala[[v]], revert = revert[v]
+                                    , label.escala = lab.escala[v], mapa = "SA", width = 20, height = 20
+                                    , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                    , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1 #?¿?¿
+                                    , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                    , cb.v.h = 26, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                    , nivel.vcont = c(2,2.01, 2.02, 2.03))
+    
+    
+  }
+    # GRID.ARRANGE. incluyendo lo obs
+    
+   
+    colorbar1 <- g_legend(mean_mod[[1]])
+    colorbar2 <- g_legend(sd_mod[[1]])
+    
+    # MEAN
+    # panel 1 - obs
+    gp1 = mean_OBS[[v]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp2 = mean_OBS[[v]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+    gp3 = mean_OBS[[v]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp4 = mean_OBS[[v]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    #panel 2 - emm
+    gp5 = mean_mod[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp6 = mean_mod[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp7 = mean_mod[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp8 = mean_mod[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    # SD
+    gp9 = SD_OBS[[v]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp10 = SD_OBS[[v]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+    gp11 = SD_OBS[[v]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp12 = SD_OBS[[v]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    #panel 2 - emm
+    gp13 = sd_mod[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp14 = sd_mod[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp15 = sd_mod[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp16 = sd_mod[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    
+    gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                        gp11, gp12, gp13, gp14, gp15, gp16), ggplotGrob )
+    
+    lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
+    
+    # de esta forma tan elegante no afecta los margenes  
+    titulo_obs = c("                          CPC                       "
+                   , "                          CMAP                       ") 
+    
+    
+    p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
+                      layout_matrix = lay
+                      , left = textGrob(titulo_obs[v]
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob("1.                                                                                                                                                        " 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    
+    p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
+                      layout_matrix = lay
+                      , left = textGrob("                          EMM                       "
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob("2.                                                                                                                                                       " 
+                                       , gp=gpar(fontsize=16,font=8)))
+    
+    
+    
+    p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
+                      layout_matrix = lay
+                      , left = textGrob(titulo_obs[v]
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob("1.                                                                                                                                                       " 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
+                      layout_matrix = lay
+                      ,  left = textGrob("                          EMM                      "
+                                         ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob("2.                                                                                                                                                        " 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    
+    
+    
+    lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
+                 c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5))
+    if(v ==1){
+      nombre = "T_"
+    } else {
+      nombre = "PP_"
+    }
+    
+    
+    nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".mean", ".jpg", sep = "")
+    
+    ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 17 ,units = "cm")
+    
+    
+    nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".SD", ".jpg", sep = "")
+    
+    ggsave(nombre_fig,plot =grid.arrange(p3, p4, ncol = 2, layout_matrix = lay, colorbar2) ,width = 30, height = 17 ,units = "cm")
+    
+    
+      
+      
+      
+
+}
+
+
+# ANOVA
 #-------------------------------------------------------------------#
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
@@ -17,12 +425,6 @@ for(i in 1:4){
 letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
 
 #-------------------------------------------------------------------#
-
-g_legend = function(a.gplot){
-  tmp = ggplot_gtable(ggplot_build(a.gplot))
-  leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend = tmp$grobs[[leg]]
-  return(legend)}
 
 sin_m = function(m, season, v){
   #v = 1 o 3
@@ -263,7 +665,7 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = l
 
 
 
-# Predictibilidad. 
+#------------------- Predictibilidad --------------------------# 
 # mismos modelos (+ GEM-NEMO en una estacion para T y PP)
 sin_m_pred = function(m, v, pred){
   #v = 1 o 3
