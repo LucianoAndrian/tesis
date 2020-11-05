@@ -11,7 +11,7 @@ g_legend = function(a.gplot){
   leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
   legend = tmp$grobs[[leg]]
   return(legend)}
-#---------------------- MEDIAS Y DESVIOS ----------------------#
+######---------------------- MEDIAS Y DESVIOS ----------------------######
 
 # OBSERVADO
 
@@ -411,7 +411,7 @@ for(v in 1:2){
 }
 
 
-# ANOVA
+###### ------------------------- ANOVA ------------------------######
 #-------------------------------------------------------------------#
 lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
@@ -477,7 +477,6 @@ sin_m = function(m, season, v){
 }
 
 
-#---- ANOVA ----#
 # EMM
 ss_temp = anova_fun(variable = "temp", ensemble_total = "si") 
 sig_temp_emm = test_cos(ss_temp, ensemble_total = "si", nomodel_selec = "no", no_model = "no")
@@ -665,7 +664,7 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = l
 
 
 
-#------------------- Predictibilidad --------------------------# 
+#######------------------- Predictibilidad --------------------------########
 # mismos modelos (+ GEM-NEMO en una estacion para T y PP)
 sin_m_pred = function(m, v, pred){
   #v = 1 o 3
@@ -872,7 +871,7 @@ for(v in c(1,3)){
 
 
 
-### MAPA cajas ####
+##### MAPA cajas #######
 # MAPA cajas y nombres. VER! que cajas usar sobre brasil.
 load("topo_sa.RData")
 topo2 = topo_sa
@@ -944,5 +943,185 @@ g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
         plot.title = element_text(hjust = 0.5, size = 15)) + geom_hline(yintercept = 0, color = "black") 
 
 ggsave(paste("/home/luciano.andrian/tesis/salidas/F.Finales/", "fig", ".jpg", sep = ""), plot = g, width = 20, height = 20, units = "cm")
+##### --------------------------- ACC ----------------------- ######
+load("ACC.RData") # "resutlados"
+resultados[[2]] = resultados[[2]][,,,3]
+resultados[[5]] = resultados[[5]][,,,,3]
+colorbars = list()
+colorbars[[1]] = "YlOrRd"; colorbars[[2]] = "PuBuGn"
 
+colorbars_gamma = list()
+colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 
+seasons = c("MAM", "JJA", "SON", "DJF")
+
+nombres2 = c("CCSM4", "CM2p1", "FLOR-A06", "FLOR-B01", "GEOS5", "CFSv2", "CanCM4i", "GEM-NEMO") 
+ACC_EMM = list(); ACC_wo_mod = list()
+for(i in 1:4){ACC_wo_mod[[i]] = 1} # esto siempre fue necesario??
+
+for(v in 1:2){
+  for(acc in 1:2){
+    for(season in 1:4){
+      
+      if(acc == 1){
+        
+       ACC_EMM[[season]] =  mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr, v.sig = resultados[[3]]
+                                            , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                                            , titulo =  "a)              EMM-C               ", label.escala = "", mapa = "SA", width = 20, height = 20
+                                            , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5
+                                            , r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
+                                            , lon = lon2, lat = lat2, type.sig = "point2", estacion = season
+                                            , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 35, cb.size = 14
+                                            , lats.size = 7, letter.size = 12, cajas = T
+                                            , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+       
+        
+      } else {
+        
+        if(v == 1){
+          v2 = 4
+          
+          if(season == 1){
+            modelos = c(3,4,7,8)
+          } else if(season == 2){
+            modelos = c(1,4,7,8)
+          } else if(season == 3){
+            modelos = c(2,4,7,8)
+          } else if(season == 4){
+            modelos = c(2,3,7,8)
+          }
+          
+        } else if(v == 2){
+          v2 = 5
+          
+          if(season == 1){
+            modelos = c(1,2,3,5)
+          } else if(season == 2){
+            modelos = c(2,5,7,8)
+          } else if(season == 3){
+            modelos = c(2,3,5,8)
+          } else if(season == 4){
+            modelos = c(2,5,7,8)
+          }
+        }
+        aux = list()
+        for(m in modelos){
+          
+          if(m == modelos[1]){ m2 = 1; l = "b)         "
+          } else if(m == modelos[2]){ m2 = 2; l = "c)         "
+          } else if(m == modelos[3]){ m2 = 3; l = "d)         "
+          } else if(m == modelos[4]){ m2 = 4; l = "e)        "
+          } 
+        
+          
+          aux[[m2]] = mapa_topo3(variable = resultados[[v2]][,,,m]*mask_arr, variable.sig = resultados[[v2]][,,,m]*mask_arr, v.sig = resultados[[3]]
+                                 , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                                 , titulo =  paste(l, "EMM sin ", nombres2[m],"         ", sep = ""), label.escala = ""
+                                 , mapa = "SA", width = 20, height = 20, na.fill = -1000
+                                 , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
+                                 , estaciones = T, altura.topo = 1500, size.point = 0.2
+                                 , lon = lon2, lat = lat2, type.sig = "point2",estacion = season
+                                 , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
+                                 , lats.size = 7, letter.size = 12, cajas = T
+                                 , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+        }
+        ACC_wo_mod[[season]] = aux
+      }
+    }
+  }
+  
+  
+  colorbar1 <- g_legend(ACC_EMM[[1]])
+
+  # panel 1 
+  gp1 = ACC_EMM[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp2 = ACC_wo_mod[[1]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp3 = ACC_wo_mod[[1]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp4 = ACC_wo_mod[[1]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp5 = ACC_wo_mod[[1]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+  
+  # panel 2 
+  gp6 = ACC_EMM[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp7 = ACC_wo_mod[[2]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp8 = ACC_wo_mod[[2]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp9 = ACC_wo_mod[[2]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp10 = ACC_wo_mod[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+  
+  # panel 3 
+  gp11 = ACC_EMM[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp12 = ACC_wo_mod[[3]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp13 = ACC_wo_mod[[3]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp14 = ACC_wo_mod[[3]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp15 = ACC_wo_mod[[3]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+  
+  # panel 3 
+  gp16 = ACC_EMM[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp17 = ACC_wo_mod[[4]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp18 = ACC_wo_mod[[4]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp19 = ACC_wo_mod[[4]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp20 = ACC_wo_mod[[4]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+  
+  
+  gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                      gp11, gp12, gp13, gp14, gp15, gp16, gp17, gp18, gp19
+                      , gp20), ggplotGrob )
+  
+  lay <- rbind(c(1,1,2,2,3,3,4,4,5,5),c(1,1,2,2,3,3,4,4,5,5))
+  
+  p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]], gpls[[5]],             
+                    layout_matrix = lay
+                    , left = textGrob("MAM", y = .5 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("1.", x = 0
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  p2 = grid.arrange(gpls[[6]], gpls[[7]], gpls[[8]], gpls[[9]], gpls[[10]],
+                    layout_matrix = lay
+                    , left = textGrob("JJA", y =.5
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("2.", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  
+  p3 = grid.arrange( gpls[[11]], gpls[[12]], gpls[[13]], gpls[[14]], gpls[[15]],
+                    layout_matrix = lay
+                    , left = textGrob("SON", y = 0.5
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("3.", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  p4 = grid.arrange( gpls[[16]], gpls[[17]], gpls[[18]], gpls[[19]], gpls[[20]],
+                    layout_matrix = lay
+                    ,  left = textGrob("DJF", y = 0.5
+                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("4.", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  
+  lay <- rbind(c(1,1,1,1,1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,1,1,1,1,5),
+               c(2,2,2,2,2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,2,2,2,2,5), 
+               c(3,3,3,3,3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,3,3,3,3,5), 
+               c(4,4,4,4,4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,4,4,4,4,5))
+  
+  if(v ==1){
+    nombre = "T_"
+  } else {
+    nombre = "PP_"
+  }
+  
+  
+  nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".ACC", ".jpg", sep = "")
+  
+  ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
+  
+
+  
+  
+}
