@@ -2126,16 +2126,14 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
   
   area = array(1, dim = c(56,76))
   
-  for(i in 1:6){
+  for(i in 1:5){
     if(i == 1){
       area[lons[[i]], lats[[i]]] = 2
     } else if(i<5){
       area[lons[[i]], lats[[i]]] = 2.01
     } else if(i==5){
       area[lons[[i]], lats[[i]]] = 2.02
-    } else if(i == 6)
-      area[lons[[i]], lats[[i]]] = 2.03
-    
+    }
   }
   
   
