@@ -893,12 +893,15 @@ breaks.lat = seq(-60, 20, by = 10); limits.lat = c(min(breaks.lat), max(breaks.l
 lats = list()
 lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
 lats[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
-lats[[5]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1); lats[[6]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1)
+lats[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
+#
 
 lons = list()
 lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
 lons[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); lons[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
-lons[[5]] = seq(which(lon2 == 299), which(lon2 == 311), by = 1); lons[[6]] = seq(which(lon2 == 285), which(lon2 == 298), by = 1)
+lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+
+
 
 area = array(1, dim = c(56,76))
 
@@ -909,10 +912,9 @@ for(i in 1:6){
     area[lons[[i]], lats[[i]]] = 2.01
   } else if(i==5){
     area[lons[[i]], lats[[i]]] = 2.02
-  } else if(i == 6)
-    area[lons[[i]], lats[[i]]] = 2.03
-  
+  }
 }
+
 
 data2 = expand.grid(lon = lon2, lat = lat2)
 data2[,3] = array(area, dim = length(lon2)*length(lat2))
@@ -931,11 +933,10 @@ g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
   geom_text(x = 309, y = -22, label = "N-SESA", aes(angle = 0), size = 5) +
   geom_text(x = 290, y = -45, label = "Patagonia", aes(angle = 90), size = 5) +
   geom_text(x = 317, y = -5, label = "NeB", aes(angle = 0), size = 5) +
-  geom_text(x = 305, y = -5, label = "CA", aes(angle = 0), size = 5) +
-  geom_text(x = 292, y = -5, label = "OA", aes(angle = 0), size = 5) +
-  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = "black", size = .3, breaks = c(2,2.01,2.02,2.03)) +
-  scale_x_longitude(breaks = breaks.lon, name = NULL, limits = c(270,335))+
-  scale_y_latitude(breaks = breaks.lat, name = NULL, limits = c(-60,20))+
+  geom_text(x = 297, y = -5, label = "Am", aes(angle = 0), size = 5) +
+  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = "black", size = .3, breaks = c(2, 2.01, 2.02)) +
+  scale_x_longitude(breaks = breaks.lon, name = NULL, limits = c(270, 335))+
+  scale_y_latitude(breaks = breaks.lat, name = NULL, limits = c(-60, 20))+
   theme(axis.text.y   = element_text(size = 15), axis.text.x   = element_text(size = 15), axis.title.y  = element_text(size = 15),
         axis.title.x  = element_text(size = 15), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
         panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
@@ -944,7 +945,18 @@ g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
 
 ggsave(paste("/home/luciano.andrian/tesis/salidas/F.Finales/", "fig", ".jpg", sep = ""), plot = g, width = 20, height = 20, units = "cm")
 ##### --------------------------- ACC ----------------------- ######
+#save(resultados, file = "ACC.RData")
 load("ACC.RData") # "resutlados"
+
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+mask=as.matrix(read.table("mascara.txt"))
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+
 resultados[[2]] = resultados[[2]][,,,3]
 resultados[[5]] = resultados[[5]][,,,,3]
 colorbars = list()
@@ -955,19 +967,44 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
+
+titulo_acc1_2 = c("a)                        MAM                        ",
+                  "b)                        JJA                        ",
+                  "c)                        SON                        ",
+                  "d)                        DJF                        ")
+l = c("a)               ","b)              ","c)              ","d)             ")
+
 nombres2 = c("CCSM4", "CM2p1", "FLOR-A06", "FLOR-B01", "GEOS5", "CFSv2", "CanCM4i", "GEM-NEMO") 
-ACC_EMM = list(); ACC_wo_mod = list()
-for(i in 1:4){ACC_wo_mod[[i]] = 1} # esto siempre fue necesario??
+ACC_EMM = list(); ACC_wo_mod = list(); ACC_teo = list()
+
 
 for(v in 1:2){
-  for(acc in 1:2){
+  for(acc in 1:3){
     for(season in 1:4){
       
       if(acc == 1){
         
+        if(v == 1){
+          v1 = 6
+        } else if(v == 2){
+          v1 = 7
+        }
+        ### ACC teorico
+        ACC_teo[[season]] =  mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr, v.sig = resultados[[3]]
+                                        , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                                        , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
+                                        , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5
+                                        , r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
+                                        , lon = lon2, lat = lat2, type.sig = "point2", estacion = season
+                                        , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 35, cb.size = 14
+                                        , lats.size = 7, letter.size = 12, cajas = T
+                                        , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+        
+      } else if(acc == 2){
+        
        ACC_EMM[[season]] =  mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr, v.sig = resultados[[3]]
                                             , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                                            , titulo =  "a)              EMM-C               ", label.escala = "", mapa = "SA", width = 20, height = 20
+                                            , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
                                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5
                                             , r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                                             , lon = lon2, lat = lat2, type.sig = "point2", estacion = season
@@ -976,56 +1013,53 @@ for(v in 1:2){
                                             , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
        
         
-      } else {
+      } else if( acc == 3){
         
         if(v == 1){
           v2 = 4
           
           if(season == 1){
-            modelos = c(3,4,7,8)
+            m = 4
           } else if(season == 2){
-            modelos = c(1,4,7,8)
+            m = 8
           } else if(season == 3){
-            modelos = c(2,4,7,8)
+            m = 7
           } else if(season == 4){
-            modelos = c(2,3,7,8)
+            m = 8
           }
           
         } else if(v == 2){
           v2 = 5
           
           if(season == 1){
-            modelos = c(1,2,3,5)
+            m = 3
           } else if(season == 2){
-            modelos = c(2,5,7,8)
+            m = 2
           } else if(season == 3){
-            modelos = c(2,3,5,8)
+            m = 2
           } else if(season == 4){
-            modelos = c(2,5,7,8)
+            m = 5
           }
         }
-        aux = list()
-        for(m in modelos){
-          
-          if(m == modelos[1]){ m2 = 1; l = "b)         "
-          } else if(m == modelos[2]){ m2 = 2; l = "c)         "
-          } else if(m == modelos[3]){ m2 = 3; l = "d)         "
-          } else if(m == modelos[4]){ m2 = 4; l = "e)        "
-          } 
         
+        
+        
+        
+        ACC_wo_mod[[season]] = mapa_topo3(variable = resultados[[v2]][,,,m]*mask_arr, variable.sig = resultados[[v2]][,,,m]*mask_arr, v.sig = resultados[[3]]
+                                   , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                                   , titulo =  paste(l[season], "EMM sin ", nombres2[m],"              ", sep = ""), label.escala = ""
+                                   , mapa = "SA", width = 20, height = 20, na.fill = -1000
+                                   , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
+                                   , estaciones = T, altura.topo = 1500, size.point = 0.2
+                                   , lon = lon2, lat = lat2, type.sig = "point2",estacion = season
+                                   , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
+                                   , lats.size = 7, letter.size = 12, cajas = T
+                                   , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+   
           
-          aux[[m2]] = mapa_topo3(variable = resultados[[v2]][,,,m]*mask_arr, variable.sig = resultados[[v2]][,,,m]*mask_arr, v.sig = resultados[[3]]
-                                 , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                                 , titulo =  paste(l, "EMM sin ", nombres2[m],"         ", sep = ""), label.escala = ""
-                                 , mapa = "SA", width = 20, height = 20, na.fill = -1000
-                                 , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
-                                 , estaciones = T, altura.topo = 1500, size.point = 0.2
-                                 , lon = lon2, lat = lat2, type.sig = "point2",estacion = season
-                                 , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
-                                 , lats.size = 7, letter.size = 12, cajas = T
-                                 , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
-        }
-        ACC_wo_mod[[season]] = aux
+      
+        
+      
       }
     }
   }
@@ -1034,81 +1068,57 @@ for(v in 1:2){
   colorbar1 <- g_legend(ACC_EMM[[1]])
 
   # panel 1 
-  gp1 = ACC_EMM[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp2 = ACC_wo_mod[[1]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp3 = ACC_wo_mod[[1]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp4 = ACC_wo_mod[[1]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp5 = ACC_wo_mod[[1]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-
-  
+  gp1 = ACC_teo[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp2 = ACC_teo[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp3 = ACC_teo[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp4 = ACC_teo[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+ 
   # panel 2 
+  gp5 = ACC_EMM[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
   gp6 = ACC_EMM[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp7 = ACC_wo_mod[[2]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp8 = ACC_wo_mod[[2]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp9 = ACC_wo_mod[[2]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp10 = ACC_wo_mod[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp7 = ACC_EMM[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp8 = ACC_EMM[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  # panel 3
+  gp9 = ACC_wo_mod[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp10 = ACC_wo_mod[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp11 = ACC_wo_mod[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp12 = ACC_wo_mod[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-  
-  # panel 3 
-  gp11 = ACC_EMM[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp12 = ACC_wo_mod[[3]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp13 = ACC_wo_mod[[3]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp14 = ACC_wo_mod[[3]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp15 = ACC_wo_mod[[3]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-  
-  # panel 3 
-  gp16 = ACC_EMM[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp17 = ACC_wo_mod[[4]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp18 = ACC_wo_mod[[4]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp19 = ACC_wo_mod[[4]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-  gp20 = ACC_wo_mod[[4]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-
-  
-  
   gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
-                      gp11, gp12, gp13, gp14, gp15, gp16, gp17, gp18, gp19
-                      , gp20), ggplotGrob )
+                      gp11, gp12), ggplotGrob)
   
-  lay <- rbind(c(1,1,2,2,3,3,4,4,5,5),c(1,1,2,2,3,3,4,4,5,5))
+  lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
   
-  p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]], gpls[[5]],             
+  p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
                     layout_matrix = lay
-                    , left = textGrob("MAM", y = .5 
+                    , left = textGrob("ACC Teorico", y = .5 
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
                     , top = textGrob("1.", x = 0
                                      , gp=gpar(fontsize=16,font=8))) 
   
   
-  p2 = grid.arrange(gpls[[6]], gpls[[7]], gpls[[8]], gpls[[9]], gpls[[10]],
+  p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
-                    , left = textGrob("JJA", y =.5
+                    , left = textGrob("ACC Observado", y =.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
                     , top = textGrob("2.", x = 0 
                                      , gp=gpar(fontsize=16,font=8))) 
   
   
   
-  p3 = grid.arrange( gpls[[11]], gpls[[12]], gpls[[13]], gpls[[14]], gpls[[15]],
+  p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
-                    , left = textGrob("SON", y = 0.5
+                    , left = textGrob("ACC", y = 0.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
                     , top = textGrob("3.", x = 0 
                                      , gp=gpar(fontsize=16,font=8))) 
   
-  p4 = grid.arrange( gpls[[16]], gpls[[17]], gpls[[18]], gpls[[19]], gpls[[20]],
-                    layout_matrix = lay
-                    ,  left = textGrob("DJF", y = 0.5
-                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("4.", x = 0 
-                                     , gp=gpar(fontsize=16,font=8))) 
   
-  
-  
-  lay <- rbind(c(1,1,1,1,1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,1,1,1,1,5),
-               c(2,2,2,2,2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,2,2,2,2,5), 
-               c(3,3,3,3,3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,3,3,3,3,5), 
-               c(4,4,4,4,4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,4,4,4,4,5))
+  lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
+               c(2,2,2,2,2,2,2,2,4),c(2,2,2,2,2,2,2,2,4), 
+               c(3,3,3,3,3,3,3,3,4),c(3,3,3,3,3,3,3,3,4))
   
   if(v ==1){
     nombre = "T_"
@@ -1119,9 +1129,185 @@ for(v in 1:2){
   
   nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".ACC", ".jpg", sep = "")
   
-  ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
-  
+  ggsave(nombre_fig,plot =grid.arrange(p2, p1, p3, ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
 
-  
-  
 }
+
+##### ------------------- ACC obs vs teorico ----------------####
+#
+load("ACC.RData")
+
+
+ruta = getwd()
+
+titulo_acc1_2 = c("a)                            MAM                            ",
+                  "b)                            JJA                            ",
+                  "c)                            SON                            ",
+                  "d)                            DJF                            ")
+
+titulo_acc2 = c("a)                                                              ",
+                 "b)                                                              ",
+                 "c)                                                              ",
+                 "d)                                                              ")
+ 
+
+lats = list()
+lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
+lats[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
+lats[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
+
+lons = list()
+lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
+lons[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); lons[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
+lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+
+figs = list()
+
+for(c in 1:5){
+  
+  figs[[c]] = list()
+  area = array(NA, dim = c(56,76))
+  
+  for(i in 1:4){
+    
+    area[lons[[c]], lats[[c]]] = 1
+    
+    data = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 4)
+    data2 = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 4)
+    
+    data[,1] = array(data = resultados[[1]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data[,2] = array(data = resultados[[6]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data[,3] = 1
+    
+    data2[,1] = array(data = resultados[[2]][,,i,3]*mask*area, dim = length(lon2)*length(lat2))
+    data2[,2] = array(data = resultados[[7]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data2[,3] = 2
+    
+    
+    data3 = as.data.frame(rbind(data, data2))
+    
+    colnames(data3) = c("Y", "X", "var")
+    
+    data3$var = as.factor(data3$var)
+    
+    
+    g  = ggplot(data = data3, mapping = aes(x = X, y = Y)) + theme_minimal() +
+      geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = 1, stroke = 1) +
+      scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.1), name = "ACC Teorico") +
+      scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.1), name = "ACC Observado") +
+      scale_color_manual(values = c("tomato3","steelblue3"), breaks = c(1,2), name = "", labels = c("Temp", "Precip")) +
+      geom_hline(yintercept = 0.31)+
+      scale_shape_discrete(guide = F) +
+      theme(axis.text.y   = element_text(size = 10), axis.text.x   = element_text(size = 10), axis.title.y  = element_text(size = 10),
+            axis.title.x  = element_text(size = 10),
+            panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
+            panel.ontop = F,
+            plot.title = element_text(hjust = 0.5), legend.position = "bottom") 
+    
+    if(c == 1){
+      g = g + ggtitle(titulo_acc1_2[i])
+    } else {
+      g = g + ggtitle(titulo_acc2[i])
+    }
+    
+    figs[[c]][[i]] = g
+    
+  }
+}
+
+
+
+colorbar1 <- g_legend(figs[[1]][[1]])
+
+# panel 1 
+
+
+gp1 = figs[[1]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp2 = figs[[1]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp3 = figs[[1]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp4 = figs[[1]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
+# panel 2 
+gp5 = figs[[2]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp6 = figs[[2]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp7 = figs[[2]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp8 = figs[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
+# panel 3
+gp9 = figs[[3]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp10 = figs[[3]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp11 = figs[[3]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp12 = figs[[3]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
+# panel 3
+gp13 = figs[[4]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp14 = figs[[4]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp15 = figs[[4]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp16 = figs[[4]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
+# panel 3
+gp17 = figs[[5]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp18 = figs[[5]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp19 = figs[[5]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp20 = figs[[5]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
+gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                    gp11, gp12, gp13, gp14, gp15, gp16, gp17,gp18,
+                    gp19, gp20), ggplotGrob)
+
+lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
+
+p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
+                  layout_matrix = lay
+                  , left = textGrob("N-SESA", y = .5 
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("1.", x = 0
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+
+p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
+                  layout_matrix = lay
+                  , left = textGrob("S-SESA", y =.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("2.", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+
+
+p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
+                  layout_matrix = lay
+                  , left = textGrob("NeB", y = 0.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("3.", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
+                  layout_matrix = lay
+                  , left = textGrob("Patagonia", y = 0.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("4.", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+p5 = grid.arrange(gpls[[17]], gpls[[18]], gpls[[19]], gpls[[20]],
+                  layout_matrix = lay
+                  , left = textGrob("Am", y = 0.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob("5.", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+
+
+lay <- rbind(c(1,1,1,1,1,1,1,1),c(1,1,1,1,1,1,1,1),
+             c(2,2,2,2,2,2,2,2),c(2,2,2,2,2,2,2,2), 
+             c(3,3,3,3,3,3,3,3),c(3,3,3,3,3,3,3,3),
+             c(4,4,4,4,4,4,4,4),c(4,4,4,4,4,4,4,4),
+             c(5,5,5,5,5,5,5,5),c(5,5,5,5,5,5,5,5))
+
+
+nombre_fig = paste(getwd(),"/salidas/F.Finales/", "ACC_vs", ".jpg", sep = "")
+
+ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 40, height = 35 ,units = "cm")
+
+
+
+
