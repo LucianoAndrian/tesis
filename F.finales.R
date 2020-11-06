@@ -53,9 +53,6 @@ for( i in 1:4){
 }
 
 
-mapa_topo3(variable = estaciones_prom_t, lon = lon2, lat = lat2, resta = 273, colorbar = "Spectral", niveles = 11
-           , mapa = "SA", na.fill = -10000, r = 4, estaciones = T, altura.topo = 1500, width = 20, height = 20, label.escala = "ºC"
-           , escala = seq(0, 35, by = 2.5), revert = T, titulo = "Temperatura - CPC", nombre.fig = "temp_cpc", salida = "/salidas/observado/") 
 
 titulos = list()
 titulos[[1]] = "a)              MAM              "
