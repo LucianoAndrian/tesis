@@ -2037,7 +2037,6 @@ corr = function(mod, obs, lon, lat, cf){
 }
 
 #### MAPA_TOPO3 ####
-# a ver si me puedo quedar con una sola q sirva para todo...
 #### MAPA_TOPO3 ####
 # a ver si me puedo quedar con una sola q sirva para todo...
 mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = NULL, v = NULL, lon, lat, contour.fill = T, contour = F, viento = F
@@ -2116,13 +2115,14 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
   lats = list()
   lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
   lats[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
-  lats[[5]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1); lats[[6]] =  seq(which(lat2 == -15), which(lat2 == 5), by = 1)
+  lats[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
+  #
   
   lons = list()
   lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
   lons[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); lons[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
-  lons[[5]] = seq(which(lon2 == 299), which(lon2 == 311), by = 1); lons[[6]] = seq(which(lon2 == 285), which(lon2 == 298), by = 1)
-  # sesa-n, sesa-s
+  lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+  
   
   area = array(1, dim = c(56,76))
   
