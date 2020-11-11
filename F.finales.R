@@ -1092,7 +1092,7 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC Teorico", y = .5 
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("1.", x = 0
+                    , top = textGrob("2.", x = 0
                                      , gp=gpar(fontsize=16,font=8))) 
   
   
@@ -1100,7 +1100,7 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC Observado", y =.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("2.", x = 0 
+                    , top = textGrob("1.", x = 0 
                                      , gp=gpar(fontsize=16,font=8))) 
   
   
@@ -1137,15 +1137,15 @@ load("ACC.RData")
 
 ruta = getwd()
 
-titulo_acc1_2 = c("a)                            MAM                            ",
-                  "b)                            JJA                            ",
-                  "c)                            SON                            ",
-                  "d)                            DJF                            ")
+titulo_acc1_2 = c("a)                  MAM                   ",
+                  "b)                  JJA                   ",
+                  "c)                  SON                   ",
+                  "d)                  DJF                   ")
 
-titulo_acc2 = c("a)                                                              ",
-                 "b)                                                              ",
-                 "c)                                                              ",
-                 "d)                                                              ")
+titulo_acc2 = c("a)                                           ",
+                 "b)                                          ",
+                 "c)                                          ",
+                 "d)                                          ")
  
 
 lats = list()
@@ -1190,13 +1190,13 @@ for(c in 1:5){
     
     g  = ggplot(data = data3, mapping = aes(x = X, y = Y)) + theme_minimal() +
       geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = 1, stroke = 1) +
-      scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.1), name = "ACC Teorico") +
-      scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.1), name = "ACC Observado") +
+      scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Teorico") +
+      scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Observado") +
       scale_color_manual(values = c("tomato3","steelblue3"), breaks = c(1,2), name = "", labels = c("Temp", "Precip")) +
       geom_hline(yintercept = 0.31)+
       scale_shape_discrete(guide = F) +
-      theme(axis.text.y   = element_text(size = 10), axis.text.x   = element_text(size = 10), axis.title.y  = element_text(size = 10),
-            axis.title.x  = element_text(size = 10),
+      theme(axis.text.y   = element_text(size = 8), axis.text.x   = element_text(size = 8), axis.title.y  = element_text(size = 8),
+            axis.title.x  = element_text(size = 8),
             panel.border = element_rect(colour = "black", fill = NA, size = 0.8),
             panel.ontop = F,
             plot.title = element_text(hjust = 0.5), legend.position = "bottom") 
@@ -1303,8 +1303,173 @@ lay <- rbind(c(1,1,1,1,1,1,1,1),c(1,1,1,1,1,1,1,1),
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", "ACC_vs", ".jpg", sep = "")
 
-ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 40, height = 35 ,units = "cm")
+ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 25, height = 35 ,units = "cm")
 
+
+
+
+
+## desempeño cont.
+
+source("funciones.R")
+
+library(ggplot2)
+library(gridExtra)
+library(ncdf4)
+
+#---------------------------------------------------------------#
+g_legend = function(a.gplot){
+  tmp = ggplot_gtable(ggplot_build(a.gplot))
+  leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend = tmp$grobs[[leg]]
+  return(legend)}
+#source("aux.desemp2.R")
+#save(resultados, file = "desemp.RData")
+
+load("desemp.RData") # "resutlados"
+
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+mask=as.matrix(read.table("mascara.txt"))
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+resultados[[2]] = resultados[[2]][,,,3]
+resultados[[4]] = resultados[[4]][,,,3]
+resultados[[6]] = resultados[[6]][,,,3]
+
+colorbars = list()
+colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1,"YlOrRd")
+colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "PuBuGn")
+
+escala = list(); escala[[1]] = escala[[2]] = list()
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(0, 5, by = 1)
+
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(0, 100, by = 20)
+
+revert = list()
+revert[[1]] = c(T,1,F,1,F); revert[[2]] = c(1,F,1,F,1, F)
+
+seasons = c("MAM", "JJA", "SON", "DJF")
+
+
+titulo_acc1_2 = c("a)                        MAM                        ",
+                  "b)                        JJA                        ",
+                  "c)                        SON                        ",
+                  "d)                        DJF                        ")
+l = c("a)               ","b)              ","c)              ","d)             ")
+
+
+
+desemp = list()
+desemp[[1]] = desemp[[2]] = desemp[[3]] = desemp[[4]] = desemp[[5]] = desemp[[6]] = list()
+
+
+var2 = list()
+var2[[1]] = c(1,3,5); var2[[2]] = c(2,4,6)
+
+for(v in 1:2){
+  for(v2 in var2[[v]]){
+      for(season in 1:4){
+
+        desemp[[v2]][[season]] = mapa_topo3(variable = resultados[[v2]]*mask_arr
+                                           , colorbar = colorbars[[v]][v2], revert = revert[[v]][v2], escala = c(escala[[v]][[v2]])
+                                           , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
+                                           , na.fill = -1000
+                                           , r = 4, estaciones = T, altura.topo = 1500
+                                           , lon = lon2, lat = lat2, estacion = season
+                                           , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 19, cb.size = 15
+                                           , lats.size = 7, letter.size = 12, cajas = T
+                                           , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+        
+        
+        
+        
+      
+    }
+  }
+  
+  if(v == 1){
+    desemp[[2]] = desemp[[3]]; desemp[[3]] = desemp[[5]] 
+  } else {
+    desemp[[1]] = desemp[[2]]; desemp[[2]] = desemp[[4]]; desemp[[3]] = desemp[[6]] 
+  }
+  
+  colorbar1 = g_legend(desemp[[1]][[1]]); colorbar2 = g_legend(desemp[[2]][[2]]); colorbar3 = g_legend(desemp[[3]][[1]])
+  
+  # panel 1 
+  gp1 = desemp[[1]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp2 = desemp[[1]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp3 = desemp[[1]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp4 = desemp[[1]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  # panel 2 
+  gp5 = desemp[[2]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp6 = desemp[[2]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp7 = desemp[[2]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp8 = desemp[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  # panel 3
+  gp9 = desemp[[3]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp10 = desemp[[3]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp11 = desemp[[3]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp12 = desemp[[3]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  
+  gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                      gp11, gp12), ggplotGrob)
+  
+  lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
+  
+  p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
+                    layout_matrix = lay
+                    , left = textGrob("Bias", y = .5 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("1.", x = 0
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
+                    layout_matrix = lay
+                    , left = textGrob("MAE", y =.5
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("2.", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  
+  p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
+                    layout_matrix = lay
+                    , left = textGrob("RMSE", y = 0.5
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob("3.", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
+  
+  
+  lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
+               c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
+               c(3,3,3,3,3,3,3,3,6),c(3,3,3,3,3,3,3,3,6))
+  
+  if(v ==1){
+    nombre = "T_"
+  } else {
+    nombre = "PP_"
+  }
+  
+  
+  nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, "desemp", ".jpg", sep = "")
+  
+  ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = lay, colorbar1, colorbar2, colorbar3) ,width = 35, height = 35 ,units = "cm")
+  
+}
+  
+ 
+    
+
+    
+    
 
 
 
