@@ -1187,13 +1187,20 @@ for(c in 1:5){
     
     data3$var = as.factor(data3$var)
     
+    dataline = matrix(data = NA, nrow = 2, ncol = 2)
+    dataline[,1] = c(-0.1,1)
+    dataline[,2] = c(-0.1,1)
+    dataline = as.data.frame(dataline)
+    colnames(dataline) = c("XX", "YY")
+    
     
     g  = ggplot(data = data3, mapping = aes(x = X, y = Y)) + theme_minimal() +
       geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = 1, stroke = 1) +
       scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Teorico") +
       scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Observado") +
       scale_color_manual(values = c("tomato3","steelblue3"), breaks = c(1,2), name = "", labels = c("Temp", "Precip")) +
-      geom_hline(yintercept = 0.31)+
+      geom_hline(yintercept = 0.31, linetype = 2)+
+      geom_abline() +
       scale_shape_discrete(guide = F) +
       theme(axis.text.y   = element_text(size = 8), axis.text.x   = element_text(size = 8), axis.title.y  = element_text(size = 8),
             axis.title.x  = element_text(size = 8),
@@ -1305,11 +1312,106 @@ nombre_fig = paste(getwd(),"/salidas/F.Finales/", "ACC_vs", ".jpg", sep = "")
 
 ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 25, height = 35 ,units = "cm")
 
+##### ACC cajas y modelos #####
+# source("aux.desemp.R")
+save(resultados, file = "ACC.RData")
+load("ACC.RData")
+
+t.ACC = resultados[[1]]; pp.ACC = resultados[[2]]
+t.ACC_mod = resultados[[8]]; pp.ACC_mod = resultados[[9]]
+rc = resultados[[3]]
+cajas_lat = list()
+cajas_lat[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); cajas_lat[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
+cajas_lat[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); cajas_lat[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
+cajas_lat[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
+#
+
+cajas_lon= list()
+cajas_lon[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); cajas_lon[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
+cajas_lon[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); cajas_lon[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
+cajas_lon[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+
+t.ACC_box = list()
+pp.ACC_box = list()
+t.ACC_ens_box = list()
+pp.ACC_ens_box = list()
+for(i in 1:5){
+  
+  t.ACC_ens_box[[i]] = apply(t.ACC[cajas_lon[[i]], cajas_lat[[i]],], c(3), mean, na.rm = T)
+  pp.ACC_ens_box[[i]] = apply(pp.ACC[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  t.ACC_box[[i]] = apply(t.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  pp.ACC_box[[i]] = apply(pp.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,,], c(3, 4, 5), mean, na.rm = T)
+  
+}
+cajas = c("N-SESA", "S-SESA", "NeB", "Patagonia", "Am")
+cajas_num = seq( 1, 5)
+
+
+t.data = fig10(prom_cajas = t.ACC_box, prom_ensamble = t.ACC_ens_box, variable = "temp")
+
+
+pp.data = fig10(prom_cajas = pp.ACC_box, prom_ensamble = pp.ACC_ens_box, variable = "pp")
+
+
+# Grafico
+g = ggplot() + theme_minimal()+
+  geom_text(data = t.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "goldenrod2", size = 4) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_mam, y = MAM), color = "goldenrod4", shape = "*" , size = 11) +
+  geom_text(data = t.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "royalblue", size = 4) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_jja, y = JJA), color = "royalblue4", shape = "*" , size = 11) +
+  geom_text(data = t.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "springgreen2", size = 4) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_son, y = SON), color = "springgreen4", shape = "*" , size = 11) +
+  geom_text(data = t.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "red1", size = 4) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_djf, y = DJF), color = "red4", shape = "*" , size = 11) +
+  geom_hline(yintercept = rc, color = "grey", size = 1) +
+  geom_hline(yintercept = 0, color = "black")+
+  ggtitle(paste("ACC - Temperatura"))+
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  scale_x_continuous(labels=c("1" = "N-SESA", "2" = "S-SESA", "3" = "NeB", "4" = "Patagonia", "5" = "Am"),breaks = seq(1, 5, by = 1))+
+  xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-GEM-NEMO(8)" )+
+  theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+        panel.border = element_rect(colour = "black", fill = NA, size = 1),
+        panel.ontop = F,
+        plot.title = element_text(hjust = 0.5)) 
+ggsave(paste("/home/luciano.andrian/tesis/salidas/F.Finales/", "ACC_T.jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+
+
+    
+
+
+g = ggplot() + theme_minimal()+
+  geom_text(data = pp.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "forestgreen", size = 4) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_mam, y = MAM), color = "darkgreen", shape = "*" , size = 11) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "tan2", size = 4) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_jja, y = JJA), color = "tan4", shape = "*" , size = 11) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "deepskyblue2", size = 4) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_son, y = SON), color = "deepskyblue4", shape = "*" , size = 11) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "midnightblue", size = 4) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_djf, y = DJF), color = "navyblue", shape = "*" , size = 11) +
+  geom_hline(yintercept = rc, color = "grey", size = 1) +
+  geom_hline(yintercept = 0, color = "black")+
+  ggtitle(paste("ACC - Precipitación"))+
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  scale_x_continuous(labels=c("1" = "N-SESA", "2" = "S-SESA", "3" = "NeB", "4" = "Patagonia", "5" = "Am"),breaks = seq(1, 5, by = 1))+
+  xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-GEM-NEMO(8)" )+
+  theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
+        panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
+        panel.border = element_rect(colour = "black", fill = NA, size = 1),
+        panel.ontop = F,
+        plot.title = element_text(hjust = 0.5)) 
+ggsave(paste("/home/luciano.andrian/tesis/salidas/F.Finales/", "ACC_PP.jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+
+
+######
 
 
 
-
-## desempeño cont.
+#### indices de verificacion #####
 
 source("funciones.R")
 
