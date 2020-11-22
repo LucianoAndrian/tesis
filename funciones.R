@@ -1854,7 +1854,7 @@ mask_topo = function(altura){
 
 
 #### FIG 10 ####
-fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
+fig10 = function(prom_cajas, prom_ensamble, variable, base_datos = 1){
   
   if(variable == "temp" ){
     
@@ -1868,6 +1868,7 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
     for(i in 0:3){
       
       data_t[(0 + 1+i*8):(8 + i*8),1] = cajas_num[i+1]
+      
       if((i + 1) == 4){ 
         data_t[33:40,1] = 5
       } else {
@@ -1888,13 +1889,19 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
     }
     
     
-    data_ensamble_t[,1] = seq(0.87, 4.87)
-    data_t[,1] = seq(0.9, 4.9)
+    data_ensamble_t[,1] = seq(0.85, 4.85)
+    data_t[,1] = seq(0.85, 4.85)
+    
+    data_ensamble_t = cbind(data_ensamble_t[,1:2], seq(0.95,4.95), data_ensamble_t[,3],
+                            seq(1.05, 5.05), data_ensamble_t[,4], seq(1.15, 5.15), data_ensamble_t[,5:6])
+    data_t = cbind(data_t[,1:2], seq(0.95,4.95), data_t[,3],
+                   seq(1.05, 5.05), data_t[,4], seq(1.15, 5.15), data_t[,5:6])
+    
     
     data_t = as.data.frame(data_t)
     data_ensamble_t = as.data.frame(data_ensamble_t)
-    colnames(data_t) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
-    colnames(data_ensamble_t) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    colnames(data_t) = c("cajas_mam", "MAM", "cajas_jja", "JJA", "cajas_son","SON", "cajas_djf", "DJF", "value")
+    colnames(data_ensamble_t) = c("cajas_mam", "MAM", "cajas_jja", "JJA", "cajas_son","SON", "cajas_djf", "DJF", "value")
     
     V = list()
     V[[1]] = data_t
@@ -1933,21 +1940,19 @@ fig10 = function(prom_cajas, prom_ensamble, variable, base_datos){
     }
     
     
-    if(base_datos == 1){
-      data_ensamble_pp[,1] = seq(1.07,5.07)
-      data_pp[,1] = seq(1.1, 5.1)
-    } else if( base_datos == 2){
-      data_ensamble_pp[,1] = seq(1.22,5.22)
-      data_pp[,1] = seq(1.25, 5.25)
-    } else {
-      data_ensamble_pp[,1] = seq(1.07, 5.07)
-      data_pp[,1] = seq(1.1, 5.1)
-    }
+    data_ensamble_pp[,1] = seq(0.85, 4.85)
+    data_pp[,1] = seq(0.85, 4.85)
+    
+    data_ensamble_pp = cbind(data_ensamble_pp[,1:2], seq(0.95,4.95), data_ensamble_pp[,3],
+                             seq(1.05, 5.05), data_ensamble_pp[,4], seq(1.15, 5.15), data_ensamble_pp[,5:6])
+    data_pp = cbind(data_pp[,1:2], seq(0.95,4.95), data_pp[,3],
+                    seq(1.05, 5.05), data_pp[,4], seq(1.15, 5.15), data_pp[,5:6])
+    
     
     data_pp = as.data.frame(data_pp)
     data_ensamble_pp = as.data.frame(data_ensamble_pp)
-    colnames(data_pp) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
-    colnames(data_ensamble_pp) = c("cajas", "MAM", "JJA", "SON", "DJF", "value")
+    colnames(data_pp) = c("cajas_mam", "MAM", "cajas_jja", "JJA", "cajas_son","SON", "cajas_djf", "DJF", "value")
+    colnames(data_ensamble_pp) = c("cajas_mam", "MAM", "cajas_jja", "JJA", "cajas_son","SON", "cajas_djf", "DJF", "value")
     
     V = list()
     V[[1]] = data_pp
