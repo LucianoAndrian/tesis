@@ -55,19 +55,19 @@ for( i in 1:4){
 
 
 titulos = list()
-titulos[[1]] = "a)              MAM              "
-titulos[[2]] = "b)              JJA              "
-titulos[[3]] = "c)              SON              "
-titulos[[4]] = "d)              DJF              "
+titulos[[1]] = "                  MAM                "
+titulos[[2]] = "                  JJA                "
+titulos[[3]] = "                  SON                "
+titulos[[4]] = "                  DJF                "
 
 T_mean_obs = list()
 for(season in 1:4){
   
   T_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_t, colorbar = "Spectral", revert = T, escala = seq(0, 35, by = 2.5)
-                 , titulo =  titulos[[season]], resta = 273, niveles = 11
+                 , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 273, niveles = 11
                  , label.escala = "ºC", mapa = "SA", width = 20, height = 20
                  , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-                 , cajas = T, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                 , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                  , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                  , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
@@ -89,10 +89,10 @@ T_SD_obs = list()
 for(season in 1:4){
   
   T_SD_obs[[season]] = mapa_topo3(variable = standar_d_t, colorbar = "YlOrRd", revert = F,escala = seq(0, 1.5, by = 0.1)
-                                    , titulo =  titulos[[season]], niveles = 9
+                                    , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9
                                     , label.escala = "ºC", mapa = "SA", width = 20, height = 20
                                     , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-                                    , cajas = T, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                    , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                                     , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                                     , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
@@ -153,10 +153,10 @@ PP_mean_obs = list()
 for(season in 1:4){
   
 PP_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
-             , titulo =  titulos[[season]], niveles = 9,escala = seq(0, 400, by = 50)
+             , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9,escala = seq(0, 400, by = 50)
              , label.escala = "ºC", mapa = "SA", width = 20, height = 20
              , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-             , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+             , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
              , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
              , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
@@ -176,10 +176,10 @@ PP_SD_obs = list()
 for(season in 1:4){
   
   PP_SD_obs[[season]] = mapa_topo3(variable = standar_d_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
-                                     , titulo =  titulos[[season]], niveles = 9,escala = seq(0, 70, by = 5)
+                                     , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9,escala = seq(0, 70, by = 5)
                                      , label.escala = "ºC", mapa = "SA", width = 20, height = 20
                                      , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-                                     , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                     , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                                      , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                                      , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
@@ -274,11 +274,11 @@ for(v in 1:2){
     aux = v.sd1[,,,v]; aux2 = array(mask,c(dim(mask),4))
 
     sd_mod[[season]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, resta = 0, colorbar = color[v]
-                                  , titulo =  titulos[[season]], niveles = 9, escala = escala[[v]]
+                                  , titulo =  paste(letters[season+4],".",titulos[[season]], sep = ""), niveles = 9, escala = escala[[v]]
                                   , label.escala = lab.escala[v], mapa = "SA", width = 20, height = 20
                                   , na.fill = 0, r = 4, estaciones = T, altura.topo = 1500
                                   , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1 #?¿?¿
-                                  , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                  , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                                   , cb.v.h = 26, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                                   , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
@@ -296,11 +296,11 @@ for(v in 1:2){
     aux = v.mean[,,,v]; aux2 = array(mask,c(dim(mask),4))
   
     mean_mod[[season]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, resta = resta[v], colorbar = color[v]
-                                    , titulo =  titulos[[season]], niveles = niveles[v], escala = escala[[v]], revert = revert[v]
+                                    , titulo =  paste(letters[season + 4], ".",titulos[[season]], sep = ""), niveles = niveles[v], escala = escala[[v]], revert = revert[v]
                                     , label.escala = lab.escala[v], mapa = "SA", width = 20, height = 20
                                     , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
                                     , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1 #?¿?¿
-                                    , cajas = T, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                    , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                                     , cb.v.h = 26, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                                     , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
@@ -351,33 +351,25 @@ for(v in 1:2){
     p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
                       layout_matrix = lay
                       , left = textGrob(titulo_obs[v]
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
-                      , top = textGrob("1.                                                                                                                                                        " 
-                                       , gp=gpar(fontsize=16,font=8))) 
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
     
     p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                       layout_matrix = lay
                       , left = textGrob("                          EMM                       "
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
-                      , top = textGrob("2.                                                                                                                                                       " 
-                                       , gp=gpar(fontsize=16,font=8)))
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
     
     
     p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                       layout_matrix = lay
                       , left = textGrob(titulo_obs[v]
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
-                      , top = textGrob("1.                                                                                                                                                       " 
-                                       , gp=gpar(fontsize=16,font=8))) 
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
     p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                       layout_matrix = lay
                       ,  left = textGrob("                          EMM                      "
-                                         ,rot = 90, gp=gpar(fontsize=16,font=8))
-                      , top = textGrob("2.                                                                                                                                                        " 
-                                       , gp=gpar(fontsize=16,font=8))) 
+                                         ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
     
     
@@ -418,12 +410,16 @@ for(i in 1:4){
   mask_arr[,,i] = mask
 }
 
-
+source("funciones.R")
 letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194"), as.character("\u03B5"))
-
+titulos = list()
+titulos[[1]] = "              SSα              "
+titulos[[2]] = "              SSβ              "
+titulos[[3]] = "              SSε              "
+titulos[[4]] = "              SSƔ              "
 #-------------------------------------------------------------------#
 
-sin_m = function(m, season, v){
+sin_m = function(m, season, v, titulo_num){
   #v = 1 o 3
   #v.sig = 2 o 4 
   
@@ -438,37 +434,37 @@ sin_m = function(m, season, v){
   
   aux = list()
   aux[[1]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[6]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[6-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  "a)              SSα              " #que trucazo
+                        , titulo =  paste(letters[1+titulo_num],".",titulos[[1]], sep = "") #que trucazo
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+                        , sig = F, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
-                        , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , lats.size = 7, letter.size = 12, cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   
   aux[[2]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[7]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[7-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  "b)              SSβ              "
+                        , titulo = paste(letters[2+titulo_num],".",titulos[[2]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+                        , sig = F, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
-                        , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , lats.size = 7, letter.size = 12, cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   aux[[4]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[9]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[9-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  "d)              SSε              "
+                        , titulo =  paste(letters[4+titulo_num],".",titulos[[3]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+                        , sig = F, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
-                        , lats.size = 7, letter.size = 12, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , lats.size = 7, letter.size = 12, cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   aux[[3]] = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr, variable.sig = EMM_wo[[v.sig]][[m]][[8-5]], colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                        , titulo = "c)              SSƔ              "
+                        , titulo = paste(letters[3+titulo_num],".",titulos[[4]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
+                        , sig = F, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F, cb.v.w = 0.7, cb.v.h = 13, cb.size = 7
-                        , lats.size = 7,letter.size = 12, margen.zero = T, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , lats.size = 7,letter.size = 12, margen.zero = F, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   return(aux)
 }
@@ -525,37 +521,37 @@ for(v in c(1,3)){
     }
    # "SSα"  "SSβ"   "SSƔ" "SSε"
     signal = mapa_topo3(variable = EMM[[v]][[6]]*mask_arr, variable.sig = EMM[[v.sig]][[6-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                        , titulo =  "a)              SSα              "
+                        , titulo = paste(letters[1],".",titulos[[1]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
-                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                        , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F,  cb.v.w = 1
                         , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
     
     bias = mapa_topo3(variable =  EMM[[v]][[7]]*mask_arr, variable.sig =  EMM[[v.sig]][[7-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                      , titulo = "b)              SSβ              "
+                      , titulo = paste(letters[2],".",titulos[[2]], sep = "")
                       , label.escala = "", mapa = "SA", width = 20, height = 20
                       , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
-                      , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
+                      , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
                       ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14, lats.size = 7, letter.size = 12, color.vcont = "black"
                       , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
     
     noise = mapa_topo3(variable =  EMM[[v]][[9]]*mask_arr, variable.sig =  EMM[[v.sig]][[9-5]], colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                       , titulo =  "d)              SSε              "
+                       , titulo =  paste(letters[4],".",titulos[[3]], sep = "")
                        , label.escala = "", mapa = "SA", width = 20, height = 20
                        , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
-                       , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
+                       , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F
                        ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14, lats.size = 7, letter.size = 12, color.vcont = "black"
                        , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
     
     structural = mapa_topo3(variable = EMM[[v]][[8]]*mask_arr, variable.sig =  EMM[[v.sig]][[8-5]], colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                            , titulo = "c)              SSƔ              "
+                            , titulo = paste(letters[3],".",titulos[[4]], sep = "")
                             , label.escala = "", mapa = "SA", width = 20, height = 20
                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
-                            , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F, cb.v.w = 1
+                            , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F, cb.v.w = 1
                             , cb.v.h = 32, cb.size = 10, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                             , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
     
@@ -564,11 +560,11 @@ for(v in c(1,3)){
     
     # Panel 2 EMM sin CFSv2
     # nombres2 = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "ECCC-GEM-NEMO") 
-    no_mod1 = sin_m(6, season,v)
+    no_mod1 = sin_m(6, season,v, titulo_num = 4)
     
-    no_mod2 = sin_m(2, season,v)
+    no_mod2 = sin_m(2, season,v, titulo_num = 8)
     
-    no_mod3 = sin_m(7, season, v)
+    no_mod3 = sin_m(7, season, v, titulo_num = 12)
     
     
 
@@ -609,31 +605,27 @@ p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("1.                                                                                                                                                        " 
-                                   , gp=gpar(fontsize=16,font=8))) 
+                  ) 
 
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM sin CFSv2                      "
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("2.                                                                                                                                                       " 
-                                   , gp=gpar(fontsize=16,font=8))) 
+                  ) 
 
 
 p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM sin CM2p1                      "
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("3.                                                                                                                                                       " 
-                                   , gp=gpar(fontsize=16,font=8))) 
+                  ) 
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                   layout_matrix = lay
                   ,  left = textGrob("                          EMM sin CM4i                      "
                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("4.                                                                                                                                                        " 
-                                   , gp=gpar(fontsize=16,font=8))) 
+                 ) 
 
 
 
@@ -663,7 +655,12 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = l
 
 #######------------------- Predictibilidad --------------------------########
 # mismos modelos (+ GEM-NEMO en una estacion para T y PP)
-sin_m_pred = function(m, v, pred){
+titulos = list()
+titulos[[1]] = "                    MAM                  "
+titulos[[2]] = "                    JJA                  "
+titulos[[3]] = "                    SON                  "
+titulos[[4]] = "                    DJF                  "
+sin_m_pred = function(m, v, pred, titulo_num){
   #v = 1 o 3
   #v.sig = 2 o 4 
   
@@ -678,39 +675,39 @@ sin_m_pred = function(m, v, pred){
   
   aux = list()
   aux[[1]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                        , titulo =  "a)                  MAM                  "
+                        , titulo =  paste(letters[1+titulo_num],".",titulos[[1]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , nombre.fig = "pred_temp", na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 1
-                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
+                        , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
                         , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   
   aux[[2]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                        , titulo =  "b)                  JJA                  "
+                        , titulo =  paste(letters[2+titulo_num],".",titulos[[2]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , nombre.fig = "pred_temp", na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
+                        , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
                         , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
   aux[[3]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                        , titulo =  "c)                  SON                  "
+                        , titulo =  paste(letters[3 + titulo_num],".",titulos[[3]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , nombre.fig = "pred_temp", na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
+                        , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
                         , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
   aux[[4]] = mapa_topo3(variable = pred[[m]][[v]]*mask_arr, variable.sig = pred[[m]][[v.sig]], colorbar = colorbars[[v]], revert = F, escala =escala_pred[[v]]
-                        , titulo =  "d)                  DJF                  "
+                        , titulo = paste(letters[4 + titulo_num],".",titulos[[4]], sep = "")
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , nombre.fig = "pred_temp", na.fill = -1000
                         , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                        , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
+                        , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
                         , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
@@ -739,47 +736,47 @@ for(v in c(1,3)){
   
   
   MAM = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                   , titulo =  "a)                  MAM                  "
+                   , titulo =  paste(letters[1],".",titulos[[1]], sep = "")
                    , label.escala = "", mapa = "SA", width = 20, height = 20
                    , nombre.fig = "pred_temp", na.fill = -1000
                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 1
-                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
+                   , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
                    , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                    , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   
   JJA = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                   , titulo =  "b)                  JJA                  "
+                   , titulo =  paste(letters[2],".",titulos[[2]], sep = "")
                    , label.escala = "", mapa = "SA", width = 20, height = 20
                    , nombre.fig = "pred_temp", na.fill = -1000
                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
+                   , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 2, mostrar = T, save = F
                    , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                    , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
   SON = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                   , titulo =  "c)                  SON                  "
+                   , titulo =  paste(letters[3],".",titulos[[3]], sep = "")
                    , label.escala = "", mapa = "SA", width = 20, height = 20
                    , nombre.fig = "pred_temp", na.fill = -1000
                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
+                   , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 3, mostrar = T, save = F
                    , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                    , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
   DJF = mapa_topo3(variable = pred[[v]]*mask_arr, variable.sig = pred[[v.sig]], colorbar = colorbars[[v]], revert = F, escala = escala_pred[[v]]
-                   , titulo =  "d)                  DJF                  "
+                   , titulo = paste(letters[4],".",titulos[[4]], sep = "")
                    , label.escala = "", mapa = "SA", width = 20, height = 20
                    , nombre.fig = "pred_temp", na.fill = -1000
                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 0.2
-                   , cajas = T, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
+                   , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 4, mostrar = T, save = F
                    , cb.v.w = 0.7, cb.v.h = 14, cb.size = 7, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                    , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
   
-  no_mod1 = sin_m_pred(6, v, pred_wo)
+  no_mod1 = sin_m_pred(6, v, pred_wo, titulo_num = 4)
   
-  no_mod2 = sin_m_pred(2, v, pred_wo)
+  no_mod2 = sin_m_pred(2, v, pred_wo, titulo_num = 8)
   
-  no_mod3 = sin_m_pred(7, v, pred_wo)
+  no_mod3 = sin_m_pred(7, v, pred_wo, titulo_num = 12)
   
   
   
@@ -820,31 +817,27 @@ for(v in c(1,3)){
                     layout_matrix = lay
                     , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("1.                                                                                                                                                        " 
-                               , gp=gpar(fontsize=16,font=8))) 
+                    ) 
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("                          EMM sin CFSv2                      "
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("2.                                                                                                                                                       " 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                    ) 
                     
   
   p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
                     , left = textGrob("                          EMM sin CM2p1                      "
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("3.                                                                                                                                                       " 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                    ) 
   
   p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                     layout_matrix = lay
                     ,  left = textGrob("                          EMM sin CM4i                      "
                                         ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("4.                                                                                                                                                        " 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                    ) 
   
   
   
@@ -941,6 +934,8 @@ g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
         plot.title = element_text(hjust = 0.5, size = 15)) + geom_hline(yintercept = 0, color = "black") 
 
 ggsave(paste("/home/luciano.andrian/tesis/salidas/F.Finales/", "fig", ".jpg", sep = ""), plot = g, width = 20, height = 20, units = "cm")
+
+
 ##### --------------------------- ACC ----------------------- ######
 #save(resultados, file = "ACC.RData")
 load("ACC.RData") # "resutlados"
