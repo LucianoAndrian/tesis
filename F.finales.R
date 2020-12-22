@@ -1157,8 +1157,10 @@ for(c in 1:6){
     
     if(c != 6){
       area[lons[[c]], lats[[c]]] = 1
+      size.point = 1; stroke.size = 0.8
     } else {
       area = 1
+      size.point = 0.3; stroke.size = 0.6
     }
     
     
@@ -1188,7 +1190,7 @@ for(c in 1:6){
     
     
     g  = ggplot(data = data3, mapping = aes(x = X, y = Y)) + theme_minimal() +
-      geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = 1, stroke = 1) +
+      geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = size.point, stroke = stroke.size) +
       scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Teorico") +
       scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Observado") +
       scale_color_manual(values = c("tomato3","steelblue3"), breaks = c(1,2), name = "", labels = c("Temp", "Precip")) +
@@ -1448,20 +1450,21 @@ resultados[[4]] = resultados[[4]][,,,3]
 resultados[[6]] = resultados[[6]][,,,3]
 
 colorbars = list()
-colorbars[[1]] = c("RdYlBu",1,"RdBu",1,"YlOrRd")
-colorbars[[2]] = c(1,"BrBG",1, "RdBu",1, "PuBuGn")
+colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1, "OrRd")
+colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "BuGn")
 
-## MAE normalizado con SD (o algo asi) 1 - mae/sd
 
-resultados[[3]] = 1 - (resultados[[3]]/v.sd1[,,,1])
-resultados[[4]] = 1 - (resultados[[4]]/v.sd1[,,,2])
+## RMSE normalizado con SD = 1 - RMSE/sd
+
+resultados[[5]] = 1 - (resultados[[5]]/standar_d_t)
+resultados[[6]] = 1 - (resultados[[6]]/standar_d_pp3)
 
 
 
 escala = list(); escala[[1]] = escala[[2]] = escala[[3]] = list()
-escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(-0.5, 0.5, by = 0.1); escala[[1]][[5]] = seq(0, 5, by = 1)
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(0, 1, by = .1)
 
-escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(-0.5, 0.5, by = 0.1); escala[[2]][[6]] = seq(0, 100, by = 20)  
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(0, 1, by = .1)  
 
 revert = list()
 revert[[1]] = c(T,1,F,1,F); revert[[2]] = c(1,F,1,F,1, F)
