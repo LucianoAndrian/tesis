@@ -960,10 +960,11 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 seasons = c("MAM", "JJA", "SON", "DJF")
 
 
-titulo_acc1_2 = c("a)                        MAM                        ",
-                  "b)                        JJA                        ",
-                  "c)                        SON                        ",
-                  "d)                        DJF                        ")
+titulo_acc1_2 = c("                          MAM                        ",
+                  "                          JJA                        ",
+                  "                          SON                        ",
+                  "                          DJF                        ")
+titulo_season = c("MAM", "JJA", "SON", "DJF")
 l = c("a)               ","b)              ","c)              ","d)             ")
 
 nombres2 = c("CCSM4", "CM2p1", "FLOR-A06", "FLOR-B01", "GEOS5", "CFSv2", "CanCM4i", "GEM-NEMO") 
@@ -975,7 +976,7 @@ for(v in 1:2){
     for(season in 1:4){
       
       if(acc == 1){
-        
+        titulo_num = 4
         if(v == 1){
           v1 = 6
         } else if(v == 2){
@@ -984,7 +985,7 @@ for(v in 1:2){
         ### ACC teorico
         ACC_teo[[season]] =  mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr, v.sig = resultados[[3]]
                                         , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                                        , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
+                                        , titulo =   paste(letters[season+titulo_num],".",titulo_acc1_2[season], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
                                         , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5
                                         , r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                                         , lon = lon2, lat = lat2, type.sig = "point2", estacion = season
@@ -993,10 +994,10 @@ for(v in 1:2){
                                         , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
         
       } else if(acc == 2){
-        
+        titulo_num = 0
        ACC_EMM[[season]] =  mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr, v.sig = resultados[[3]]
                                             , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                                            , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
+                                            , titulo =  paste(letters[season+titulo_num],".",titulo_acc1_2[season], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
                                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5
                                             , r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                                             , lon = lon2, lat = lat2, type.sig = "point2", estacion = season
@@ -1006,7 +1007,7 @@ for(v in 1:2){
        
         
       } else if( acc == 3){
-        
+        titulo_num = 8
         if(v == 1){
           v2 = 4
           
@@ -1039,7 +1040,7 @@ for(v in 1:2){
         
         ACC_wo_mod[[season]] = mapa_topo3(variable = resultados[[v2]][,,,m]*mask_arr, variable.sig = resultados[[v2]][,,,m]*mask_arr, v.sig = resultados[[3]]
                                    , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
-                                   , titulo =  paste(l[season], "EMM sin ", nombres2[m],"              ", sep = ""), label.escala = ""
+                                   , titulo =  paste(letters[season+titulo_num],".", "      ", titulo_season[season], " - EMM sin ", nombres2[m],"             ", sep = ""), label.escala = ""
                                    , mapa = "SA", width = 20, height = 20, na.fill = -1000
                                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
                                    , estaciones = T, altura.topo = 1500, size.point = 0.2
@@ -1087,16 +1088,14 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC Teorico", y = .5 
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("2.", x = 0
-                                     , gp=gpar(fontsize=16,font=8))) 
+                    ) 
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("ACC Observado", y =.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("1.", x = 0 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                   ) 
   
   
   
@@ -1104,8 +1103,7 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC", y = 0.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("3.", x = 0 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                    ) 
   
   
   lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
@@ -1132,37 +1130,37 @@ load("ACC.RData")
 
 ruta = getwd()
 
-titulo_acc1_2 = c("a)                  MAM                   ",
-                  "b)                  JJA                   ",
-                  "c)                  SON                   ",
-                  "d)                  DJF                   ")
-
-titulo_acc2 = c("a)                                           ",
-                 "b)                                          ",
-                 "c)                                          ",
-                 "d)                                          ")
- 
+titulo_acc1_2 = c("         MAM          ",
+                  "         JJA          ",
+                  "         SON          ",
+                  "         DJF          ")
+titulo_num = c(4,8,12,16,20,0)
 
 lats = list()
 lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
 lats[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); lats[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
-lats[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
-
+lats[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1); lats[[6]] = lat2
+ 
 lons = list()
 lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
 lons[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); lons[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
-lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1); lons[[6]] = lon2
 
 figs = list()
 
-for(c in 1:5){
+for(c in 1:6){
   
   figs[[c]] = list()
   area = array(NA, dim = c(56,76))
-  
+
   for(i in 1:4){
     
-    area[lons[[c]], lats[[c]]] = 1
+    if(c != 6){
+      area[lons[[c]], lats[[c]]] = 1
+    } else {
+      area = 1
+    }
+    
     
     data = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 4)
     data2 = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 4)
@@ -1203,11 +1201,10 @@ for(c in 1:5){
             panel.ontop = F,
             plot.title = element_text(hjust = 0.5), legend.position = "bottom") 
     
-    if(c == 1){
-      g = g + ggtitle(titulo_acc1_2[i])
-    } else {
-      g = g + ggtitle(titulo_acc2[i])
-    }
+      g = g + ggtitle(paste(letters[i+titulo_num[c]],".",titulo_acc1_2[i], sep = "")) #titulo_acc1_2[i])
+
+
+   
     
     figs[[c]][[i]] = g
     
@@ -1250,9 +1247,14 @@ gp18 = figs[[5]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.
 gp19 = figs[[5]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
 gp20 = figs[[5]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
 
+gp21 = figs[[6]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp22 = figs[[6]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp23 = figs[[6]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+gp24 = figs[[6]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,0,.2), "lines"))
+
 gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
                     gp11, gp12, gp13, gp14, gp15, gp16, gp17,gp18,
-                    gp19, gp20), ggplotGrob)
+                    gp19, gp20, gp21, gp22, gp23, gp24), ggplotGrob)
 
 lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
 
@@ -1260,7 +1262,7 @@ p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],
                   layout_matrix = lay
                   , left = textGrob("N-SESA", y = .5 
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("1.", x = 0
+                  , top = textGrob(" ", x = 0
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
@@ -1268,7 +1270,7 @@ p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
                   , left = textGrob("S-SESA", y =.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("2.", x = 0 
+                  , top = textGrob(" ", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
@@ -1277,21 +1279,28 @@ p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                   layout_matrix = lay
                   , left = textGrob("NeB", y = 0.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("3.", x = 0 
+                  , top = textGrob(" ", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                   layout_matrix = lay
                   , left = textGrob("Patagonia", y = 0.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("4.", x = 0 
+                  , top = textGrob("", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 p5 = grid.arrange(gpls[[17]], gpls[[18]], gpls[[19]], gpls[[20]],
                   layout_matrix = lay
                   , left = textGrob("Am", y = 0.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob("5.", x = 0 
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+p6 = grid.arrange(gpls[[21]], gpls[[22]], gpls[[23]], gpls[[24]],
+                  layout_matrix = lay
+                  , left = textGrob("Sudamérica", y = 0.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob(" ", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
@@ -1300,12 +1309,13 @@ lay <- rbind(c(1,1,1,1,1,1,1,1),c(1,1,1,1,1,1,1,1),
              c(2,2,2,2,2,2,2,2),c(2,2,2,2,2,2,2,2), 
              c(3,3,3,3,3,3,3,3),c(3,3,3,3,3,3,3,3),
              c(4,4,4,4,4,4,4,4),c(4,4,4,4,4,4,4,4),
-             c(5,5,5,5,5,5,5,5),c(5,5,5,5,5,5,5,5))
+             c(5,5,5,5,5,5,5,5),c(5,5,5,5,5,5,5,5),
+             c(6,6,6,6,6,6,6,6),c(6,6,6,6,6,6,6,6))
 
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", "ACC_vs", ".jpg", sep = "")
 
-ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 25, height = 35 ,units = "cm")
+ggsave(nombre_fig,plot =grid.arrange(p6, p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 20, height = 35 ,units = "cm")
 
 ##### ACC cajas y modelos #####
 # source("aux.desemp.R")
@@ -1438,13 +1448,20 @@ resultados[[4]] = resultados[[4]][,,,3]
 resultados[[6]] = resultados[[6]][,,,3]
 
 colorbars = list()
-colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1,"YlOrRd")
-colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "PuBuGn")
+colorbars[[1]] = c("RdYlBu",1,"RdBu",1,"YlOrRd")
+colorbars[[2]] = c(1,"BrBG",1, "RdBu",1, "PuBuGn")
 
-escala = list(); escala[[1]] = escala[[2]] = list()
-escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(0, 5, by = 1)
+## MAE normalizado con SD (o algo asi) 1 - mae/sd
 
-escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(0, 100, by = 20)
+resultados[[3]] = 1 - (resultados[[3]]/v.sd1[,,,1])
+resultados[[4]] = 1 - (resultados[[4]]/v.sd1[,,,2])
+
+
+
+escala = list(); escala[[1]] = escala[[2]] = escala[[3]] = list()
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(-0.5, 0.5, by = 0.1); escala[[1]][[5]] = seq(0, 5, by = 1)
+
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(-0.5, 0.5, by = 0.1); escala[[2]][[6]] = seq(0, 100, by = 20)  
 
 revert = list()
 revert[[1]] = c(T,1,F,1,F); revert[[2]] = c(1,F,1,F,1, F)
@@ -1452,11 +1469,11 @@ revert[[1]] = c(T,1,F,1,F); revert[[2]] = c(1,F,1,F,1, F)
 seasons = c("MAM", "JJA", "SON", "DJF")
 
 
-titulo_acc1_2 = c("a)                        MAM                        ",
-                  "b)                        JJA                        ",
-                  "c)                        SON                        ",
-                  "d)                        DJF                        ")
-l = c("a)               ","b)              ","c)              ","d)             ")
+titulo_acc1_2 = c("                          MAM                        ",
+                  "                          JJA                        ",
+                  "                          SON                        ",
+                  "                          DJF                        ")
+
 
 
 
@@ -1469,16 +1486,23 @@ var2[[1]] = c(1,3,5); var2[[2]] = c(2,4,6)
 
 for(v in 1:2){
   for(v2 in var2[[v]]){
+    if(v2 == 1){
+      titulo_num = 0
+    } else if(v2 == 3){
+      titulo_num = 4
+    } else {
+      titulo_num = 8
+    }
       for(season in 1:4){
 
         desemp[[v2]][[season]] = mapa_topo3(variable = resultados[[v2]]*mask_arr
                                            , colorbar = colorbars[[v]][v2], revert = revert[[v]][v2], escala = c(escala[[v]][[v2]])
-                                           , titulo =  titulo_acc1_2[season], label.escala = "", mapa = "SA", width = 20, height = 20
+                                           , titulo =  paste(letters[season+titulo_num],".", titulo_acc1_2[season], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
                                            , na.fill = -1000
                                            , r = 4, estaciones = T, altura.topo = 1500
                                            , lon = lon2, lat = lat2, estacion = season
                                            , mostrar = T, save = F,  cb.v.w = 1, cb.v.h = 19, cb.size = 15
-                                           , lats.size = 7, letter.size = 12, cajas = T
+                                           , lats.size = 7, letter.size = 12, cajas = F
                                            , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
         
         
@@ -1523,26 +1547,20 @@ for(v in 1:2){
   p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
                     layout_matrix = lay
                     , left = textGrob("Bias", y = .5 
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("1.", x = 0
-                                     , gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("MAE", y =.5
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("2.", x = 0 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
   
   
   
   p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
                     , left = textGrob("RMSE", y = 0.5
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    , top = textGrob("3.", x = 0 
-                                     , gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
   
   
   lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
