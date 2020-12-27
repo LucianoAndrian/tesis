@@ -351,25 +351,32 @@ for(v in 1:2){
     p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],             
                       layout_matrix = lay
                       , left = textGrob(titulo_obs[v]
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
-    
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
     
     p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                       layout_matrix = lay
                       , left = textGrob("                          EMM                       "
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
     
     
     
     p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                       layout_matrix = lay
                       , left = textGrob(titulo_obs[v]
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
     
     p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                       layout_matrix = lay
                       ,  left = textGrob("                          EMM                      "
-                                         ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                         ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
     
     
     
@@ -464,7 +471,7 @@ sin_m = function(m, season, v, titulo_num){
                         , na.fill = -1000
                         , sig = F, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                         , lon = lon2, lat = lat2, type.sig = "point",estacion = season, mostrar = T, save = F, cb.v.w = 0.7, cb.v.h = 13, cb.size = 7
-                        , lats.size = 7,letter.size = 12, margen.zero = F, cajas = T, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , lats.size = 7,letter.size = 12, margen.zero = F, cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   return(aux)
 }
@@ -605,27 +612,31 @@ p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  ) 
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8)))  
 
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM sin CFSv2                      "
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  ) 
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
 
 
 p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                   layout_matrix = lay
                   , left = textGrob("                          EMM sin CM2p1                      "
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  ) 
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8)))  
 
 p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                   layout_matrix = lay
                   ,  left = textGrob("                          EMM sin CM4i                      "
                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                 ) 
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
 
 
 
@@ -817,27 +828,31 @@ for(v in c(1,3)){
                     layout_matrix = lay
                     , left = textGrob("                          EMM Completo                       " # de esta forma tan elegante no afecta los margenes
                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("                          EMM sin CFSv2                      "
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
                     
   
   p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
                     , left = textGrob("                          EMM sin CM2p1                      "
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
                     layout_matrix = lay
                     ,  left = textGrob("                          EMM sin CM4i                      "
                                         ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   
   
@@ -1088,14 +1103,16 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC Teorico", y = .5 
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("ACC Observado", y =.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                   ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   
   
@@ -1103,7 +1120,8 @@ for(v in 1:2){
                     layout_matrix = lay
                     , left = textGrob("ACC", y = 0.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
-                    ) 
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))  
   
   
   lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
@@ -1550,20 +1568,26 @@ for(v in 1:2){
   p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
                     layout_matrix = lay
                     , left = textGrob("Bias", y = .5 
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
   
   
   p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                     layout_matrix = lay
                     , left = textGrob("MAE", y =.5
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
   
   
   
   p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
                     , left = textGrob("RMSE", y = 0.5
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8))) 
   
   
   lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
@@ -1584,10 +1608,427 @@ for(v in 1:2){
 }
   
  
-    
+##### corr cm2p1 sst ######
 
+# Correlacion SST
+library(ncdf4)
+source("funciones.R")
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+
+#### SST ####
+aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+sst = ncvar_get(aux, "sst")
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+nc_close(aux)
+# rotando el array
+sst = sst[,ncol(sst):1,]
+
+#### mascara ####
+aux = nc_open("X190.191.246.159.142.12.48.11.nc")
+w.mask = ncvar_get(aux, "mask")
+nc_close(aux)
+# rotando..
+w.mask = w.mask[,ncol(w.mask):1] 
+
+#### meses de ci ####
+sst.ci = array(data = NA, dim = c(360, 180, 29, 4))
+ci = c(2, 5, 8, 11)
+for(i in 1:4){
+  for(j in 0:28)
+    sst.ci[,,j + 1, i] = sst[,,ci[i]+12*j]*w.mask
+}
+
+
+####  Modelos ####
+nombres = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO") 
+aux3 = array(data = NA, dim = c(56,76,29,4,8))
+for(i in 1:8){
+  aux3[,,,,i] = mean_sd(nombres[i])[[6]]
+}
+
+#---- ensambles ----#
+pp.ens = apply(aux3, c(1,2,3,4), mean, na.rm = T)
+
+# "SESA_3"
+#lats.area[[11]] = seq(which(lat == -37.5), which(lat == -20.5), by = 1)
+#lons[[11]] = seq(which(lon2 == 298), which(lon2 == 313), by = 1)
+
+# N-SESA y NeB
+lats = lons = list()
+lats[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); lats[[2]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1)
+lons[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); lons[[2]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1)
+
+# para la caja
+lat = rev(lat)
+lats.area = list() # un poco distintas debido al grillado del mapa. 1x1 pero 1.5 2.5 3.5
+lats.area[[1]] =  seq(which(lat == -28.5), which(lat == -16.5), by = 1); lats.area[[2]] = seq(which(lat == -15.5), which(lat == 2.5), by = 1)
+
+lons.area = list()
+lons.area[[1]] =  seq(which(lon == 302.5), which(lon == 315.5), by = 1); lons.area[[2]] = seq(which(lon == 310.5), which(lon == 325.5), by = 1)
+
+# titulos
+region = c("N-SESA", "NeB")
+region.fig = c("N-SESA", "NeB")
+estaciones = c("MAM", "JJA", "SON", "DJF")
+
+#### EMM ####
+# pp 
+mapa_EMM = list()
+mapa_EMM[[1]] = mapa_EMM[[2]] = 1
+for(i in 1:2){
+  area = w.mask
+  area[lons.area[[i]], lats.area[[i]]] = 2
+  
+  aux.prom = apply(pp.ens[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
+  
+  j = 3
     
+    aux.corr = corr(mod = aux.prom[,j], obs = sst.ci[,,,j], lon = 360, lat = 180, cf = 0.95)
     
+    # prueba mapa_topo3
+    
+    aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+    aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+    auxa = array(area, dim = c(dim(area), 1))
+    
+   mapa_EMM[[i]] =  mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+               , titulo = paste("Correlación PP ", region[i], " vs SST - ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/", save = F, mostrar = T
+               , nombre.fig = paste("pp.corr_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T, lats.size = 7, letter.size = 12, margen.zero = T
+               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
+    
+  
+}
+
+#### Corr por modelos ####
+mapa_cm2p1 = list()
+mapa_cm2p1[[1]] = mapa_cm2p1[[2]] = 1
+for(i in 1:2){ 
+  m = 2 
+    area = w.mask
+    area[lons.area[[i]], lats.area[[i]]] = 2
+    aux.prom = apply(aux3[lons[[i]], lats[[i]],,,m], c(3,4), mean, na.rm = T)
+    
+    j = 3
+      
+      aux.corr = corr(mod = aux.prom[,j], obs = sst.ci[,,,j], lon = 360, lat = 180, cf = 0.95)
+      
+      aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+      aux.sig = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+      auxa = array(area, dim = c(dim(area), 1))
+      
+      mapa_cm2p1[[i]] = mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+                 , titulo = paste("Correlación PP ", region[i], " vs SST - ", estaciones[j], sep = "")
+                 , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+                 , r = 1, width = 30, height = 15, salida =  "/salidas/corr/modelos/", save = F, mostrar = T
+                 , nombre.fig = paste("pp.corr_",region.fig[i], nombres[m],"_", estaciones[j], sep = ""), na.fill = 0
+                 , sig = T, variable.sig = aux.sig, color.vsig = "white", alpha.vsig = 1, fill.mapa = T, lats.size = 7, letter.size = 12, margen.zero = T
+                 , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
+    
+  
+}
+
+
+#--- SST con PP CMAP y CPC ---#
+# cmap
+# cambio de periodo para los dos, un año menos.
+
+#### SST ####
+
+aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+sst = ncvar_get(aux, "sst")
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+nc_close(aux)
+# rotando el array
+sst = sst[,ncol(sst):1,1:336]
+
+#### mascara ####
+aux = nc_open("X190.191.246.159.142.12.48.11.nc")
+w.mask = ncvar_get(aux, "mask")
+nc_close(aux)
+# rotando..
+w.mask = w.mask[,ncol(w.mask):1] 
+
+#### meses de ci ####
+sst.ci = array(data = NA, dim = c(360, 180, 28, 4))
+ci = c(2, 5, 8, 11)
+for(i in 1:4){
+  for(j in 0:27)
+    sst.ci[,,j + 1, i] = sst[,,ci[i]+12*j]*w.mask
+}
+
+
+#### PP cmap ####
+require(fields)
+aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+
+lon4 = ncvar_get(aux, "lon")
+lat4 = ncvar_get(aux, "lat")
+aux2 = ncvar_get(aux, "precip")[,,27:363]
+nc_close(aux)
+
+
+pp3_int = array(NA, dim = c(58, 78, 336)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
+
+for(i in 1:336){
+  
+  mod = list(x = lon4, y = lat4, z = aux2[,,i])
+  
+  grid = list(x=seq(min(lon4), max(lon4), by = 1), y = seq(min(lat4), max(lat2)+1, by = 1))
+  
+  pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
+  
+  pp3_int[,,i] = pp_aux$z  # algo esta mal con esta
+}
+
+
+pp3_estaciones = array(NA, dim = c(58, 78, 28, 12))
+
+for(j in 1:12){
+  for (i in 0:27){
+    pp3_estaciones[,,1+i,j] = pp3_int[1:58 , 1:78, j+12*i]
+  }
+}
+
+
+estaciones_p_a_pp3 = array(NA, dim = c(58, 78, 28, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_pp3[,,,i] = apply(pp3_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)*30 # esta en mm/day
+  i = i + 1
+}
+
+pp.cmap = estaciones_p_a_pp3
+
+
+#### Graficos por zonas ###
+# CMAP
+mapa_cmap = list()
+mapa_cmap[[1]] = mapa_cmap[[2]] = 1
+
+for(i in 1:2){
+  area = w.mask
+  area[lons.area[[i]], lats.area[[i]]] = 2
+  
+  aux.prom = apply(pp.cmap[lons[[i]], lats[[i]],,], c(3,4), mean, na.rm = T)
+  
+  j = 3
+    
+    aux.corr = corr(mod = aux.prom[,j], obs = sst.ci[,,,j], lon = 360, lat = 180, cf = 0.95)
+    
+    # prueba mapa_topo3
+    
+    aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+    aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+    auxa = array(area, dim = c(dim(area), 1))
+    
+   mapa_cmap[[i]] =  mapa_topo3(variable = aux, lon = seq(1,360), lat = seq(-90,90), colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+               , titulo = paste("Correlación PP ", region[i], " vs SST - ", estaciones[j], sep = "")
+               , label.escala = "", x.label = NULL, y.label = NULL, mapa = "mundo"
+               , r = 1, width = 30, height = 15, salida =  "/salidas/corr/obs/", save = F, mostrar = T
+               , nombre.fig = paste("pp.corr.cmap_", region.fig[i],"_", estaciones[j], sep = ""), na.fill = 0
+               , sig = T, variable.sig = aux2, color.vsig = "white", alpha.vsig = 1, fill.mapa = T, lats.size = 7, letter.size = 12, margen.zero = T
+               , variable.cont = auxa, contour = T, nivel.vcont = 2, color.vcont = "red", colorbar.pos = "bottom")
+    
+  
+}
+
+
+#niño3.4 con pp
+
+aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+nc_close(aux)
+
+mask2 = as.matrix(read.table("mascara.txt"))
+mask2 = array(mask2, dim = c(56,76,28,4))
+
+pp.cmap = pp.cmap[2:57,2:77,,]*mask2
+
+
+lats.n34 = seq(which(lat == -4.5), which(lat == 5.5))
+lons.n34 = seq(which(lon == 190.5), which(lon == 240.5))
+
+area = w.mask
+area[lons.n34, lats.n34] = 2
+
+aux.prom = apply(sst.ci[lons.n34, lats.n34,,], c(3,4), mean, na.rm = T)
+
+j = 3
+aux.corr = corr(mod = aux.prom[,j], obs = pp.cmap[,,,j], lon = 56, lat = 76, cf = 0.95)
+aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+auxa = array(area, dim = c(dim(area), 1))
+
+mapa_sa_cmap = mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+                          , titulo = paste("Correlación PP CMAP vs SST Niño3.4 - " , estaciones[j], sep = "")
+                          , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+                          , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", save = F, mostrar = T
+                          , nombre.fig = paste("pp.cmap.corr.SA_", estaciones[j], sep = ""), na.fill = -1000, lats.size = 7, letter.size = 12, margen.zero = T
+                          , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.4, altura.topo = 1500, type.sig = "point", size.point = 0.2)
+
+  
+
+##### Con pp del ensamble ####
+#### SST ####
+aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+sst = ncvar_get(aux, "sst")
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+nc_close(aux)
+# rotando el array
+sst = sst[,ncol(sst):1,]
+
+#### mascara ####
+aux = nc_open("X190.191.246.159.142.12.48.11.nc")
+w.mask = ncvar_get(aux, "mask")
+nc_close(aux)
+# rotando..
+w.mask = w.mask[,ncol(w.mask):1] 
+
+#### meses de ci ####
+sst.ci = array(data = NA, dim = c(360, 180, 29, 4))
+ci = c(2, 5, 8, 11)
+for(i in 1:4){
+  for(j in 0:28)
+    sst.ci[,,j + 1, i] = sst[,,ci[i]+12*j]*w.mask
+}
+
+
+area = w.mask
+area[lons.n34, lats.n34] = 2
+
+aux.prom = apply(sst.ci[lons.n34, lats.n34,,], c(3,4), mean, na.rm = T)
+
+mask = array(as.matrix(read.table("mascara.txt")), dim = c(dim(pp.ens)))
+
+pp.ens = pp.ens*mask
+
+j = 3
+
+aux.corr = corr(mod = aux.prom[,j], obs = pp.ens[,,,j], lon = 56, lat = 76, cf = 0.95)
+
+# prueba mapa_topo3
+
+aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+auxa = array(area, dim = c(dim(area), 1))
+
+mapa_sa_emm  =  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+                           , titulo = paste("Correlación PP EMM vs SST Niño3.4 -  ", estaciones[j], sep = "")
+                           , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
+                           , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", save = F, mostrar = T
+                           , nombre.fig = paste("pp.corr.ens.SA_",estaciones[j], sep = ""), na.fill = -1000, lats.size = 7, letter.size = 12, margen.zero = T
+                           , sig = T, variable.sig = aux2, color.vsig = "black", alpha.vsig = 0.4, altura.topo = 1500, type.sig = "point", size.point = 0.2 )
+
+
+
+### contra pp de cada modelo (por ahora con gfdl-cm2p1)
+
+
+area = w.mask
+area[lons.area[[i]], lats.area[[i]]] = 2
+aux.prom = apply(aux3[lons[[i]], lats[[i]],,,m], c(3,4), mean, na.rm = T)
+#### Corr por modelos ####
+
+
+aux.prom = apply(sst.ci[lons.n34, lats.n34,,], c(3,4), mean, na.rm = T)
+
+mask = array(as.matrix(read.table("mascara.txt")), dim = c(dim(aux3)))
+
+pp = aux3*mask
+
+
+m = 2
+j = 3
+
+aux.corr = corr(mod = aux.prom[,j], obs = pp[,,,j,m], lon = 56, lat = 76, cf = 0.95)
+
+aux = array(aux.corr[,,1], dim = c(dim(aux.corr[,,1]), 1))
+aux.sig = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
+auxa = array(area, dim = c(dim(area), 1))
+
+mapa_sa_cm2p1  =     mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = "RdBu", revert = T, escala = seq(-1,1, by = 0.1)
+                                , titulo = paste("Correlación PP CM2p1 vs SST Niño3.4 - " , estaciones[j], sep = "")
+                                , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA", save = F, mostrar = T
+                                , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", altura.topo = 1500
+                                , nombre.fig = paste("corr.N34_", nombres[m],"_", estaciones[j], sep = ""), na.fill = -1000
+                                , sig = T, variable.sig = aux.sig, color.vsig = "black", alpha.vsig = .4, lats.size = 7, letter.size = 12, margen.zero = T
+                                , variable.cont = auxa, contour = F, nivel.vcont = 2, color.vcont = "red"
+                                , type.sig = "point", size.point = .2, cb.v.w = 1, cb.v.h = 30, cb.size = 14)
+
+  
+  
+colorbar1 = g_legend(mapa_sa_cm2p1)
+
+
+gp1 = mapa_EMM[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp2 = mapa_EMM[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gp3 = mapa_cm2p1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp4 = mapa_cm2p1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gp5 = mapa_cmap[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp6 = mapa_cmap[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gp7 = mapa_sa_emm + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp8 = mapa_sa_cm2p1 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp9 = mapa_sa_cmap + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9), ggplotGrob)
+
+lay <- rbind(c(1,1,2,2),c(1,1,2,2))
+
+p1 = grid.arrange(gpls[[1]], gpls[[2]],          
+                  layout_matrix = lay
+                  , left = textGrob("EMM", y = .5 
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+
+p2 = grid.arrange(gpls[[3]], gpls[[4]],
+                  layout_matrix = lay
+                  , left = textGrob("CM2p1", y =.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+
+
+p3 = grid.arrange(gpls[[5]], gpls[[6]],
+                  layout_matrix = lay
+                  , left = textGrob("CMAP", y = 0.5
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
+                  , top = textGrob(" ", x = 0 
+                                   , gp=gpar(fontsize=16,font=8))) 
+
+lay <- rbind(c(1,1,2,2,3,3),c(1,1,2,2,3,3))
+p4 = grid.arrange(gpls[[7]], gpls[[8]], gpls[[9]],
+                 layout_matrix = lay
+                 , left = textGrob("", y = 0.5
+                                   ,rot = 90, gp=gpar(fontsize=16,font=8))
+                 , top = textGrob(" ", x = 0 
+                                  , gp=gpar(fontsize=16,font=8))) 
+
+lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
+             c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
+             c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5),
+             c(4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,5))
+
+
+
+
+nombre_fig = paste(getwd(),"/salidas/F.Finales/", "corr_cm2p1.jpg", sep = "")
+
+ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4 ,ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 30 ,units = "cm")
+
 
 
 
