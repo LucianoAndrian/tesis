@@ -1961,7 +1961,7 @@ mapa_sa_cm2p1  =     mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar
                                 , nombre.fig = paste("corr.N34_", nombres[m],"_", estaciones[j], sep = ""), na.fill = -1000
                                 , sig = T, variable.sig = aux.sig, color.vsig = "black", alpha.vsig = .4, lats.size = 7, letter.size = 12, margen.zero = T
                                 , variable.cont = auxa, contour = F, nivel.vcont = 2, color.vcont = "red"
-                                , type.sig = "point", size.point = .2, cb.v.w = 1, cb.v.h = 30, cb.size = 14)
+                                , type.sig = "point", size.point = .2, cb.v.w = 1, cb.v.h = 40, cb.size = 15)
 
   
   
@@ -1969,23 +1969,19 @@ colorbar1 = g_legend(mapa_sa_cm2p1)
 
 
 gp1 = mapa_EMM[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp2 = mapa_EMM[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp2 = mapa_cm2p1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp3 = mapa_cmap[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-gp3 = mapa_cm2p1[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp4 = mapa_cm2p1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-gp5 = mapa_cmap[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp6 = mapa_cmap[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp4 = mapa_sa_emm + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp5 = mapa_sa_cm2p1 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp6 = mapa_sa_cmap + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-gp7 = mapa_sa_emm + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp8 = mapa_sa_cm2p1 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp9 = mapa_sa_cmap + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6), ggplotGrob)
 
-gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9), ggplotGrob)
+lay <- rbind(c(1,1,1,2,2),c(1,1,1,2,2))
 
-lay <- rbind(c(1,1,2,2),c(1,1,2,2))
-
-p1 = grid.arrange(gpls[[1]], gpls[[2]],          
+p1 = grid.arrange(gpls[[1]], gpls[[4]],           
                   layout_matrix = lay
                   , left = textGrob("EMM", y = .5 
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
@@ -1993,7 +1989,7 @@ p1 = grid.arrange(gpls[[1]], gpls[[2]],
                                    , gp=gpar(fontsize=16,font=8))) 
 
 
-p2 = grid.arrange(gpls[[3]], gpls[[4]],
+p2 = grid.arrange(gpls[[2]], gpls[[5]],
                   layout_matrix = lay
                   , left = textGrob("CM2p1", y =.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
@@ -2002,32 +1998,23 @@ p2 = grid.arrange(gpls[[3]], gpls[[4]],
 
 
 
-p3 = grid.arrange(gpls[[5]], gpls[[6]],
+p3 = grid.arrange(gpls[[3]], gpls[[6]],
                   layout_matrix = lay
                   , left = textGrob("CMAP", y = 0.5
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
                   , top = textGrob(" ", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
-lay <- rbind(c(1,1,2,2,3,3),c(1,1,2,2,3,3))
-p4 = grid.arrange(gpls[[7]], gpls[[8]], gpls[[9]],
-                 layout_matrix = lay
-                 , left = textGrob("", y = 0.5
-                                   ,rot = 90, gp=gpar(fontsize=16,font=8))
-                 , top = textGrob(" ", x = 0 
-                                  , gp=gpar(fontsize=16,font=8))) 
 
-lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
-             c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
-             c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5),
-             c(4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,5))
-
+lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
+             c(2,2,2,2,2,2,2,2,4),c(2,2,2,2,2,2,2,2,4), 
+             c(3,3,3,3,3,3,3,3,4),c(3,3,3,3,3,3,3,3,4))
 
 
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", "corr_cm2p1.jpg", sep = "")
 
-ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4 ,ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 30 ,units = "cm")
+ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3,ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
 
 
 
