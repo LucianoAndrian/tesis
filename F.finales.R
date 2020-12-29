@@ -1468,8 +1468,8 @@ resultados[[4]] = resultados[[4]][,,,3]
 resultados[[6]] = resultados[[6]][,,,3]
 
 colorbars = list()
-colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1, "OrRd")
-colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "BuGn")
+colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1, "PuOr")
+colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "BrBG")
 
 
 ## RMSE normalizado con SD = 1 - RMSE/sd
@@ -1480,12 +1480,12 @@ resultados[[6]] = 1 - (resultados[[6]]/standar_d_pp3)
 
 
 escala = list(); escala[[1]] = escala[[2]] = escala[[3]] = list()
-escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(0, 1, by = .1)
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(-3, 3, by = 1)
 
-escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(0, 1, by = .1)  
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(-3, 3, by = 1)  
 
 revert = list()
-revert[[1]] = c(T,1,F,1,F); revert[[2]] = c(1,F,1,F,1, F)
+revert[[1]] = c(T,1,F,1,T); revert[[2]] = c(1,F,1,F,1, F)
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
