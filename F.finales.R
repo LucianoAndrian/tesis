@@ -120,7 +120,7 @@ for(i in 1:360){
   
   grid = list(x=seq(min(lon4), max(lon4)-2, by = 1), y = seq(min(lat4), max(lat2)-1, by = 1))
   
-  pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
+  pp_aux = fields::interp.surface.grid(obj = mod, grid.list = grid)
   
   pp3_int[,,i] = pp_aux$z 
 }
@@ -752,7 +752,7 @@ for(v in c(1,3)){
                    , nombre.fig = "pred_temp", na.fill = -1000
                    , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500,  size.point = 1
                    , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = 1, mostrar = T, save = F,  cb.v.w = 1
-                   , cb.v.h = 35, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                   , cb.v.h = 26, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                    , nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   
@@ -856,10 +856,8 @@ for(v in c(1,3)){
   
   
   
-  lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
-               c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
-               c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5), 
-               c(4,4,4,4,4,4,4,4,5),c(4,4,4,4,4,4,4,4,5))
+  lay <- rbind(c(1,1,1,1,1,1,1,1,3),c(1,1,1,1,1,1,1,1,3),
+               c(2,2,2,2,2,2,2,2,3),c(2,2,2,2,2,2,2,2,3))
   
   if(v ==1){
     nombre = "T_"
@@ -870,7 +868,7 @@ for(v in c(1,3)){
   
   nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, ".PRED", ".jpg", sep = "")
   
-  ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 35 ,units = "cm")
+  ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 17 ,units = "cm")
 
 }
 
@@ -1474,15 +1472,17 @@ colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "BrBG")
 
 ## RMSE normalizado con SD = 1 - RMSE/sd
 
-resultados[[5]] = 1 - (resultados[[5]]/standar_d_t)
-resultados[[6]] = 1 - (resultados[[6]]/standar_d_pp3)
+source("rmse_corregido.R")
+
+resultados[[5]] = 1 - (rmse[[1]]/standar_d_t)
+resultados[[6]] = 1 - (rmse[[2]]/standar_d_pp3)
 
 
 
 escala = list(); escala[[1]] = escala[[2]] = escala[[3]] = list()
-escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(-3, 3, by = 1)
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(-.5, .5, by = .1)
 
-escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(-3, 3, by = 1)  
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(-.5, .5, by = .1)  
 
 revert = list()
 revert[[1]] = c(T,1,F,1,T); revert[[2]] = c(1,F,1,F,1, F)
@@ -1584,7 +1584,7 @@ for(v in 1:2){
   
   p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
                     layout_matrix = lay
-                    , left = textGrob("RMSE", y = 0.5
+                    , left = textGrob("NRMSE", y = 0.5
                                       ,rot = 90, gp=gpar(fontsize=16,font=8))
                     , top = textGrob(" ", x = 0 
                                      , gp=gpar(fontsize=16,font=8))) 
