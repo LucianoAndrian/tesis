@@ -430,6 +430,12 @@ sin_m = function(m, season, v, titulo_num){
   #v = 1 o 3
   #v.sig = 2 o 4 
   
+  if(is.na(m)){
+   return(NA)
+  } else {
+    
+  
+  
   if(v == 1){
     v.sig = 2
   } else if(v == 3){
@@ -474,6 +480,7 @@ sin_m = function(m, season, v, titulo_num){
                         , lats.size = 7,letter.size = 12, margen.zero = F, cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
   
   return(aux)
+  }
 }
 
 
@@ -513,6 +520,21 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
+wo_mod = array(NA, dim = c(3,4,2))
+
+wo_mod[,1,1] = c(6,7,NA)
+wo_mod[,2,1] = c(2,NA,NA)
+wo_mod[,3,1] = c(6,2,NA)
+wo_mod[,4,1] = c(6,7,NA)
+
+wo_mod[,1,2] = c(6,NA,NA)
+wo_mod[,2,2] = c(6,2,NA)
+wo_mod[,3,2] = c(6,2,8)
+wo_mod[,4,2] = c(6,2,NA)
+
+
+nombres2 = c("CCSM4", "CM2p1", "FLOR-A06", "FLOR-B01", "GEOS5", "CFSv2", "CM4i", "GEM-NEMO") 
+
 for(v in c(1,3)){
   for(season in 1:4){
     
@@ -532,7 +554,7 @@ for(v in c(1,3)){
                         , label.escala = "", mapa = "SA", width = 20, height = 20
                         , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
                         , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F,  cb.v.w = 1
-                        , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                        , cb.v.h = 17, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
     
@@ -559,19 +581,23 @@ for(v in c(1,3)){
                             , label.escala = "", mapa = "SA", width = 20, height = 20
                             , na.fill = -1000, sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.2
                             , cajas = F, lon = lon2, lat = lat2, type.sig = "point", estacion = season, mostrar = T, save = F, cb.v.w = 1
-                            , cb.v.h = 32, cb.size = 10, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
+                            , cb.v.h = 17, cb.size = 10, lats.size = 7,letter.size = 12, margen.zero = T, color.vcont = "black"
                             , nivel.vcont = c(2,2.01, 2.02, 2.03, 2.02))
     
     
     
+    if(v == 1){
+      v3 = 1
+    } else {
+      v3 = 2
+    }
     
-    # Panel 2 EMM sin CFSv2
-    # nombres2 = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "ECCC-GEM-NEMO") 
-    no_mod1 = sin_m(6, season,v, titulo_num = 4)
     
-    no_mod2 = sin_m(2, season,v, titulo_num = 8)
+    no_mod1 = sin_m(wo_mod[1,season,v3], season,v, titulo_num = 4)
     
-    no_mod3 = sin_m(7, season, v, titulo_num = 12)
+    no_mod2 = sin_m(wo_mod[2,season,v3], season,v, titulo_num = 8)
+    
+    no_mod3 = sin_m(wo_mod[3,season,v3], season, v, titulo_num = 12)
     
     
 
@@ -589,22 +615,48 @@ gp6 = no_mod1[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.
 gp7 = no_mod1[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 gp8 = no_mod1[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-#panel 3 - no_mod2
-gp9 = no_mod2[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp10 = no_mod2[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp11 = no_mod2[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp12 = no_mod2[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+if(!is.na(no_mod2[1])){
+  
+  #panel 3 - no_mod2
+  gp9 = no_mod2[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp10 = no_mod2[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp11 = no_mod2[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  gp12 = no_mod2[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+  
+  if(!is.na(no_mod3[1])){
+    
+    
+    #panel 4 - no_mod3
+    gp13 = no_mod3[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp14 = no_mod3[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp15 = no_mod3[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp16 = no_mod3[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                        gp11, gp12, gp13, gp14, gp15, gp16), ggplotGrob )
+    
+    
+    
+    
+  } else {
+    
+    gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
+                        gp11, gp12), ggplotGrob )
+    
+  }
+  
+  
+  
+  
+} else {
+  
+  gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8), ggplotGrob )
+  
+}
 
 
-#panel 4 - no_mod3
-gp13 = no_mod3[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp14 = no_mod3[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp15 = no_mod3[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp16 = no_mod3[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
 
-gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
-                    gp11, gp12, gp13, gp14, gp15, gp16), ggplotGrob )
 
 lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
 
@@ -618,32 +670,56 @@ p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
                   layout_matrix = lay
-                  , left = textGrob("                          EMM sin CFSv2                      "
+                  , left = textGrob(paste("                          EMM sin ", nombres2[wo_mod[1,season,v3]], "                       ")
                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
                   , top = textGrob(" ", x = 0 
                                    , gp=gpar(fontsize=16,font=8))) 
 
+if(!is.na(no_mod2[1])){
+  
+  p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
+                    layout_matrix = lay
+                    , left = textGrob(paste("                          EMM sin ", nombres2[wo_mod[2,season,v3]], "                       ")
+                                      ,rot = 90, gp=gpar(fontsize=16,font=8))
+                    , top = textGrob(" ", x = 0 
+                                     , gp=gpar(fontsize=16,font=8)))
 
-p3 = grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]], gpls[[12]],
-                  layout_matrix = lay
-                  , left = textGrob("                          EMM sin CM2p1                      "
-                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob(" ", x = 0 
-                                   , gp=gpar(fontsize=16,font=8)))  
-
-p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
-                  layout_matrix = lay
-                  ,  left = textGrob("                          EMM sin CM4i                      "
-                                     ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob(" ", x = 0 
-                                   , gp=gpar(fontsize=16,font=8))) 
-
-
-
-lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
-             c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
-             c(3,3,3,3,3,3,3,3,6),c(3,3,3,3,3,3,3,3,6), 
-             c(4,4,4,4,4,4,4,4,6),c(4,4,4,4,4,4,4,4,6))
+  
+  
+  
+  if(!is.na(no_mod3[1])){
+    
+    p4 = grid.arrange(gpls[[13]], gpls[[14]], gpls[[15]], gpls[[16]],
+                      layout_matrix = lay
+                      , left = textGrob(paste("                          EMM sin ", nombres2[wo_mod[3,season,v3]], "                       ")
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    
+    lay <- rbind(c(1,1,1,1,1,1,1,1,5),c(1,1,1,1,1,1,1,1,5),
+                 c(2,2,2,2,2,2,2,2,5),c(2,2,2,2,2,2,2,2,5), 
+                 c(3,3,3,3,3,3,3,3,6),c(3,3,3,3,3,3,3,3,6), 
+                 c(4,4,4,4,4,4,4,4,6),c(4,4,4,4,4,4,4,4,6))
+    
+    
+    
+  } else {lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
+                       c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
+                       c(2,2,2,2,2,2,2,2,6),c(2,2,2,2,2,2,2,2,4),
+                       c(2,2,2,2,2,2,2,2,6),c(2,2,2,2,2,2,2,2,5), 
+                       c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5),
+                       c(3,3,3,3,3,3,3,3,5),c(3,3,3,3,3,3,3,3,5))
+  }
+  
+  
+  
+} else {
+  
+  lay <- rbind(c(1,1,1,1,1,1,1,1,3),c(1,1,1,1,1,1,1,1,3),
+               c(2,2,2,2,2,2,2,2,4),c(2,2,2,2,2,2,2,2,4))
+               
+}
 
 if(v ==1){
   nombre = "T_"
@@ -653,10 +729,19 @@ if(v ==1){
 
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, seasons[season], ".anova", ".jpg", sep = "")
+if(!is.na(no_mod2[1])){
+  if(!is.na(no_mod3[2])){
+    ggsave(nombre_fig,plot =grid.arrange(p1, p2,p3,p4, ncol = 2, layout_matrix = lay, colorbar1, colorbar2) ,width = 30, height = 35 ,units = "cm")
+  } else {
+    ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, ncol = 2, layout_matrix = lay, colorbar1, colorbar2) ,width = 30, height = 26.25 ,units = "cm")
+  }
+} else {
+  ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1, colorbar2) ,width = 30, height = 17.5 ,units = "cm")
+}
 
-ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3, p4, ncol = 2, layout_matrix = lay, colorbar1, colorbar2) ,width = 30, height = 35 ,units = "cm")
 
   }
+  
 }
 
 
