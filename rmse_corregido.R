@@ -150,7 +150,7 @@ for(i in 1:8){
     aux[,,,i,t] = (t.mods[,,t,,i]- mp + mo - datos.obs[,,t,,1]) 
   }
   
-  t.rmse[,,,i] = (apply(sqrt(aux[,,,i,]**2), c(1,2,3), sum, na.rm = T)/29)
+  t.rmse[,,,i] = sqrt((apply(aux[,,,i,]**2, c(1,2,3), sum, na.rm = T)/29))
 
 }
 
@@ -174,7 +174,7 @@ for(i in 1:8){
     aux[,,,i,t] = (pp.mods[,,t,,i]- mp + mo - datos.obs[,,t,,2]) 
   }
   
-  pp.rmse[,,,i] = (apply(sqrt(aux[,,,i,]**2), c(1,2,3), sum, na.rm = T)/29)
+  pp.rmse[,,,i] = sqrt((apply(aux[,,,i,]**2, c(1,2,3), sum, na.rm = T)/29))
   
 }
 
@@ -182,4 +182,35 @@ pp.rmse_mean = apply(pp.rmse, c(1,2,3), mean, na.rm = T)*mask_arr
 
 rmse[[2]] = pp.rmse_mean
 
-return(rmse)
+
+
+aux = array(data = NA, dim = c(length(lon2), length(lat2), 4, 29))
+for(t in 1:29){
+  años = seq(1,29)
+  años[t] = NA
+  mp = apply(datos.obs[,,años,,1], c(1,2,4), mean, na.rm = T)
+  aux[,,,t] = (datos.obs[,,t,,1]- mp)**2
+}
+
+sd_t = sqrt(apply(aux, c(1,2,3), sum, na.rm = T)/29)*mask_arr
+
+
+
+aux = array(data = NA, dim = c(length(lon2), length(lat2), 4, 29))
+for(t in 1:29){
+  años = seq(1,29)
+  años[t] = NA
+  mp = apply(datos.obs[,,años,,2], c(1,2,4), mean, na.rm = T)
+  aux[,,,t] = (datos.obs[,,t,,2]- mp)**2
+}
+
+sd_pp = sqrt(apply(aux, c(1,2,3), sum, na.rm = T)/29)*mask_arr
+
+
+
+NRMSE = list()
+NRMSE[[1]] = 1 - rmse[[1]]/sd_t
+NRMSE[[2]] = 1 - rmse[[2]]/sd_pp
+
+
+return(NRMSE)

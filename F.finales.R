@@ -1461,9 +1461,17 @@ for(i in 1:4){
   mask_arr[,,i] = mask
 }
 
-resultados[[2]] = resultados[[2]][,,,3]
-resultados[[4]] = resultados[[4]][,,,3]
-resultados[[6]] = resultados[[6]][,,,3]
+
+resultados2 = list()
+
+resultados2[[1]] = resultados[[1]]
+resultados2[[3]] = resultados[[3]]
+
+
+
+resultados2[[2]] = resultados[[2]][,,,3]
+resultados2[[4]] = resultados[[4]][,,,3]
+
 
 colorbars = list()
 colorbars[[1]] = c("RdYlBu",1,"YlOrRd",1, "PuOr")
@@ -1472,17 +1480,18 @@ colorbars[[2]] = c(1,"BrBG",1, "PuBuGn",1, "BrBG")
 
 ## RMSE normalizado con SD = 1 - RMSE/sd
 
+
 source("rmse_corregido.R")
 
-resultados[[5]] = 1 - (rmse[[1]]/standar_d_t)
-resultados[[6]] = 1 - (rmse[[2]]/standar_d_pp3)
+resultados2[[5]] = NRMSE[[1]]
+resultados2[[6]] = NRMSE[[2]]
 
 
 
 escala = list(); escala[[1]] = escala[[2]] = escala[[3]] = list()
-escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(-.5, .5, by = .1)
+escala[[1]][[1]] = seq(-5, 5, by = 1); escala[[1]][[3]] = seq(0, 5, by = 1); escala[[1]][[5]] = seq(-.6, .6, by = .15)
 
-escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(-.5, .5, by = .1)  
+escala[[2]][[2]] = seq(-100, 100, by = 20); escala[[2]][[4]] = seq(0, 100, by = 20); escala[[2]][[6]] = seq(-.6, .6, by = .15)  
 
 revert = list()
 revert[[1]] = c(T,1,F,1,T); revert[[2]] = c(1,F,1,F,1, F)
@@ -1516,7 +1525,7 @@ for(v in 1:2){
     }
       for(season in 1:4){
 
-        desemp[[v2]][[season]] = mapa_topo3(variable = resultados[[v2]]*mask_arr
+        desemp[[v2]][[season]] = mapa_topo3(variable = resultados2[[v2]]*mask_arr
                                            , colorbar = colorbars[[v]][v2], revert = revert[[v]][v2], escala = c(escala[[v]][[v2]])
                                            , titulo =  paste(letters[season+titulo_num],".", titulo_acc1_2[season], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
                                            , na.fill = -1000
