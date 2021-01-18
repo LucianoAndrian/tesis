@@ -2113,3 +2113,394 @@ ggsave(nombre_fig,plot =grid.arrange(p1, p2, p3,ncol = 2, layout_matrix = lay, c
 
 
 
+
+#### climatologia SSb ####
+
+source("funciones.R")
+
+library(ggplot2)
+library(gridExtra)
+library(ncdf4)
+
+#---------------------------------------------------------------#
+g_legend = function(a.gplot){
+  tmp = ggplot_gtable(ggplot_build(a.gplot))
+  leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend = tmp$grobs[[leg]]
+  return(legend)}
+######---------------------- MEDIAS Y DESVIOS ----------------------######
+
+# OBSERVADO
+
+# Temp
+ruta = "/pikachu/datos/osman/nmme/monthly"
+
+tref = nc_open(paste(ruta,"tref_monthly_nmme_ghcn_cams.nc", sep = "/"))
+names(tref$var)
+temp = ncvar_get(tref, "tref")
+
+lat = ncvar_get(tref, "Y")
+lon = ncvar_get(tref, "X")
+nc_close(tref)
+temp = temp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:371] 
+
+lon2 = lon[which(lon==275):which(lon==330)]
+lat2 = lat[which(lat==-60):which(lat==15)]
+
+temp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) 
+
+for(j in 1:12){
+  for (i in 0:29){
+    temp_estaciones[,,1+i,j] = temp[ , , j+12*i]
+  }
+}
+
+# Estaciones
+estaciones_p_a_t = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_t[,,,i] = apply(temp_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)
+  i = i + 1
+}
+
+estaciones_prom_t = array(NA, dim = c(length(lon2), length(lat2), 4))
+
+for( i in 1:4){
+  estaciones_prom_t[,,i] = apply(estaciones_p_a_t[,,,i], c(1,2), mean)
+}
+
+
+
+
+T_mean_obs = list()
+for(season in 1:4){
+  
+  T_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_t, colorbar = "Spectral", revert = T, escala = seq(0, 35, by = 2.5)
+                                    , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 273, niveles = 11
+                                    , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                    , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                    , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                    , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                    , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+}
+
+
+mask = estaciones_prom_t[,,1]  
+mask[which(!is.na(mask))]=1
+
+# sd
+standar_d_t = array(NA, dim = c(length(lon2), length(lat2), 4))
+for( i in 1:4 ){
+  standar_d_t[,,i] = apply(estaciones_p_a_t[,,,i], c(1,2), sd)
+}
+
+
+T_SD_obs = list()
+for(season in 1:4){
+  
+  T_SD_obs[[season]] = mapa_topo3(variable = standar_d_t, colorbar = "YlOrRd", revert = F,escala = seq(0, 1.5, by = 0.1)
+                                  , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9
+                                  , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                  , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                  , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                  , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                  , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+
+}
+
+# Precip
+
+aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+
+lon = ncvar_get(aux, "lon")
+lat = ncvar_get(aux, "lat")
+aux2 = ncvar_get(aux, "precip")[,,27:386]
+nc_close(aux)
+
+lon4 = lon
+lat4 = lat
+
+pp3_int = array(NA, dim = c(56, 76, 360)) # esta quedo con mayor latitud y longitud ya que sino queda mas chico debido a la grilla 2.5x2.5
+
+for(i in 1:360){
+  
+  mod = list(x = lon4, y = lat4, z = aux2[,,i])
+  
+  grid = list(x=seq(min(lon4), max(lon4)-2, by = 1), y = seq(min(lat4), max(lat2)-1, by = 1))
+  
+  pp_aux = fields::interp.surface.grid(obj = mod, grid.list = grid)
+  
+  pp3_int[,,i] = pp_aux$z 
+}
+
+
+pp3_estaciones = array(NA, dim = c(56, 76, 30, 12))
+
+for(j in 1:12){
+  for (i in 0:29){
+    pp3_estaciones[,,1+i,j] = pp3_int[1:56 , 1:76, j+12*i]
+  }
+}
+
+
+estaciones_p_a_pp3 = array(NA, dim = c(56, 76, 30, 4))
+i=1
+while(i<=4){
+  estaciones_p_a_pp3[,,,i] = apply(pp3_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)*30 # esta en mm/day
+  i = i + 1
+}
+
+estaciones_prom_pp3 = array(NA, dim = c(56, 76, 4))
+
+for( i in 1:4){
+  estaciones_prom_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), mean)*mask
+}
+
+PP_mean_obs = list()
+for(season in 1:4){
+  
+  PP_mean_obs[[season]] = mapa_topo3(variable = estaciones_prom_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
+                                     , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9,escala = seq(0, 400, by = 50)
+                                     , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                     , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                     , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                     , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                     , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+}
+
+
+
+
+## sd
+standar_d_pp3 = array(NA, dim = c(56, 76, 4))
+for( i in 1:4 ){
+  standar_d_pp3[,,i] = apply(estaciones_p_a_pp3[,,,i], c(1,2), sd)*mask
+}
+
+
+PP_SD_obs = list()
+for(season in 1:4){
+  
+  PP_SD_obs[[season]] = mapa_topo3(variable = standar_d_pp3, lon = lon2, lat = lat2, resta = 0, colorbar = "PuBuGn"
+                                   , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), niveles = 9,escala = seq(0, 70, by = 5)
+                                   , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                   , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                   , cajas = F, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                   , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                                   , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+}
+
+
+
+mean_OBS = list(); mean_OBS[[1]] = T_mean_obs; mean_OBS[[2]] = PP_mean_obs
+SD_OBS = list(); SD_OBS[[1]] = T_SD_obs; SD_OBS[[2]] = PP_SD_obs
+## modelos
+
+ruta =  "/home/luciano.andrian/tesis/ncfiles/"
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+mask=as.matrix(read.table("mascara.txt"))
+anios = seq(from = 1982, to = 2010, by = 1)
+variable = c("temp", "pp")
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
+V.mean = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
+V.sd1 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
+
+
+for(v in 1:2){
+  print(v)
+  for(j in 1:8){ 
+    print(paste("inicio j = ", j))
+    
+    nc = nc_open(paste(ruta, modelos[j], "-", variable[v], ".nc",  sep = ""))
+    
+    var = ncvar_get(nc, variable[v])
+    nc_close(nc)
+    
+    V1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    for(i in 1:4){
+      V1[,,i] = apply(var[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+    }
+    
+    V.mean[,,,j,v] = V1
+    
+    # SD1
+    V2 =  array(NA, dim = c(length(lon2), length(lat2), length(anios),4))
+    for(i in 1:4){
+      V2[,,,i] =  apply(var[,,,,,i], c(1,2,5), mean, na.rm = TRUE)
+    }
+    
+    
+    sd = array(NA, dim = c(length(lon2), length(lat2),4)) 
+    for(i in 1:4){
+      sd[,,i] = apply(V2[,,,i], c(1,2), sd, na.rm = TRUE)*mask
+    }
+    
+    V.sd1[,,,j,v] = sd
+    
+    print(paste("fin j = ", j))
+  }
+}
+
+#climatologia del EMM sin CFSv2 (6) T MAM djf
+no_mod = c(1,2,3,4,5,7,8)
+v.mean_no_CFSv2 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.mean_no_CFSv2[,,,1] = apply(V.mean[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.mean_no_CFSv2[,,,2] = apply(V.mean[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+v.sd1_no_CFSv2 = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.sd1_no_CFSv2[,,,1] = apply(V.sd1[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.sd1_no_CFSv2[,,,2] = apply(V.sd1[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+
+
+#climatologia del EMM sin CM4i (7) T MAM
+no_mod = c(1,2,3,4,5,6,8)
+v.mean_no_CM4i = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.mean_no_CM4i[,,,1] = apply(V.mean[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.mean_no_CM4i[,,,2] = apply(V.mean[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+v.sd1_no_CM4i = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.sd1_no_CM4i[,,,1] = apply(V.sd1[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.sd1_no_CM4i[,,,2] = apply(V.sd1[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+
+#climatologia del EMM sin NEMO (8) PP SON
+no_mod = c(1,2,3,4,5,6,7)
+v.mean_no_NEMO = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.mean_no_NEMO[,,,1] = apply(V.mean[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.mean_no_NEMO[,,,2] = apply(V.mean[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+v.sd1_no_NEMO = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+v.sd1_no_NEMO[,,,1] = apply(V.sd1[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+v.sd1_no_NEMO[,,,2] = apply(V.sd1[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+
+
+
+#CFSv2 MAM y DJF T
+no_CFSv2 = list()
+aux = aux2 =list()
+resta_CFS_EMM = V.mean[,,,6,1] - v.mean_no_CFSv2[,,,1]
+resta_CFS_OBS = V.mean[,,,6,1] - estaciones_prom_t
+#resta_CFS_OBS[which(resta_CFS_OBS<(-3))] = -3
+
+for(season in 1:4){
+  
+  aux[[season]] = mapa_topo3(variable = resta_CFS_EMM, colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
+                             , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                             , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                             , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                             , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                             , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  aux2[[season]] = mapa_topo3(variable =resta_CFS_OBS, colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
+                              , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                              , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                              , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                              , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                              , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                              , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+  
+  
+}
+
+no_CFSv2[[1]] = aux; no_CFSv2[[2]] = aux2
+
+#CM4i (7) MAM T
+no_CM4i = list()
+resta_CM4i_EMM = V.mean[,,,7,1] - v.mean_no_CM4i[,,,1]
+resta_CM4i_OBS = V.mean[,,,7,1] - estaciones_prom_t
+resta_CM4i_OBS[which(resta_CM4i_OBS<(-5))] = -5
+resta_CM4i_OBS[which(resta_CM4i_OBS>5)] = 5
+for(season in 1:4){
+  
+  aux[[season]] = mapa_topo3(variable = resta_CM4i_EMM, colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
+                             , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                             , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                             , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                             , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                             , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  aux2[[season]] = mapa_topo3(variable =resta_CM4i_OBS, colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
+                              , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                              , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                              , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                              , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                              , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                              , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+  
+  
+}
+
+no_CM4i[[1]] = aux; no_CM4i[[2]] = aux2
+
+
+#NEMO (8) PP SON
+no_NEMO = list()
+resta_NEMO_EMM = V.mean[,,,8,1] - v.mean_no_NEMO[,,,1]
+resta_NEMO_OBS = V.mean[,,,8,1] - estaciones_prom_t
+
+for(season in 1:4){
+  
+  aux[[season]] = mapa_topo3(variable = resta_NEMO_EMM, colorbar = "BrBG", escala = seq(-5, 5, by = 1), revert = F
+                             , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                             , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                             , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                             , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                             , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  aux2[[season]] = mapa_topo3(variable =resta_NEMO_OBS, colorbar = "BrBG", escala = seq(-5, 5, by = 1), revert = F
+                              , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
+                              , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                              , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                              , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                              , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
+                              , nivel.vcont = c(2,2.01, 2.02, 2.03))
+  
+  
+  
+  
+}
+
+no_NEMO[[1]] = aux; no_NEMO[[2]] = aux2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
