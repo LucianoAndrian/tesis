@@ -2236,9 +2236,6 @@ for( i in 1:4 ){
 }
 
 
-
-mean_OBS = list(); mean_OBS[[1]] = T_mean_obs; mean_OBS[[2]] = PP_mean_obs
-SD_OBS = list(); SD_OBS[[1]] = T_SD_obs; SD_OBS[[2]] = PP_SD_obs
 ## modelos
 
 ruta =  "/home/luciano.andrian/tesis/ncfiles/"
@@ -2288,55 +2285,118 @@ for(v in 1:2){
 }
 
 
+datos.obs = array(NA, dim = c(dim(estaciones_prom_pp3), 2))
+datos.obs[,,,1] = estaciones_prom_t; datos.obs[,,,2] = estaciones_prom_pp3
 
+escalas = list()
+escalas[[1]] = seq(-5,5); escalas[[2]] = seq(-100, 100, by = 20)
+colorbars = list(); colorbars[[1]] = "RdBu"; colorbars[[2]] = "BrBG"
+revert = c(T, F)
 
-for(m in 1:8){
-  
+modelos_nom = c("CCSM4", "CM2p1", "FLOR-A06", "FLOR-B01", "GEOSS5", "CFSv2", "CanCM4i", "GEM-NEMO")
+meses_nom = c("MAM", "JJA", "SON", "DJF")
 
-  no_mod = c(1,2,3,4,5,6,7,8)
-  no_mod[m] = NA
-  v.mean_no_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
-  v.mean_no_mod[,,,1] = apply(V.mean[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
-  v.mean_no_mod[,,,2] = apply(V.mean[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
-  
-  v.sd1_no_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
-  v.sd1_no_mod[,,,1] = apply(V.sd1[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
-  v.sd1_no_mod[,,,2] = apply(V.sd1[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
-  
-  
-  
-  
-  resta_EMM = V.mean[,,,m,1] - v.mean_no_mod[,,,1]
-  resta_OBS = V.mean[,,,m,1] - estaciones_prom_t
-  
-  #resta_EMM = V.sd1[,,,m,2] - v.sd1_no_mod[,,,2]
-  #resta_OBS = V.sd1[,,,m,2] - standar_d_pp3
-  #resta_CFS_OBS[which(resta_CFS_OBS<(-3))] = -3
-  #colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
-  for(season in 1:4){
-    
-    aux[[season]] = mapa_topo3(variable = resta_EMM, colorbar = "RdBu", escala = seq(-5, 5, by = 1), revert = T
-                               , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 9
-                               , label.escala = "ºC", mapa = "SA", width = 20, height = 20
-                               , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-                               , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
-                               , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
-                               , nivel.vcont = c(2,2.01, 2.02, 2.03))
-    
-    aux2[[season]] = mapa_topo3(variable =resta_OBS, colorbar = "RdBu", escala = seq(-10, 10, by = 2), revert = T
-                                , titulo =  paste(letters[season],".",titulos[[season]], sep = ""), resta = 0, niveles = 11
-                                , label.escala = "ºC", mapa = "SA", width = 20, height = 20
-                                , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
-                                , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
-                                , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T, color.vcont = "black"
-                                , nivel.vcont = c(2,2.01, 2.02, 2.03))
-    
-    
-    
-
+for(v in 1:2){
+  if(v == 1){
+    mods = c(6,8)
+    meses = array(NA, dim = c(2,2)); meses[,1] = c(2,4); meses[,2] = c(2,3)
+  } else {
+    mods = c(2,5)
+    meses = array(NA, dim = c(2,2)); meses[,1] = c(1,4); meses[,2] = c(2,3)
   }
-  no_modd[[m]] = aux
-  no_mod_obs[[m]] = aux2 
+  no_modd = no_mod_obs= list()
+  for(m in mods){
+    
+    aux = aux2 = list()
+    
+    no_mod = c(1,2,3,4,5,6,7,8)
+    no_mod[m] = NA
+    v.mean_no_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+    v.mean_no_mod[,,,1] = apply(V.mean[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+    v.mean_no_mod[,,,2] = apply(V.mean[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+    
+    v.sd1_no_mod = array(data = NA, dim = c(length(lon2), length(lat2), 4, 2))
+    v.sd1_no_mod[,,,1] = apply(V.sd1[,,,no_mod,1], c(1,2,3), mean, na.rm = T)
+    v.sd1_no_mod[,,,2] = apply(V.sd1[,,,no_mod,2], c(1,2,3), mean, na.rm = T)
+    
+    resta_EMM = V.mean[,,,m,v] - v.mean_no_mod[,,,v]
+    resta_OBS = V.mean[,,,m,v] - datos.obs[,,,v]
+    
+    resta_OBS[which(resta_OBS<min(escalas[[v]]))] = min(escalas[[v]])
+    resta_OBS[which(resta_OBS>max(escalas[[v]]))] = max(escalas[[v]])
+    
+      
+
+    
+    for(season in 1:4){
+      
+      aux[[season]] = mapa_topo3(variable = resta_EMM, colorbar = colorbars[[v]], escala = escalas[[v]], revert = revert[v]
+                                 , titulo =  paste("Climatología ", modelos_nom[m], " - EMM", sep = ""), resta = 0, niveles = 9
+                                 , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                 , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                 , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                 , cb.v.h = 32, cb.size = 15, lats.size = 7, letter.size = 12, margen.zero = T)
+      
+      aux2[[season]] = mapa_topo3(variable = resta_OBS, colorbar = colorbars[[v]], escala = escalas[[v]], revert = revert[v]
+                                  , titulo =   paste("Climatología ", modelos_nom[m], " - Observada", sep = ""), resta = 0, niveles = 11
+                                  , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                  , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                  , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                  , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T)
+      
+      
+      
+      
+    }
+    
+    colorbar1 = g_legend(aux[[1]])
+    
+    if(mods[1] == m){
+      x = 1
+    } else {
+      x = 2
+    }
+    
+    gp1 = aux[[meses[1,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp2 = aux2[[meses[1,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    gp3 = aux[[meses[2,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp4 = aux2[[meses[2,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    gpls <- lapply(list(gp1,gp2,gp3, gp4), ggplotGrob)
+    
+    lay <- rbind(c(1,1,2,2))
+    
+    p1 = grid.arrange(gpls[[1]], gpls[[2]],
+                      layout_matrix = lay
+                      , left = textGrob(meses_nom[meses[1,x]], y = .5 
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    
+    p2 = grid.arrange(gpls[[3]], gpls[[4]],
+                      layout_matrix = lay
+                      , left = textGrob(meses_nom[meses[2,x]], y =.5
+                                        ,rot = 90, gp=gpar(fontsize=16,font=8))
+                      , top = textGrob(" ", x = 0 
+                                       , gp=gpar(fontsize=16,font=8))) 
+    
+    lay <- rbind(c(1,1,1,1,1,1,1,1,3),c(1,1,1,1,1,1,1,1,3),
+                 c(2,2,2,2,2,2,2,2,3),c(2,2,2,2,2,2,2,2,3))
+    
+    if(v ==1){
+      nombre = "T_"
+    } else {
+      nombre = "PP_"
+    }
+    
+    
+    nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, "beta_",m, ".jpg", sep = "")
+    
+    ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1) ,width = 25, height = 25 ,units = "cm")
+    
+  }
 }
 
 
