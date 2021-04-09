@@ -329,10 +329,10 @@ load("topo.RData")
 
 
 mapa_topo3(variable = t.ACC, colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-           , titulo = paste("ACC Temp Ensamble y CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , titulo = paste("T - ACC NMME vs CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("t.ACC_ensamble", sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC
-           , lon = lon2, lat = lat2, type.sig = "point2")
+           , lon = lon2, lat = lat2, type.sig = "point2", letter.size = 18)
 
 
 
@@ -348,7 +348,7 @@ for(i in 1:4){
 i = 3
 #for(i in 1:3){
 mapa_topo3(variable = pp.ACC[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-           , titulo = paste("ACC PP MODS y ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+           , titulo = paste("PP - ACC NMME vs CPC ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("AC_pp_", nombres2[i], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC[,,,i]*mask_arr
            , lon = lon2, lat = lat2, type.sig = "point2")
@@ -439,7 +439,7 @@ for(i in 1:8){
 for(i in 1:8){
   
   mapa_topo3(variable = t.ACC_oneless[,,,i], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo = paste("ACC Temp MODS y CPC sin ", modelos[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo = paste("T - ACC NMME w/o ", modelos[i], "vs CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/desemp_mods/AC_sin_mods/", nombre.fig = paste("t.ACC_sin_", modelos[i], sep = ""), na.fill = -1000
              , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC_oneless[,,,i]
              , lon = lon2, lat = lat2, type.sig = "point2")
@@ -461,7 +461,7 @@ for(j in 1:8){
    i = 3 
     
     mapa_topo3(variable = pp.ACC_oneless[,,,j,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-               , titulo = paste("ACC PP MODS y ", nombres2[i], " sin ", modelos[j],  sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+               , titulo = paste("PP - ACC NMME w/o  ", modelos[j], " vs ",  nombres2[i],  sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
                , salida = "/salidas/desemp_mods/AC_sin_mods/", nombre.fig = paste("pp.ACC_", nombres2[i],"sin_", modelos[j], sep = ""), na.fill = -1000
                , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC_oneless[,,,j,i]*mask_arr
                , lon = lon2, lat = lat2, type.sig = "point2")

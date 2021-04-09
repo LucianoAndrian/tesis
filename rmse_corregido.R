@@ -54,7 +54,7 @@ while(i<=4){
 ## ------------------------ CMAP ------------------------ ## # sin mascara
 # solo pp
 
-aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+aux = nc_open("/home/luciano.andrian/tesis/ncfiles/X190.191.242.210.56.5.48.49.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")

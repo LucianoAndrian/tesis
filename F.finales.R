@@ -102,7 +102,7 @@ for(season in 1:4){
 
 # Precip
 
-aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+aux = nc_open("/home/luciano.andrian/tesis/ncfiles/X190.191.242.210.56.5.48.49.nc")
 
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
@@ -399,11 +399,6 @@ for(v in 1:2){
     
     ggsave(nombre_fig,plot =grid.arrange(p3, p4, ncol = 2, layout_matrix = lay, colorbar2) ,width = 30, height = 17 ,units = "cm")
     
-    
-      
-      
-      
-
 }
 
 
@@ -483,13 +478,23 @@ sin_m = function(m, season, v, titulo_num){
   }
 }
 
-
 # EMM
+
+
+ss_T = anova_fun(variable = "temp", ensemble_total = "no")    # ver funcion. ssgama muy alto.
+
+ss_PP = anova_fun(variable = "pp", ensemble_total = "no")
+
+
+
+
 ss_temp = anova_fun(variable = "temp", ensemble_total = "si") 
 sig_temp_emm = test_cos(ss_temp, ensemble_total = "si", nomodel_selec = "no", no_model = "no")
 
+
 ss_pp = anova_fun(variable = "pp", ensemble_total = "si")
 sig_pp_emm = test_cos(ss_pp, ensemble_total = "si", nomodel_selec = "no", no_model = "no")
+
 
 EMM = list()
 EMM[[1]] = ss_temp; EMM[[2]] = sig_temp_emm
@@ -527,7 +532,7 @@ wo_mod[,2,1] = c(2,NA,NA)
 wo_mod[,3,1] = c(6,2,NA)
 wo_mod[,4,1] = c(6,7,NA)
 
-wo_mod[,1,2] = c(6,2,NA)
+wo_mod[,1,2] = c(6,NA,NA)
 wo_mod[,2,2] = c(6,2,NA)
 wo_mod[,3,2] = c(6,2,8)
 wo_mod[,4,2] = c(6,2,NA)
@@ -818,7 +823,7 @@ pred = pp_test(ss_temp = ss_temp, ss_pp = ss_pp, ensemble_total = "si")
 pred_wo =pp_test(ss_temp = ss_T, ss_pp = ss_PP, ensemble_total = "no")
 
 escala_pred = list()
-escala_pred[[1]] = seq(0,1, by = .1); escala_pred[[3]] = seq(0, .4, by = .05)
+escala_pred[[1]] = seq(0,1, by = .1); escala_pred[[3]] = seq(0, .6, by = .1)
 
 for(v in c(1,3)){
   if(v == 1){
@@ -1228,6 +1233,10 @@ for(v in 1:2){
 #
 load("ACC.RData")
 
+auxT = sqrt(ss_temp[[1]])/sqrt(ss_temp[[4]])
+auxPP = sqrt(ss_pp[[1]])/sqrt(ss_pp[[4]])
+
+snr=list(); snr[[1]] = auxT; snr[[2]] = auxPP
 
 ruta = getwd()
 
@@ -1249,6 +1258,16 @@ lons[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1); lons[[6]] = lon
 
 figs = list()
 
+
+curva = function(x){
+  x = seq(0,10, by = .1)
+  v = as.vector(NA)
+  y = x/(1+x**2)**(1/2)  
+  return(y)
+}
+  
+
+
 for(c in 1:6){
   
   figs[[c]] = list()
@@ -1269,11 +1288,15 @@ for(c in 1:6){
     data2 = matrix(data = NA, nrow = length(lon2)*length(lat2), ncol = 4)
     
     data[,1] = array(data = resultados[[1]][,,i]*mask*area, dim = length(lon2)*length(lat2))
-    data[,2] = array(data = resultados[[6]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    #data[,2] = array(data = resultados[[6]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    #data[,2] = array(data = pred[[1]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data[,2] = array(data = snr[[1]][,,i]*mask*area, dim = length(lon2)*length(lat2))
     data[,3] = 1
     
-    data2[,1] = array(data = resultados[[2]][,,i,3]*mask*area, dim = length(lon2)*length(lat2))
-    data2[,2] = array(data = resultados[[7]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data2[,1] = array(data = resultados[[2]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    #data2[,2] = array(data = resultados[[7]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    #data2[,2] = array(data = pred[[3]][,,i]*mask*area, dim = length(lon2)*length(lat2))
+    data2[,2] = array(data = snr[[2]][,,i]*mask*area, dim = length(lon2)*length(lat2))
     data2[,3] = 2
     
     
@@ -1283,20 +1306,19 @@ for(c in 1:6){
     
     data3$var = as.factor(data3$var)
     
-    dataline = matrix(data = NA, nrow = 2, ncol = 2)
-    dataline[,1] = c(-0.1,1)
-    dataline[,2] = c(-0.1,1)
-    dataline = as.data.frame(dataline)
-    colnames(dataline) = c("XX", "YY")
+
+    
+
     
     
     g  = ggplot(data = data3, mapping = aes(x = X, y = Y)) + theme_minimal() +
-      geom_point(data = data3,aes(colour = var, shape = as.factor(var)),show.legend = T, size = size.point, stroke = stroke.size) +
-      scale_x_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Teorico") +
+      geom_point(data = data3, aes(colour = var, shape = as.factor(var)),show.legend = T, size = size.point, stroke = stroke.size) +
+      scale_x_continuous(limits = c(0,5), breaks = seq(0,5,by = .5), name = "SNR") +
       scale_y_continuous(limits = c(0,1), breaks = seq(0,1,by = 0.2), name = "ACC Observado") +
+      stat_function(fun=function(x) x/(1+x**2)**(1/2))+
       scale_color_manual(values = c("tomato3","steelblue3"), breaks = c(1,2), name = "", labels = c("Temp", "Precip")) +
-      geom_hline(yintercept = 0.31, linetype = 2)+
-      geom_abline() +
+      #geom_hline(yintercept = 0.31, linetype = 2)+
+      
       scale_shape_discrete(guide = F) +
       theme(axis.text.y   = element_text(size = 8), axis.text.x   = element_text(size = 8), axis.title.y  = element_text(size = 8),
             axis.title.x  = element_text(size = 8),
@@ -1360,13 +1382,12 @@ gpls <- lapply(list(gp1,gp2,gp3, gp4, gp5, gp6, gp7, gp8, gp9, gp10,
                     gp19, gp20, gp21, gp22, gp23, gp24), ggplotGrob)
 
 lay <- rbind(c(1,1,2,2,3,3,4,4),c(1,1,2,2,3,3,4,4))
+library(grid)
 
 p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],          
                   layout_matrix = lay
                   , left = textGrob("N-SESA", y = .5 
-                                    ,rot = 90, gp=gpar(fontsize=16,font=8))
-                  , top = textGrob(" ", x = 0
-                                   , gp=gpar(fontsize=16,font=8))) 
+                                    ,rot = 90, gp=gpar(fontsize=16,font=8))) 
 
 
 p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]], gpls[[8]],
@@ -1418,10 +1439,10 @@ lay <- rbind(c(1,1,1,1,1,1,1,1),c(1,1,1,1,1,1,1,1),
 
 nombre_fig = paste(getwd(),"/salidas/F.Finales/", "ACC_vs", ".jpg", sep = "")
 
-ggsave(nombre_fig,plot =grid.arrange(p6, p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 20, height = 35 ,units = "cm")
+ggsave(nombre_fig,plot =grid.arrange(p6, p1, p2, p3, p4, p5, ncol = 2, layout_matrix = lay) ,width = 25, height = 35 ,units = "cm")
 
 ##### ACC cajas y modelos #####
-# source("aux.desemp.R")
+source("aux.desemp.R")
 save(resultados, file = "ACC.RData")
 load("ACC.RData")
 
@@ -1533,8 +1554,8 @@ g_legend = function(a.gplot){
   leg = which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
   legend = tmp$grobs[[leg]]
   return(legend)}
-#source("aux.desemp2.R")
-#save(resultados, file = "desemp.RData")
+source("aux.desemp2.R")
+save(resultados, file = "desemp.RData")
 
 load("desemp.RData") # "resutlados"
 
@@ -1711,16 +1732,15 @@ lon2 = read.table("lon2.txt")[,1]
 lat2 = read.table("lat2.txt")[,1]
 
 #### SST ####
-aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+aux = nc_open("ncfiles/X140.172.38.222.142.12.42.20.nc")
 sst = ncvar_get(aux, "sst")
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
 nc_close(aux)
 # rotando el array
 sst = sst[,ncol(sst):1,]
-
 #### mascara ####
-aux = nc_open("X190.191.246.159.142.12.48.11.nc")
+aux = nc_open("ncfiles/X190.191.246.159.142.12.48.11.nc")
 w.mask = ncvar_get(aux, "mask")
 nc_close(aux)
 # rotando..
@@ -1782,7 +1802,7 @@ while(i<=4){
 
 # PP cmap #
 require(fields)
-aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+aux = nc_open("/home/luciano.andrian/tesis/ncfiles/X190.191.242.210.56.5.48.49.nc")
 
 lon4 = ncvar_get(aux, "lon")
 lat4 = ncvar_get(aux, "lat")
@@ -1826,7 +1846,7 @@ obs[,,,,1] = estaciones_p_a_t; obs[,,,,2] = estaciones_p_a_pp3
 
 
 #niño3.4
-aux = nc_open("X140.172.38.222.142.12.42.20.nc")
+aux = nc_open("ncfiles/X140.172.38.222.142.12.42.20.nc")
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
 nc_close(aux)
@@ -1859,10 +1879,10 @@ revert = c(T,F)
 for(v in 1:2){
   
   if(v == 1){
-    mods_num = c(6,7)
+    mods_num = 6
   } else {
     mods_num = 2
-    meses = c(1,2,3,4)
+    meses = c(2,3,4)
   }
   
   for(m in mods_num){
@@ -1889,7 +1909,7 @@ for(v in 1:2){
       aux2 = array(aux.corr[,,2]*as.matrix(read.table("mascara.txt")),c(dim(aux.corr[,,1]),1))
       auxa = array(area, dim = c(dim(area), 1))
       
-      mapa_obs[[m]][[j]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.1)
+      mapa_obs[[m]][[j]] = mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.2)
                                 , titulo = paste(titulo[v], "observada vs SST Niño3.4 - " , estaciones[j], sep = "")
                                 , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
                                 , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", save = F, mostrar = T
@@ -1913,7 +1933,7 @@ for(v in 1:2){
       aux2 = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
       auxa = array(area, dim = c(dim(area), 1))
       
-      mapa_emm[[m]][[j]]  =  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.1)
+      mapa_emm[[m]][[j]]  =  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.2)
                                  , titulo = paste(titulo[v], "EMM vs SST Niño3.4 -  ", estaciones[j], sep = "")
                                  , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA"
                                  , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", save = F, mostrar = T
@@ -1935,8 +1955,8 @@ for(v in 1:2){
       aux.sig = array(aux.corr[,,2],c(dim(aux.corr[,,1]),1))
       auxa = array(area, dim = c(dim(area), 1))
       
-      mapa_mod[[m]][[j]]  =  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.1)
-                                   , titulo = paste("Correlación PP ", nombres[m], " vs SST Niño3.4 - " , estaciones[j], sep = "")
+      mapa_mod[[m]][[j]]  =  mapa_topo3(variable = aux, lon = lon2, lat = lat2, colorbar = colorbar[v], revert = revert[v], escala = seq(-1,1, by = 0.2)
+                                   , titulo = paste(titulo[v], "observada vs SST Niño3.4 - " , estaciones[j], sep = "")
                                    , label.escala = "", x.label = NULL, y.label = NULL, mapa = "SA", save = F, mostrar = T
                                    , r = 1, width = 20, height = 20, salida =  "/salidas/corr/n34/", altura.topo = 1500
                                    , nombre.fig = paste("corr.N34_", nombres[m],"_", estaciones[j], sep = ""), na.fill = -1000
@@ -1954,79 +1974,72 @@ for(v in 1:2){
   p = list()
   colorbar1 = g_legend(mapa_mod[[m]][[j]]) 
   if(v == 1){
-    gp1 = mapa_emm[[min(mods_num)]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp3 = mapa_obs[[min(mods_num)]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp5 = mapa_mod[[min(mods_num)]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    
-    gp2 = mapa_emm[[max(mods_num)]][[j]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp4 = mapa_obs[[max(mods_num)]][[j]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp6 = mapa_mod[[max(mods_num)]][[j]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp1 = mapa_emm[[mods_num]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp2 = mapa_obs[[mods_num]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp3 = mapa_mod[[mods_num]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     
     
-    lay <- rbind(c(1,2),c(1,2))
+    lay <- rbind(1,1)
     
-    gpls <- lapply(list(gp1,gp2,gp3,gp4,gp5,gp6), ggplotGrob)
+    gpls <- lapply(list(gp1,gp2,gp3), ggplotGrob)
     
-    p1 = grid.arrange(gpls[[1]], gpls[[2]],           
+    p1 = grid.arrange(gpls[[1]],            
                           layout_matrix = lay
-                          , left = textGrob("EMM", y = .5 
-                                            ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                          , bottom = textGrob("EMM", x = .5 
+                                            ,rot = 0, gp=gpar(fontsize=16,font=8))) 
     
-    p2 = grid.arrange(gpls[[3]], gpls[[4]],           
+    p2 = grid.arrange(gpls[[2]],
                       layout_matrix = lay
-                      , left = textGrob("Observado", y = .5 
-                                        ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                      , bottom = textGrob("CFSv2", x = .5 
+                                          ,rot = 0, gp=gpar(fontsize=16,font=8))) 
     
-    p3 =  grid.arrange(gpls[[5]], gpls[[6]],           
+    p3 =  grid.arrange(gpls[[3]],     
                      layout_matrix = lay
-                     , left = textGrob("Modelos", y = .5 
-                                      ,rot = 90, gp=gpar(fontsize=16,font=8))) 
+                     , bottom = textGrob("Observado", x = .5 
+                                         ,rot = 0, gp=gpar(fontsize=16,font=8))) 
     
-    lay <- rbind(c(1,1,1,1,1,1,1,1,4),c(1,1,1,1,1,1,1,1,4),
-                 c(2,2,2,2,2,2,2,2,4),c(2,2,2,2,2,2,2,2,4), 
-                 c(3,3,3,3,3,3,3,3,4),c(3,3,3,3,3,3,3,3,4))
+    lay <- rbind(c(1,1,1,2,2,2,3,3,3,4),c(1,1,1,2,2,2,3,3,3,4))
     
+    nombre_fig = paste(getwd(),"/salidas/F.Finales/","T_corr6.jpg", sep = "")
     
-    nombre_fig = paste(getwd(),"/salidas/F.Finales/","T_corr2.jpg", sep = "")
-    
-    ggsave(nombre_fig,plot =grid.arrange(p1,p3,p2 ,ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
+    ggsave(nombre_fig,plot =grid.arrange(p1,p2,p3, layout_matrix = lay, colorbar1) ,width = 40, height = 15 ,units = "cm")
   } else {
     
     colorbar1 = g_legend(mapa_mod[[m]][[j]]) 
     
-    lay <- rbind(c(1,2,3,4),c(1,2,3,4))
+    lay <- rbind(c(1,2,3),c(1,2,3))
       
-    gp1 = mapa_emm[[m]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp2 = mapa_emm[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp3 = mapa_emm[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp4 = mapa_emm[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     
-    gp5 = mapa_obs[[m]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp6 = mapa_obs[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp7 = mapa_obs[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp8 = mapa_obs[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp1 = mapa_emm[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp2 = mapa_emm[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp3 = mapa_emm[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     
-    gp9 = mapa_mod[[m]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp10 = mapa_mod[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp11 = mapa_mod[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-    gp12 = mapa_mod[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    gp4 = mapa_obs[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp5 = mapa_obs[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp6 = mapa_obs[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    
+    gp7 = mapa_mod[[m]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp8 = mapa_mod[[m]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp9 = mapa_mod[[m]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     
     gpls <- lapply(list(gp1,gp2,gp3,gp4,gp5,gp6,
-                        gp7,gp8,gp9,gp10,gp11,gp12), ggplotGrob)
+                        gp7,gp8,gp9), ggplotGrob)
     
-    p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]], gpls[[4]],           
+    p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[3]],
                       layout_matrix = lay
                       , left = textGrob("EMM", y = .5 
                                         ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
-    p2 = grid.arrange(gpls[[5]], gpls[[6]], gpls[[7]],  gpls[[8]],            
+    p2 = grid.arrange(gpls[[4]], gpls[[5]], gpls[[6]],
                       layout_matrix = lay
                       , left = textGrob("Observado", y = .5 
                                         ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
-    p3 =  grid.arrange(gpls[[9]], gpls[[10]], gpls[[11]],  gpls[[12]],                   
+    p3 =  grid.arrange(gpls[[7]], gpls[[8]], gpls[[9]],
                        layout_matrix = lay
-                       , left = textGrob("Modelos", y = .5 
+                       , left = textGrob("CM2p1", y = .5 
                                          ,rot = 90, gp=gpar(fontsize=16,font=8))) 
     
     
@@ -2037,7 +2050,7 @@ for(v in 1:2){
     
     nombre_fig = paste(getwd(),"/salidas/F.Finales/","PP_corr2.jpg", sep = "")
     
-    ggsave(nombre_fig,plot =grid.arrange(p1,p3,p2 ,ncol = 2, layout_matrix = lay, colorbar1) ,width = 55, height = 35 ,units = "cm")
+    ggsave(nombre_fig,plot =grid.arrange(p1,p3,p2 ,ncol = 2, layout_matrix = lay, colorbar1) ,width = 35, height = 35 ,units = "cm")
     }
 }
 
@@ -2236,7 +2249,7 @@ for(v in 1:2){
   no_modd = no_mod_obs= list()
   for(m in mods){
     
-    aux = aux2 = list()
+    aux = aux2 = aux3 = list()
     
     no_mod = c(1,2,3,4,5,6,7,8)
     no_mod[m] = NA
@@ -2250,6 +2263,7 @@ for(v in 1:2){
     
     resta_EMM = V.mean[,,,m,v] - v.mean_no_mod[,,,v]
     resta_OBS = V.mean[,,,m,v] - datos.obs[,,,v]
+    resta_EMM_OBS = v.mean_no_mod[,,,v] - datos.obs[,,,v]
     
     resta_OBS[which(resta_OBS<min(escalas[[v]]))] = min(escalas[[v]])
     resta_OBS[which(resta_OBS>max(escalas[[v]]))] = max(escalas[[v]])
@@ -2273,6 +2287,12 @@ for(v in 1:2){
                                   , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
                                   , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T)
       
+      aux3[[season]] = mapa_topo3(variable = resta_EMM_OBS, colorbar = colorbars[[v]], escala = escalas[[v]], revert = revert[v]
+                                  , titulo =   paste("Climatología EMM menos Observada", sep = ""), resta = 0, niveles = 11
+                                  , label.escala = "ºC", mapa = "SA", width = 20, height = 20
+                                  , na.fill = -1000, r = 4, estaciones = T, altura.topo = 1500
+                                  , cajas = F, lon = lon2, lat = lat2, estacion = season, mostrar = T, save = F,  cb.v.w = 1
+                                  , cb.v.h = 32, cb.size = 10, lats.size = 7, letter.size = 12, margen.zero = T)
       
       
       
@@ -2289,16 +2309,19 @@ for(v in 1:2){
     gp1 = aux[[meses[1,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     gp2 = aux2[[meses[1,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
     
-    if(v == 1){
+    if(v == 1 & m == 6){
       
       gp3 = aux[[meses[2,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
       gp4 = aux2[[meses[2,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
       
-      gpls <- lapply(list(gp1,gp2,gp3, gp4), ggplotGrob)
+      gp21 = aux3[[meses[1,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+      gp41 = aux3[[meses[2,x]]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
       
-      lay <- rbind(c(1,1,2,2))
+      gpls <- lapply(list(gp1,gp2,gp3, gp4, gp21, gp41), ggplotGrob)
       
-      p1 = grid.arrange(gpls[[1]], gpls[[2]],
+      lay <- rbind(c(1,1,2,2,3,3))
+      
+      p1 = grid.arrange(gpls[[1]], gpls[[2]], gpls[[5]],
                         layout_matrix = lay
                         , left = textGrob(meses_nom[meses[1,x]], y = .5 
                                           ,rot = 90, gp=gpar(fontsize=16,font=8))
@@ -2306,7 +2329,7 @@ for(v in 1:2){
                                          , gp=gpar(fontsize=16,font=8))) 
       
       
-      p2 = grid.arrange(gpls[[3]], gpls[[4]],
+      p2 = grid.arrange(gpls[[3]], gpls[[4]],gpls[[6]],
                         layout_matrix = lay
                         , left = textGrob(meses_nom[meses[2,x]], y =.5
                                           ,rot = 90, gp=gpar(fontsize=16,font=8))
@@ -2320,7 +2343,7 @@ for(v in 1:2){
       
       nombre_fig = paste(getwd(),"/salidas/F.Finales/", nombre, "beta_",m, ".jpg", sep = "")
       
-      ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1) ,width = 25, height = 25 ,units = "cm")
+      ggsave(nombre_fig,plot =grid.arrange(p1, p2, ncol = 2, layout_matrix = lay, colorbar1) ,width = 30, height = 25 ,units = "cm")
       
     } else {
       

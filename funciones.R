@@ -2049,7 +2049,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                       , color.vcont = "red", alpha.vsig, sig = F, v.sig = 1
                       , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, color.mapa = "black", colorbar.pos = "right"
                       , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, estacion = NA, mostrar = F,
-                      type.sig = "tile", size.point = 0.3, letter.size = 20, save = T, cb.v.w = 1.5, cb.v.h = 30, cb.size = 14, lats.size = 14, title.size = 14, margen.zero = F
+                      type.sig = "tile", size.point = 0.3, letter.size = 20, save = T, cb.v.w = 1.5, cb.v.h = 30, cb.h.w = 1.5, cb.h.h = 30, cb.size = 14, lats.size = 14, title.size = 14, margen.zero = F
                       , cajas = F, nombres.cajas = F, h.just = 0.5){
   
   library(maps)
@@ -2200,17 +2200,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       } else if(contour.fill == T & revert == F ){
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       } else if(contour.fill == F & revert == T){
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                  guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                                  guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       } else {
         g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                              guide = guide_colorbar(barwidth = 35, barheight = 0.8, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                              guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       }
       
     }
