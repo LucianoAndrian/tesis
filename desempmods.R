@@ -1,5 +1,5 @@
-# Desempeño de modelos... otra vez.
-
+# 5
+# Desempeño de modelos
 
 #### Apertura base de datos ####
 #-------------------------------------------------#
@@ -56,83 +56,83 @@ while(i<=4){
 
 # PP
 
-#prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
-prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")  # nuevo
-names(prec$var)
-pp = ncvar_get(prec, "precip")
-lat = ncvar_get(prec, "lat")
-lon = ncvar_get(prec, "lon")
-nc_close(prec)
-
-pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:362]   
-
-pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) # le pongo 30 igual. va tener NA pero sino complica los calculos mas adelante
-
-for(j in 1:12){
-  for (i in 0:29){
-    pp_estaciones[,,1+i,j] = pp[ , , j+12*i]
-  }
-}
-
-
-# Estaciones
-
-prom_est_cpc_pp = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
-i=1
-while(i<=4){
-  prom_est_cpc_pp[,,,i] = apply(pp_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean, na.rm = T)
-  i = i + 1
-}
-
+# #prec = nc_open(paste(ruta, "prec_monthly_nmme_cpc.nc", sep = "/"))
+# prec = nc_open("/home/luciano.andrian/tesis/ncfiles/cpc_pp.1x1.nc")  # nuevo
+# names(prec$var)
+# pp = ncvar_get(prec, "precip")
+# lat = ncvar_get(prec, "lat")
+# lon = ncvar_get(prec, "lon")
+# nc_close(prec)
+# 
+# pp = pp[which(lon==275):which(lon==330), which(lat==-60):which(lat==15), 3:362]   
+# 
+# pp_estaciones = array(NA, dim = c(length(lon2), length(lat2), 30, 12)) # le pongo 30 igual. va tener NA pero sino complica los calculos mas adelante
+# 
+# for(j in 1:12){
+#   for (i in 0:29){
+#     pp_estaciones[,,1+i,j] = pp[ , , j+12*i]
+#   }
+# }
+# 
+# 
+# # Estaciones
+# 
+# prom_est_cpc_pp = array(NA, dim = c(length(lon2), length(lat2), 30, 4))
+# i=1
+# while(i<=4){
+#   prom_est_cpc_pp[,,,i] = apply(pp_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean, na.rm = T)
+#   i = i + 1
+# }
+# 
 
 
 ## ------------------------ GPCC ------------------------ ## #con mascara
 # solo pp
 
-aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
-lon = ncvar_get(aux, "lon")
-lat = ncvar_get(aux, "lat")
-aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:386]
-nc_close(aux)
-
-lon2 = lon[which(lon==275.25):which(lon==330.25)]
-lat2 = lat[which(lat==-60.25):which(lat==15.25)]
-
-pp2_int = array(NA, dim = c(56, 76, 360))
-
-require(fields) 
-for(i in 1:360){ # interpolado (no guarde los interpolados en datos_obs.R)
-  
-  mod = list(x = lon2, y = lat2, z = aux2[,,i])
-  
-  grid = list(x=seq(min(lon2), max(lon2), by = 1), y = seq(min(lat2), max(lat2), by = 1))
-  
-  pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
-  
-  pp2_int[,,i] = pp_aux$z
-}
-
-pp2_estaciones = array(NA, dim = c(56, 76, 30, 12))
-
-for(j in 1:12){
-  for (i in 0:29){
-    pp2_estaciones[,,1+i,j] = pp2_int[ , , j+12*i]
-  }
-}
-
-prom_est_gpcc_pp = array(NA, dim = c(56, 76, 30, 4))
-i=1
-while(i<=4){
-  prom_est_gpcc_pp[,,,i] = apply(pp2_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)
-  i = i + 1
-}
+# aux = nc_open("/home/luciano.andrian/tesis/X157.92.36.193.339.11.29.13.nc")
+# lon = ncvar_get(aux, "lon")
+# lat = ncvar_get(aux, "lat")
+# aux2 = ncvar_get(aux, "precip")[which(lon==275.25):which(lon==330.25), which(lat==-60.25):which(lat==15.25),27:386]
+# nc_close(aux)
+# 
+# lon2 = lon[which(lon==275.25):which(lon==330.25)]
+# lat2 = lat[which(lat==-60.25):which(lat==15.25)]
+# 
+# pp2_int = array(NA, dim = c(56, 76, 360))
+# 
+# require(fields) 
+# for(i in 1:360){ # interpolado (no guarde los interpolados en datos_obs.R)
+#   
+#   mod = list(x = lon2, y = lat2, z = aux2[,,i])
+#   
+#   grid = list(x=seq(min(lon2), max(lon2), by = 1), y = seq(min(lat2), max(lat2), by = 1))
+#   
+#   pp_aux = interp.surface.grid(obj = mod, grid.list = grid)
+#   
+#   pp2_int[,,i] = pp_aux$z
+# }
+# 
+# pp2_estaciones = array(NA, dim = c(56, 76, 30, 12))
+# 
+# for(j in 1:12){
+#   for (i in 0:29){
+#     pp2_estaciones[,,1+i,j] = pp2_int[ , , j+12*i]
+#   }
+# }
+# 
+# prom_est_gpcc_pp = array(NA, dim = c(56, 76, 30, 4))
+# i=1
+# while(i<=4){
+#   prom_est_gpcc_pp[,,,i] = apply(pp2_estaciones[,,,(i + 2*i - 2):(i+2*i)], c(1,2,3), mean)
+#   i = i + 1
+# }
 
 
 
 ## ------------------------ CMAP ------------------------ ## # sin mascara
 # solo pp
 
-aux = nc_open("/home/luciano.andrian/tesis/X190.191.242.210.56.5.48.49.nc")
+aux = nc_open("/home/luciano.andrian/tesis/ncfiles/X190.191.242.210.56.5.48.49.nc")
 #aux2 = ncvar_get(aux, "precip")[which(lon==275):which(lon==330), which(lat==-60):which(lat==15),]
 lon = ncvar_get(aux, "lon")
 lat = ncvar_get(aux, "lat")
@@ -175,8 +175,8 @@ while(i<=4){
 # O
 datos.obs = array(data = NA, dim = c(56, 76, 29, 4, 4)) # uso misma cantidad de años que los modelos
 datos.obs[,,,,1] = prom_est_cpc_t[,,1:29,] 
-datos.obs[,,,,2] = prom_est_cpc_pp[,,1:29,]
-datos.obs[,,,,3] = prom_est_gpcc_pp[,,1:29,]
+# datos.obs[,,,,2] = prom_est_cpc_pp[,,1:29,]
+# datos.obs[,,,,3] = prom_est_gpcc_pp[,,1:29,]
 datos.obs[,,,,4] = prom_est_cmap_pp[2:57,2:77,1:29,]  # este tenia + lats y lons por el grillado
 
 
@@ -331,7 +331,8 @@ load("topo.RData")
 mapa_topo3(variable = t.ACC, colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo = paste("T - ACC NMME vs CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("t.ACC_ensamble", sep = ""), na.fill = -1000
-           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , v.sig = rc, variable.sig = t.ACC
            , lon = lon2, lat = lat2, type.sig = "point2", letter.size = 18)
 
 
@@ -350,7 +351,8 @@ i = 3
 mapa_topo3(variable = pp.ACC[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
            , titulo = paste("PP - ACC NMME vs CPC ", nombres2[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/desemp1/", nombre.fig = paste("AC_pp_", nombres2[i], sep = ""), na.fill = -1000
-           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC[,,,i]*mask_arr
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , v.sig = rc, variable.sig = pp.ACC[,,,i]*mask_arr
            , lon = lon2, lat = lat2, type.sig = "point2")
 
 #}
@@ -439,9 +441,11 @@ for(i in 1:8){
 for(i in 1:8){
   
   mapa_topo3(variable = t.ACC_oneless[,,,i], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo = paste("T - ACC NMME w/o ", modelos[i], "vs CPC", sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo = paste("T - ACC NMME w/o ", modelos[i], "vs CPC", sep = "")
+             , label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/desemp_mods/AC_sin_mods/", nombre.fig = paste("t.ACC_sin_", modelos[i], sep = ""), na.fill = -1000
-             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC_oneless[,,,i]
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , v.sig = rc, variable.sig = t.ACC_oneless[,,,i]
              , lon = lon2, lat = lat2, type.sig = "point2")
   
 }
@@ -461,9 +465,11 @@ for(j in 1:8){
    i = 3 
     
     mapa_topo3(variable = pp.ACC_oneless[,,,j,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-               , titulo = paste("PP - ACC NMME w/o  ", modelos[j], " vs ",  nombres2[i],  sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+               , titulo = paste("PP - ACC NMME w/o  ", modelos[j], " vs ",  nombres2[i],  sep = "")
+               , label.escala = "", mapa = "SA", width = 20, height = 20
                , salida = "/salidas/desemp_mods/AC_sin_mods/", nombre.fig = paste("pp.ACC_", nombres2[i],"sin_", modelos[j], sep = ""), na.fill = -1000
-               , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC_oneless[,,,j,i]*mask_arr
+               , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+               , v.sig = rc, variable.sig = pp.ACC_oneless[,,,j,i]*mask_arr
                , lon = lon2, lat = lat2, type.sig = "point2")
   #}
   
@@ -522,29 +528,37 @@ for(i in 1:4){
 for(i in 1:8){
   
   mapa_topo3(variable =  t.ACC_ens_vs_mods[,,,i]*mask_arr, colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo = paste("ACC Temp Ensamble y ", modelos[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo = paste("ACC Temp Ensamble y ", modelos[i], sep = "")
+             , label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/desemp_mods/AC_con_mods/", nombre.fig = paste("t.ACC_ens_", modelos[i], sep = ""), na.fill = -1000
-             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC_ens_vs_mods[,,,i]*mask_arr
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , v.sig = rc, variable.sig = t.ACC_ens_vs_mods[,,,i]*mask_arr
              , lon = lon2, lat = lat2, type.sig = "point2")
   
   mapa_topo3(variable =  pp.ACC_ens_vs_mods[,,,i]*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo = paste("ACC PP Ensamble y ", modelos[i], sep = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo = paste("ACC PP Ensamble y ", modelos[i], sep = "")
+             , label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/desemp_mods/AC_con_mods/", nombre.fig = paste("pp.ACC_ens_", modelos[i], sep = ""), na.fill = -1000
-             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC_ens_vs_mods[,,,i]*mask_arr
+             , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+             , v.sig = rc, variable.sig = pp.ACC_ens_vs_mods[,,,i]*mask_arr
              , lon = lon2, lat = lat2, type.sig = "point2")
   
 }
 
 mapa_topo3(variable =  t.ACC_teo_prom*mask_arr, colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-           , titulo = "ACC Teorico Temperatura", label.escala = "", mapa = "SA", width = 20, height = 20
+           , titulo = "ACC Teorico Temperatura"
+           , label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/AC_con_mods/", nombre.fig = "t.ACC_teo", na.fill = -1000
-           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = t.ACC_teo_prom*mask_arr
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , v.sig = rc, variable.sig = t.ACC_teo_prom*mask_arr
            , lon = lon2, lat = lat2, type.sig = "point2")
 
 mapa_topo3(variable =  pp.ACC_teo_prom*mask_arr, colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-           , titulo = "ACC Teorico Precipitacion", label.escala = "", mapa = "SA", width = 20, height = 20
+           , titulo = "ACC Teorico Precipitacion"
+           , label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/desemp_mods/AC_con_mods/", nombre.fig = "pp.ACC_teo", na.fill = -1000
-           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1, v.sig = rc, variable.sig = pp.ACC_teo_prom*mask_arr
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
+           , v.sig = rc, variable.sig = pp.ACC_teo_prom*mask_arr
            , lon = lon2, lat = lat2, type.sig = "point2")
 
 #### Fig10 ####
@@ -615,30 +629,37 @@ g = list()
 for(i in 2:5){
   
   g = ggplot() + theme_minimal()+
-    geom_text(data = t.data[[1]], aes(x = cajas, y = t.data[[1]][,i], label = value), color = "green2", size = 4) + 
-    geom_point(data = t.data[[2]], aes(x = cajas, y = t.data[[2]][,i]), color = "darkgreen", shape = "*" , size = 11) + 
-    #geom_text(data = pp.data[[1]][[1]], aes(x = cajas, y = pp.data[[1]][[1]][,i], label = value), color = "blue", size = 4) + 
-    #geom_point(data = pp.data[[1]][[2]], aes(x = cajas , y = pp.data[[1]][[2]][,i]), color = "navyblue", shape = "*" , size = 11) + 
-    #geom_text(data = pp.data[[2]][[1]], aes(x = cajas, y = pp.data[[2]][[1]][,i], label = value), color = "purple", size = 4) + 
-    #geom_point(data = pp.data[[2]][[2]], aes(x = cajas , y = pp.data[[2]][[2]][,i]), color = "purple4", shape = "*" , size = 11) + 
-    geom_text(data = pp.data[[3]][[1]], aes(x = cajas, y = pp.data[[3]][[1]][,i], label = value), color = "navyblue", size = 4) + 
-    geom_point(data = pp.data[[3]][[2]], aes(x = cajas , y = pp.data[[3]][[2]][,i]), color = "darkblue", shape = "*" , size = 11) + 
+    geom_text(data = t.data[[1]], aes(x = cajas, y = t.data[[1]][,i], label = value)
+              , color = "green2", size = 4) + 
+    geom_point(data = t.data[[2]], aes(x = cajas, y = t.data[[2]][,i])
+               , color = "darkgreen", shape = "*" , size = 11) + 
+    geom_text(data = pp.data[[3]][[1]], aes(x = cajas, y = pp.data[[3]][[1]][,i], label = value)
+              , color = "navyblue", size = 4) + 
+    geom_point(data = pp.data[[3]][[2]], aes(x = cajas , y = pp.data[[3]][[2]][,i])
+               , color = "darkblue", shape = "*" , size = 11) + 
     
     geom_hline(yintercept = rc, color = "grey", size = 1) +
     geom_hline(yintercept = 0, color = "black")+
     ggtitle(paste("ACC - ", est[i-1], sep = ""))+
     scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
-    #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
-    scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB"),breaks = seq(1, 5, by = 1))+
+  
+    scale_x_continuous(labels=c("1" = "Am", "2" = "SAM", "3" = "NeB", "4" = "SACZ", "5" = "LPB")
+                       ,breaks = seq(1, 5, by = 1)) +
     xlab(label = "COLA-CCSM4(1), GFDL-CM2p1(2), GFDL-FLOR-A06(3), GFDL-FLOR-B01(4), NASA-GEOS5(5), NCEP-CFSv2(6) CMC-CanCM4i(7), CMC-GEM-NEMO(8)" )+
-    theme(axis.text.y   = element_text(size = 14, color = "black"), axis.text.x   = element_text(size = 14, color = "black", face = "bold"), axis.title.y  = element_blank(),
-          panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"), axis.title.x = element_text(),
-          panel.border = element_rect(colour = "black", fill = NA, size = 1),
+    theme(axis.text.y   = element_text(size = 14, color = "black")
+          , axis.text.x   = element_text(size = 14, color = "black", face = "bold")
+          , axis.title.y  = element_blank()
+          , panel.grid.minor = element_blank(), axis.line = element_line(colour = "black")
+          , axis.title.x = element_text()
+          , panel.border = element_rect(colour = "black", fill = NA, size = 1),
           panel.ontop = F,
           plot.title = element_text(hjust = 0.5)) 
-  ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/AC_con_mods/", "ACC", "_", est[i-1], ".jpg",sep =""), plot = g, width = 30, height = 15  , units = "cm")
+  
+  ggsave(paste("/home/luciano.andrian/tesis/salidas/desemp_mods/AC_con_mods/", "ACC", "_", est[i-1], ".jpg",sep ="")
+         , plot = g, width = 30, height = 15  , units = "cm")
   
 }
+
 
 
 #### Bias ####

@@ -1,3 +1,4 @@
+# 2
 # ANOVA
 # seleccion y orden de los nc en un solo archivo
 library(ncdf4)

@@ -1,4 +1,5 @@
-
+# 6.
+# figuras finales tesis
 source("funciones.R")
 
 library(ggplot2)

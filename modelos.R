@@ -1,11 +1,11 @@
+# 3
 #rm(list=ls())
 
+# ANOVA EMM completo
 
 library(ncdf4)
 
 source("funciones.R")
-#source("mapa_obs.R")
-#source("r2_modelos.R")
 
 #---------------------------------------------------------------#
 lon2 = read.table("lon2.txt")[,1]
@@ -42,7 +42,8 @@ for(i in 1:length(nombres2)){
   # imagenes
   # T
   mapa_topo3(variable = v[[1]], colorbar = "Spectral", revert = T, escala = seq(-5, 40, by = 5)
-             , titulo =  paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "ºC", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("Promedio Temperatura 1982 - 2010 - ", nombres2[i], sep = "")
+             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/sd_mean/", nombre.fig = paste("temp_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500, resta = 273
              , lon = lon2, lat = lat2)
@@ -50,7 +51,8 @@ for(i in 1:length(nombres2)){
   
   # SD - T
   mapa_topo3(variable = v[[2]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo =  paste("SD Temperatura 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "ºC", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("SD Temperatura 1982 - 2010 - ", nombres2[i], sep = "")
+             , label.escala = "ºC", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/sd_mean/", nombre.fig = paste("SD-temp_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500
              , lon = lon2, lat = lat2)
@@ -59,14 +61,16 @@ for(i in 1:length(nombres2)){
   # PP
   
   mapa_topo3(variable = v[[3]], colorbar = "YlGnBu", revert = F, escala = seq(0, 400, by = 50)
-             , titulo =  paste("Promedio Precipitacíón 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "mm", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("Promedio Precipitacíón 1982 - 2010 - ", nombres2[i], sep = "")
+             , label.escala = "mm", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/sd_mean/", nombre.fig = paste("pp_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500
              , lon = lon2, lat = lat2)
 
   # SD
   mapa_topo3(variable = v[[4]], colorbar = "YlGnBu", revert = F, escala = seq(0, 100, by = 10)
-             , titulo =  paste("SD Precipitacióm 1982 - 2010 - ", nombres2[i], sep = ""), label.escala = "mm", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("SD Precipitacióm 1982 - 2010 - ", nombres2[i], sep = "")
+             , label.escala = "mm", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/sd_mean/", nombre.fig = paste("SD-pp_",nombres2[i], sep = ""), na.fill = -1000
              , r = 4, estaciones = T, altura.topo = 1500
              , lon = lon2, lat = lat2)
@@ -107,14 +111,16 @@ sig_pp = test_cos(ss_pp, ensemble_total = "si", nomodel_selec = "no", no_model =
 for(i in 6:9){  
   
   mapa_topo3(variable = ss_temp[[i]]*mask_arr, variable.sig = sig_temp[[i-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo =  paste("T - Fraction of total variance determined by", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("T - Fraction of total variance determined by", letras[i-5] , by = "")
+             , label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("temp_ss", letras[i-5], sep = ""), na.fill = -1000
              , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2, type.sig = "point")
   
   
   mapa_topo3(variable = ss_pp[[i]]*mask_arr, variable.sig = sig_pp[[i-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 1, by = 0.1)
-             , titulo =  paste("PP - Fraction of total variance determined by", letras[i-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+             , titulo =  paste("PP - Fraction of total variance determined by", letras[i-5] , by = "")
+             , label.escala = "", mapa = "SA", width = 20, height = 20
              , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("pp_ss", letras[i-5], sep = ""), na.fill = -1000
              , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
              , lon = lon2, lat = lat2, type.sig = "point")
@@ -124,15 +130,17 @@ for(i in 6:9){
 
 # ssg como otra escala # 0--> 0.2 de a 0.04
 
-mapa_topo3(variable = ss_temp[[8]]*mask_arr, variable.sig = sig_temp[[8-5]], colorbar = "YlOrRd", revert = F, escala = seq(0, 0.1, by = 0.01)
-           , titulo = paste("T - Fraction of total variance determined by", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+mapa_topo3(variable = ss_temp[[8]]*mask_arr, variable.sig = sig_temp[[8-5]], colorbar = "RdPu", revert = F, escala = seq(0, 0.1, by = 0.01)
+           , titulo = paste("T - Fraction of total variance determined by", letras[8-5] , by = "")
+           , label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("esc_temp_ss", letras[8-5], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4, estaciones = T, altura.topo = 1500, size.point = 0.8
            , lon = lon2, lat = lat2, type.sig = "point")
 
 
-mapa_topo3(variable = ss_pp[[8]]*mask_arr, variable.sig = sig_pp[[8-5]], colorbar = "PuBuGn", revert = F, escala = seq(0, 0.1, by = 0.01)
-           , titulo = paste("PP - Fraction of total variance determined by", letras[8-5] , by = ""), label.escala = "", mapa = "SA", width = 20, height = 20
+mapa_topo3(variable = ss_pp[[8]]*mask_arr, variable.sig = sig_pp[[8-5]], colorbar = "BuPu", revert = F, escala = seq(0, 0.1, by = 0.01)
+           , titulo = paste("PP - Fraction of total variance determined by", letras[8-5] , by = "")
+           , label.escala = "", mapa = "SA", width = 20, height = 20
            , salida = "/salidas/ensemble/anova/anova1/", nombre.fig = paste("esc_pp_ss", letras[8-5], sep = ""), na.fill = -1000
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4, estaciones = T, altura.topo = 1500, size.point = 1
            , lon = lon2, lat = lat2, type.sig = "point")

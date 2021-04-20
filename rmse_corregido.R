@@ -1,4 +1,5 @@
-#RMSE corregido
+#6.3
+#aux de F.finales RMSE corregido
 
 #### Apertura base de datos ####
 # necesito "estaciones_p_a_t" de datos_obs.R  (ahora se va a llamar prom_est)
