@@ -421,3 +421,149 @@ for(v in 1:2){
 
 
 
+
+########################################
+############## SSBETA ###################
+####################################
+
+anios = seq(from = 1982, to = 2010, by = 1)
+variable = c("temp", "pp")
+modelos = c("COLA-CCSM4", "GFDL-CM2p1", "GFDL-FLOR-A06", "GFDL-FLOR-B01", "NASA-GEOS5", "NCEP-CFSv2", "CMC-CanCM4i", "CMC-GEM-NEMO")
+V.mean = array(data = NA, dim = c(length(lon2), length(lat2), 4, 8, 2))
+
+
+for(v in 1:2){
+  print(v)
+  for(j in 1:8){ 
+    print(paste("inicio j = ", j))
+    
+    nc = nc_open(paste(ruta, modelos[j], "-", variable[v], ".nc",  sep = ""))
+    
+    var = ncvar_get(nc, variable[v])
+    nc_close(nc)
+    
+    V1 =  array(NA, dim = c(length(lon2), length(lat2), 4)) 
+    for(i in 1:4){
+      V1[,,i] = apply(var[,,,,,i], c(1,2), mean, na.rm = TRUE)*mask  
+    }
+    
+    V.mean[,,,j,v] = V1
+
+    print(paste("fin j = ", j))
+  }
+}
+
+
+
+seasons = list()
+seasons[[1]] = c(1,1,2,3,4)
+seasons[[2]] = c(2,2,3) 
+
+mods = list()
+mods[[1]] = c(7,6,2,2,6)
+mods[[2]] = c(2,8,8)
+
+mean.obs = apply(obs, c(1,2,4,5), mean)
+
+
+escalas = list()
+escalas[[1]] = seq(-5,5); escalas[[2]] = seq(-100, 100, by = 20)
+colorbars = list(); colorbars[[1]] = "RdBu"; colorbars[[2]] = "BrBG"
+revert = c(T, F)
+
+var.titulo = c("T", "PP")
+
+for(v in 1:2){
+
+  j = 1
+  for(m in mods[[v]]){
+    
+    s = seasons[[v]][j]
+    
+    j = j + 1
+    
+    no_mod = c(1,2,3,4,5,6,7,8)
+    no_mod[m] = NA
+    
+    if(m == 2){
+      escalas[[1]] = seq(-8,8,by = 2)
+      escalas[[2]] = seq(-150,150, by = 25)
+    } else {
+      escalas[[1]] = seq(-5,5)
+      escalas[[2]] = seq(-100, 100, by = 20)
+    }
+    
+    #ensamble sin el modelo m
+    aux = apply(V.mean[,,s,no_mod,v], c(1,2), mean, na.rm = T)
+    
+    dif_emm = V.mean[,,s,m,v] - aux
+    dif_obs = V.mean[,,s,m,v] - mean.obs[,,s,v]
+    dif_emm.obs = aux - mean.obs[,,s,v]
+    
+    
+    #emm
+    aux = array(dif_emm, dim = c(56,76,1))
+    g1 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
+                    , altura.topo = 1500
+                    , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
+                    , titulo = paste(var.nombre[v]," - Climatología MME - ", modelos[m], " - ", estaciones[s], sep = "")
+                    , label.escala = "", mapa = "SA"
+                    , r = 1, contour.fill = T, na.fill = -10000
+                    , cb.v.w = 1, cb.v.h = 25, save = F
+                    , cb.size = 20, letter.size = 14, width = 25, mostrar = T)
+    
+    #mod
+    aux = array(dif_obs, dim = c(56,76,1))
+    g2 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
+                    , altura.topo = 1500
+                    , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
+                    , titulo = paste(var.nombre[v]," - Climatología ", modelos[m]," - OBS", " - ", estaciones[s], sep = "")
+                    , label.escala = "", mapa = "SA"
+                    , r = 1, contour.fill = T, na.fill = -10000
+                    , cb.v.w = 1, cb.v.h = 25, save = F
+                    , cb.size = 20, letter.size = 14, width = 25, mostrar = T)
+    
+    
+    #emm.obs
+    aux = array(dif_emm.obs, dim = c(56,76,1))
+    g3 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
+                    , altura.topo = 1500
+                    , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
+                    , titulo = paste(var.nombre[v]," - Climatología EMM - OBS", " - ", estaciones[s], sep = "")
+                    , label.escala = "", mapa = "SA"
+                    , r = 1, contour.fill = T, na.fill = -10000
+                    , cb.v.w = 1, cb.v.h = 25, save = F
+                    , cb.size = 20, letter.size = 14, width = 25, mostrar = T)
+    
+    
+    colorbar = g_legend(g3)
+    gp1 = g1 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp2 = g2 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    gp3 = g3 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+    
+    
+    lay <- rbind(c(1,1))
+    
+    gpls <- lapply(list(gp1,gp2,gp3), ggplotGrob)
+    
+    
+    p1 = grid.arrange(gpls[[1]],            
+                      layout_matrix = lay) 
+    
+    p2 = grid.arrange(gpls[[2]],
+                      layout_matrix = lay) 
+    
+    p3 =  grid.arrange(gpls[[3]],     
+                       layout_matrix = lay) 
+    
+    lay <- rbind(c(1,1,1,2,2,2,3,3,3,4),c(1,1,1,2,2,2,3,3,3,4))
+    
+    nombre_fig = paste(getwd(),"/salidas/F.Finales/", var.nombre[v], "_bias-",modelos[m],"_", estaciones[s], ".jpg", sep = "")
+    
+    ggsave(nombre_fig, plot = grid.arrange(p1,p2,p3, layout_matrix = lay, colorbar) ,width = 40, height = 15 ,units = "cm")
+  
+
+  }
+}
+
+
