@@ -666,7 +666,7 @@ mean_sd = function(nombre){
 
 #### ANOVA_FUN ####
 # anova, ss y cocientes (no tests)
-anova_fun = function(variable, ensemble_total, todos = 1){
+anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL ){
   #variable = as.character(readline("Variable (pp), (temp): "))
   #ensemble_total = readline("Todos los modelos?(si, no): ")
   
@@ -934,12 +934,20 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       return(ss_v)
       
     } else {
-      
-      f = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-GEM-NEMO: " ))
+      # 
+      # no.mods = as.numeric(readline("Cantidad de modelos a eliminar: "))
+      # 
+      # f = vector()
+      # for(i in 1:no.mods){
+      #   
+      #   f[i] = as.numeric(readline("Modelo a eliminar del ensamble. (1)COLA-CCSM4, (2)GFDL-CM2p1, (3)GFDL-FLOR-A06, (4)GFDL-FLOR-B01, (5)NASA-GEOS5, (6)NCEP-CFSv2, (7)CMC-CanCM4i, (8)CMC-GEM-NEMO: " ))  
+      #   
+      # }
+      # 
       
       mask = as.matrix(read.table("mascara.txt"))
       
-      m = 7 #modelos
+      m = 8-no.mods #modelos
       
       nc = nc_open(paste("/home/luciano.andrian/tesis/ncfiles/pre_anova-",variable,".nc", sep = ""))
       v_seasons = ncvar_get(nc, variable) # lon lat members years seasons models 
@@ -947,7 +955,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
       
       nomodel = seq(1:8)
-      nomodel = nomodel[nomodel!=f]  #esto para eliminar la dimencion correspondiente al modelo en v_seasons ya que traer errores en apply
+      nomodel = nomodel[!nomodel %in% f]  #esto para eliminar la dimencion correspondiente al modelo en v_seasons ya que traer errores en apply
       v_seasons2 = v_seasons[,,,,,nomodel]   #ok
       
       k[f] = NA # eliminando el correspondiente al modelo omitido
@@ -956,8 +964,8 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       #igual que antes. pero ahora con 7 modelos
       x000 = array(NA, dim = c(length(lon2), length(lat2), 4))
       xt00 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4))
-      x0m0 = array(NA, dim = c(length(lon2), length(lat2), 4, 7))
-      xtm0 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      x0m0 = array(NA, dim = c(length(lon2), length(lat2), 4, m))
+      xtm0 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, m))
       
       for(i in 1:4){
         x000[,,i] = apply(v_seasons2[,,,,i,],c(1,2), mean, na.rm = T)         
@@ -970,7 +978,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
       ########################################### SSa ###########################################
       
-      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4,7))  #7 en lugar de 8
+      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios),4,m))  #7 en lugar de 8
       for(i in 1:length(anios)){
         aux[,,i,,] = (xt00[,,i,]-x000)**2
       }
@@ -980,12 +988,12 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
       ########################################### SSb ###########################################
       
-      aux = array(NA, dim = c(length(lon2), length(lat2), 4, 7)) #7 en lugar de 8
-      for(i in 1:7){
+      aux = array(NA, dim = c(length(lon2), length(lat2), 4, m)) #7 en lugar de 8
+      for(i in 1:m){
         aux[,,,i] = (x0m0[,,,i]-x000)**2
       }
       
-      for(i in 1:7){ 
+      for(i in 1:m){ 
         aux[,,,i] = aux[,,,i]*k[i]*t   ## aca va k. y por esto es necesario cambiarlo
       }
       
@@ -994,7 +1002,7 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
       ########################################### SSe ###########################################
       
-      aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, 7)) #7 en lugar de 8
+      aux = array(NA, dim = c(length(lon2), length(lat2), 28, length(anios), 4, m)) #7 en lugar de 8
       for(i in 1:28){
         aux[,, i,,,] = (v_seasons2[,,i,,,]-xtm0)**2
       }
@@ -1004,24 +1012,24 @@ anova_fun = function(variable, ensemble_total, todos = 1){
       
       ########################################### SSg ########################################### 
       
-      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
-      for(i in 1:7){
+      aux = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, m))
+      for(i in 1:m){
         aux[,,,,i] = xtm0[,,,,i] - xt00
       }
       
-      aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      aux2 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, m))
       for(i in 1:length(anios)){
         aux2[,,i,,] = aux[,,i,,] - x0m0
       }
       
-      aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, 7))
+      aux3 = array(NA, dim = c(length(lon2), length(lat2), length(anios), 4, m))
       for(i in 1:length(anios)){
-        for(j in 1:7){
+        for(j in 1:m){
           aux3[,,i,,j] = (aux2[,,i,,j] + x000)**2
         }
       }
       
-      for(i in 1:7){ 
+      for(i in 1:m){ 
         aux3[,,,,i] = aux3[,,,,i]*k[i]    
       }
       
@@ -2050,7 +2058,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                       , titulo = NULL, label.escala = "value", x.label = NULL, y.label = NULL, fill.mapa = F, color.mapa = "black", colorbar.pos = "right"
                       , mapa = NULL, altura.topo = 0, r = 1, na.fill = NULL, nombre.fig = "fig", width = 25, height = 20, salida = NULL, estaciones = F, estacion = NA, mostrar = F,
                       type.sig = "tile", size.point = 0.3, letter.size = 20, save = T, cb.v.w = 1.5, cb.v.h = 30, cb.h.w = 1.5, cb.h.h = 30, cb.size = 14, lats.size = 14, title.size = 14, margen.zero = F
-                      , cajas = F, nombres.cajas = F, h.just = 0.5){
+                      , cajas = F, nombres.cajas = F, h.just = 0.5, breaks.lon = seq(0, 360, by = 30), breaks.lat = seq(-90, 90, by = 20)){
   
   library(maps)
   library(ncdf4)
@@ -2091,10 +2099,18 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
     map = map_data("world2", colour = "black")
     
-    breaks.lon = seq(0, 360, by = 30); limits.lon = c(min(breaks.lon), max(breaks.lon))
-    breaks.lat = seq(-90, 90, by = 20); limits.lat = c(min(breaks.lat), max(breaks.lat))
+    ###### MODIFICADO PARA MAPA VENEZUELA
+    #map <- map_data("world2", regions = c("Venezuela"), colour = "black")
     
     
+   limits.lon = c(min(breaks.lon), max(breaks.lon))
+   limits.lat = c(min(breaks.lat), max(breaks.lat))
+    
+   load("topo_sa.RData")
+   topo2 = topo_sa
+   rm(topo_sa)
+   topo2[which(topo2$h<altura.topo)]=NA
+   
   } else if(mapa == "SA") {
     
     load("topo_sa.RData")
@@ -2108,8 +2124,8 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
                                           "Martinique", "falkland islands", "Honduras", "El Salvador", "Guatemala", "Belice"), colour = "black")
     
     
-    breaks.lon = seq(270, 335, by = 10); limits.lon = c(min(breaks.lon), max(breaks.lon))
-    breaks.lat = seq(-60, 20, by = 10); limits.lat = c(min(breaks.lat), max(breaks.lat))
+    breaks.lon = seq(270, 335, by = 20); limits.lon = c(min(breaks.lon), max(breaks.lon))
+    breaks.lat = seq(-60, 20, by = 20); limits.lat = c(min(breaks.lat), max(breaks.lat))
     
   }
   
@@ -2158,12 +2174,12 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
     colnames(data)<-c("lon", "lat", "var")
     
-    if(mapa == "SA"){
+    if(mapa == "mundo" | mapa == "SA"){ ###### MODIFICADO PARA MAPA VENEZUELA
       
       g = ggplot(topo2, aes(lon, lat)) + theme_minimal() +
         xlab(x.label) + ylab(y.label) + 
         theme(panel.border = element_blank(), panel.grid.major = element_line(colour = "grey", size = 0.3), panel.grid.minor = element_blank()) +
-        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 0.5, na.rm = T) 
+        geom_tile(data = data, aes(x = lon, y = lat, fill = var), alpha = 1, na.rm = T) 
       
     } else {
       
@@ -2189,7 +2205,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
                                   guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size))) 
       } else {
-        g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+       g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
                               guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size)))
       }
       
@@ -2209,7 +2225,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
                                   guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       } else {
-        g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
+        g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
                               guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
       }
       
@@ -2255,9 +2271,9 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     
     
     
-    if(mapa == "SA"){
+    if(mapa == "mundo" | mapa == "SA"){
       
-      g = g + geom_tile(data = topo2, aes(x = lon, y = lat, fill = h ), na.rm = T, alpha = 1, color = "black", show.legend = F) 
+      g = g + geom_tile(data = subset(topo2,  !is.na(h)), aes(x = lon, y = lat, fill = h ), na.rm = T, alpha = 1, color = "black", show.legend = F) 
       
     }
     
@@ -2279,7 +2295,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     if(fill.mapa == T){
       g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = "black", color = color.mapa, alpha = 0.3) 
     } else {
-      g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = NA, color = "black") 
+      g = g + geom_polygon(data = map, aes(x = long ,y = lat, group = group),fill = NA, color = "black", size = 0.15) 
     }
     
     if(nombres.cajas){
@@ -2304,15 +2320,23 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
     }
     
     if(estaciones == F){
-      g = g + ggtitle(titulo) +
-        scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
-        scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
-        theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
-              axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-              panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
-              panel.ontop = TRUE,
-              plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+      g = g + ggtitle(titulo) 
       
+      if(mapa == "mundo"){
+        g = g + scale_x_continuous(breaks = breaks.lon, name = x.label, limits = limits.lon) +
+          scale_y_continuous(breaks = breaks.lat, name = y.label, limits = limits.lat)
+        
+      } else {
+        g = g +   scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
+          scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)
+      }
+      
+      # g = g +  theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
+      #         axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+      #        
+      #         panel.ontop = TRUE,
+      #         plot.title = element_text(hjust = h.just, size = letter.size))
+      # 
       
       if(colorbar.pos == "bottom"){
         g = g + theme(legend.position = "bottom")
@@ -2333,9 +2357,9 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
           scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
           theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
                 axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
+                panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
                 panel.ontop = TRUE,  legend.margin=margin(0,0,0,0),  legend.box.margin=margin(-10,-10,-10,-10),
-                plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+                plot.title = element_text(hjust = h.just, size = letter.size)) 
         
         
         if(cajas){
@@ -2352,12 +2376,15 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g + ggtitle(paste(titulo)) +
           scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
-          scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
-          theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
-                axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
-                panel.border = element_rect(colour = "black", fill = NA, size = 1.5),
-                panel.ontop = TRUE, 
-                plot.title = element_text(hjust = h.just, size = letter.size)) + geom_hline(yintercept = 0, color = "black") 
+          scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat) +
+          theme(axis.text.y = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size)
+                , axis.title.y  = element_text(size = title.size),
+                axis.title.x = element_text(size = lats.size)
+                , panel.grid.minor = element_blank(),
+                #, axis.line = element_line(colour = "black"),
+                panel.ontop = TRUE,
+                panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
+                plot.title = element_text(hjust = h.just, size = letter.size))
         
         
         if(cajas){
