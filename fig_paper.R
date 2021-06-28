@@ -28,10 +28,10 @@ letras = c(as.character("\u03b1"), as.character("\u03B2"), as.character("\u194")
            , as.character("\u03B5"))
 
 titulos = list()
-titulos[[1]] = "                            α                            "
-titulos[[2]] = "                            β                            "
-titulos[[3]] = "                            ε                            "
-titulos[[4]] = "                            Ɣ                            "
+titulos[[1]] = "α"
+titulos[[2]] = "β"
+titulos[[3]] = "ε"
+titulos[[4]] = "Ɣ"
 
 
 
@@ -108,13 +108,13 @@ for(v in c(1,3)){
                         , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
                         , titulo = titulos[[1]]
                         , label.escala = NULL, mapa = "SA"
-                        , width = 20, height = 20, title.size = 12, na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 0.5
+                        , width = 20, height = 20, title.size = 13, na.fill = -1000
+                        , sig = T, color.vsig = "black", alpha.vsig = 1
                         , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
                         , cajas = F, lon = lon2, lat = lat2
                         , type.sig = "point", estacion = season
                         , mostrar = T, save = F,  cb.v.w = 0.5
-                        , cb.v.h = 8, cb.size = 5, lats.size = 3
+                        , cb.v.h = 9.5, cb.size = 6, lats.size = 4
                         , letter.size = 9, margen.zero = F, color.vcont = "black"
                         , nivel.vcont = c(2,2.01, 2.02, 2.03))
     
@@ -123,14 +123,14 @@ for(v in c(1,3)){
                       , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
                       , titulo = titulos[[2]]
                       , label.escala = NULL, mapa = "SA"
-                      , width = 20, height = 20,title.size = 12, na.fill = -1000
-                      , sig = T, color.vsig = "black", alpha.vsig = 0.5
+                      , width = 20, height = 20,title.size = 13, na.fill = -1000
+                      , sig = T, color.vsig = "black", alpha.vsig = 1
                       , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
                       , cajas = F, lon = lon2, lat = lat2
                       , type.sig = "point", estacion = season
                       , mostrar = T, save = F
                       ,  cb.v.w = 0.5, cb.v.h = 30, cb.size = 14
-                      , lats.size = 3, letter.size = 8, color.vcont = "black"
+                      , lats.size = 4, letter.size = 8, color.vcont = "black"
                       , nivel.vcont = c(2,2.01, 2.02, 2.03),margen.zero = F)
     
     
@@ -138,28 +138,28 @@ for(v in c(1,3)){
                        , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
                        , titulo =  titulos[[3]]
                        , label.escala = NULL, mapa = "SA"
-                       , width = 20, height = 20,title.size = 12, na.fill = -1000
-                       , sig = T, color.vsig = "black", alpha.vsig = 0.5
+                       , width = 20, height = 20,title.size = 13, na.fill = -1000
+                       , sig = T, color.vsig = "black", alpha.vsig = 1
                        , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
                        , cajas = F, lon = lon2, lat = lat2
                        , type.sig = "point", estacion = season
                        , mostrar = T, save = F
                        ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
-                       , lats.size = 3, letter.size = 8, color.vcont = "black"
+                       , lats.size = 4, letter.size = 8, color.vcont = "black"
                        , nivel.vcont = c(2,2.01, 2.02, 2.03),margen.zero = F)
     
     structural[[season]] = mapa_topo3(variable = EMM[[v]][[8]]*mask_arr, variable.sig =  EMM[[v.sig]][[8-5]]
                             , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
                             , titulo = titulos[[4]]
                             , label.escala = NULL, mapa = "SA"
-                            , width = 20, height = 20,title.size = 12, na.fill = -1000
+                            , width = 20, height = 20,title.size = 13, na.fill = -1000
                             , sig = T, color.vsig = "black", alpha.vsig = 0.1
                             , r = 4, estaciones = T, altura.topo = 2000, size.point = 0.0001
                             , cajas = F, lon = lon2, lat = lat2
                             , type.sig = "point", estacion = season
                             , mostrar = T, save = F
-                            ,  cb.v.w = 0.5, cb.v.h = 8.5, cb.size = 5
-                            , lats.size = 3, letter.size = 8, color.vcont = "black"
+                            ,  cb.v.w = 0.5, cb.v.h = 9.5, cb.size = 6
+                            , lats.size = 4, letter.size = 8, color.vcont = "black"
                             , nivel.vcont = c(2,2.01, 2.02, 2.03), margen.zero = F)
     
   }
@@ -192,12 +192,12 @@ for(v in c(1,3)){
   p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                  ncol = 4, nrow = 2
                  ,labels = paste(letters, ".", sep = "")
-                 , font.label = list(size = 6), vjust = 1)
+                 , font.label = list(size = 6, face = "plain"), vjust = 1)
   
   p2 = ggarrange(gp9, gp10, gp11, gp12, gp13, gp14, gp15, gp16,
                  ncol = 4, nrow = 2
                  ,labels = paste(letters[9:16], ".", sep = "")
-                 , font.label = list(size = 6), vjust = 1)
+                 , font.label = list(size = 6, face = "plain"), vjust = 1)
   
    p1 = ggarrange(p1, colorbar1, widths = c(15,1))
    p2 = ggarrange(p2, colorbar2, widths = c(15,1))
@@ -208,10 +208,56 @@ for(v in c(1,3)){
                       , "anova", ".eps", sep = "")
    
    ggsave(nombre_fig,plot =  ggarrange(p1, p2, ncol = 1, nrow = 2, align = "v")
-          ,dpi = 300, device = cairo_ps) #res ?
+          ,dpi = 300, device = cairo_ps, height = 5, units = "in", width = 7)
    
 }
+
+
+# MME without models
+# temp. CanCM4i, MAM, Bias
+v = 1; m = 7; season = 1
+bias1 = mapa_topo3(variable = EMM_wo[[v]][[m]][[7]]*mask_arr
+           , variable.sig = EMM_wo[[v.sig]][[m]][[7-5]]
+           , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+           , titulo = paste(titulos[[2]], "without CanCM4i", sep = " ")
+           , label.escala = "", mapa = "SA"
+           , na.fill = -1000, title.size = 13
+           , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
+           , estaciones = T, altura.topo = 2000, size.point = 1
+           , lon = lon2, lat = lat2, type.sig = "point"
+           , estacion = season, mostrar = T, save = F
+           ,  cb.v.w = 1, cb.v.h = 30, cb.size = 14
+           , lats.size = 7, letter.size = 12, cajas = F
+           , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+
    
-  
- 
+# temp, CFSv2, SON, gamma  
+v = 1; m = 6; season = 3
+gamma1 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
+           , variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
+           , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
+           , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
+           , label.escala = "", mapa = "SA", width = 20, height = 20
+           , na.fill = -1000,title.size = 12
+           , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4
+           , estaciones = T, altura.topo = 1500, size.point = 0.2
+           , lon = lon2, lat = lat2, type.sig = "point"
+           ,estacion = season, mostrar = T, save = F, cb.v.w = 0.7, cb.v.h = 13, cb.size = 7
+          , lats.size = 7,letter.size = 12, margen.zero = F
+          , cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+
+# pp, GEM-NEMO, JJA, gamma  
+v = 3; m = 8; season = 2
+gamma2 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
+                    , variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
+                    , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
+                    , titulo = paste(titulos[[4]], "without GEM-NEMO", sep = " ")
+                    , label.escala = "", mapa = "SA", width = 20, height = 20
+                    , na.fill = -1000,title.size = 12
+                    , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4
+                    , estaciones = T, altura.topo = 1500, size.point = 0.2
+                    , lon = lon2, lat = lat2, type.sig = "point"
+                    ,estacion = season, mostrar = T, save = F, cb.v.w = 0.7, cb.v.h = 13, cb.size = 7
+                    , lats.size = 7,letter.size = 12, margen.zero = F
+                    , cajas = F, color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
  
