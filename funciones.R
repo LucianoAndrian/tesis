@@ -2196,17 +2196,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size)))
+                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size), ticks.colour = "black", frame.colour = "black"))
       } else if(contour.fill == T & revert == F ){
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size))) 
+                            guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size), ticks.colour = "black", frame.colour = "black"))
       } else if(contour.fill == F & revert == T){
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                  guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size))) 
+                                  guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size), ticks.colour = "black", frame.colour = "black"))
       } else {
        g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                              guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size)))
+                              guide = guide_colorbar(barwidth = cb.v.w, barheight = cb.v.h, title.position = "top", title.hjust = 0.5, raster = F, ticks = T, label.theme = element_text(size = cb.size), frame.colour = "black", frame.colour = "black"))
       }
       
       
@@ -2216,17 +2216,17 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal", ticks.colour = "black", frame.colour = "black")) 
       } else if(contour.fill == T & revert == F ){
         g = g +  geom_contour_fill(data = data, aes(x = lon, y = lat, z = var),alpha = 1, na.fill = na.fill , breaks = escala) +
           scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                            guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal", ticks.colour = "black", frame.colour = "black")) 
       } else if(contour.fill == F & revert == T){
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = rev(brewer.pal(n=niveles , colorbar)), na.value = "white", breaks = escala,
-                                  guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                                  guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal", ticks.colour = "black", frame.colour = "black")) 
       } else {
         g = g + scale_fill_stepsn(limits = limites, name = label.escala, colours = brewer.pal(n=niveles , colorbar), na.value = "white", breaks = escala,
-                              guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal")) 
+                              guide = guide_colorbar(barwidth = cb.h.w, barheight = cb.h.h, title.position = "left", title.hjust = 0.5, raster = F, ticks = T, direction = "horizontal", ticks.colour = "black", frame.colour = "black")) 
       }
       
     }
@@ -2355,7 +2355,9 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         g = g + ggtitle(paste(titulo)) +
           scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
           scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat)+
-          theme(axis.text.y   = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size), axis.title.y  = element_text(size = title.size),
+          theme(axis.text.y = element_blank(), axis.text.x   = element_blank()
+                #axis.text.y = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size) #<<---LATS 
+                , axis.title.y  = element_text(size = title.size),
                 axis.title.x  = element_text(size = lats.size), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
                 panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
                 panel.ontop = TRUE,  legend.margin=margin(0,0,0,0),  legend.box.margin=margin(-10,-10,-10,-10),
@@ -2377,12 +2379,14 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
         g = g + ggtitle(paste(titulo)) +
           scale_x_longitude(breaks = breaks.lon, name = x.label, limits = limits.lon)+
           scale_y_latitude(breaks = breaks.lat, name = y.label, limits = limits.lat) +
-          theme(axis.text.y = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size)
+          theme(axis.text.y = element_blank(), axis.text.x   = element_blank()
+                #axis.text.y = element_text(size = lats.size), axis.text.x   = element_text(size = lats.size) #<<---LATS 
                 , axis.title.y  = element_text(size = title.size),
                 axis.title.x = element_text(size = lats.size)
-                , panel.grid.minor = element_blank(),
+                , panel.grid.minor = element_blank()
+                ,panel.grid.major =  element_line(colour="gray", size = (0.01))
                 #, axis.line = element_line(colour = "black"),
-                panel.ontop = TRUE,
+                , panel.ontop = TRUE,
                 panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
                 plot.title = element_text(hjust = h.just, size = letter.size))
         
