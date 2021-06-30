@@ -2370,7 +2370,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
           data2[,3] = array(area, dim = length(lon)*length(lat)) - resta.vcont
           colnames(data2)<-c("lon", "lat", "cont")
           
-          g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = .3, breaks = nivel.vcont)
+          g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = .01, breaks = nivel.vcont)
           
         }
         

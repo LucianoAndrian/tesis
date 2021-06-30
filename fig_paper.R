@@ -687,3 +687,304 @@ ggsave(nombre_fig,plot =  p1
        , units = "in")
 
 }  
+
+# RMSE; RMSE normalizado con SD = 1 - RMSE/sd
+
+#source("rmse_corregido.R")
+
+#save(NRMSE, file = "NRMSE.RData")
+
+load("NRMSE.RData") # "resutlados"
+
+lon2 = read.table("lon2.txt")[,1]
+lat2 = read.table("lat2.txt")[,1]
+mask=as.matrix(read.table("mascara.txt"))
+mask_arr = array(NA, dim = c(length(lon2), length(lat2), 4))
+for(i in 1:4){
+  mask_arr[,,i] = mask
+}
+
+
+colorbars_nrmse = c("PuOr", "BrBG")
+revert = c(T, F)
+
+seasons = c("MAM", "JJA", "SON", "DJF")
+
+letter.size = 8
+colorbar.length = 8.5
+colorbar.size = 6
+lats.size = 4 #por ahora borradas
+height.fig = 4
+width.fig = 7
+
+aux = list()
+
+
+for(v in 1:2){
+  aux[[v]] = list()
+  for(s in 1:4){
+    
+    aux[[v]][[s]] = mapa_topo3(variable = NRMSE[[v]]*mask_arr
+               , colorbar = colorbars_nrmse[v], revert = revert[v]
+               , escala = seq(-.6, .6, by = .15)
+               , titulo = seasons[s]
+               , label.escala = NULL, mapa = "SA"
+               , width = 20, height = 20, title.size = 13, na.fill = -1000
+               , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+               , cajas = F, lon = lon2, lat = lat2
+               , type.sig = "point", estacion = s
+               , mostrar = T, save = F, margen.zero = F
+               ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
+               , lats.size = 6, letter.size = letter.size
+               , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+    
+  }
+}
+
+colorbar1 = g_legend(aux[[1]][[1]])
+colorbar2 = g_legend(aux[[2]][[1]])
+
+
+gp1 = aux[[1]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp2 = aux[[1]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp3 = aux[[1]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp4 = aux[[1]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gp5 = aux[[2]][[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp6 = aux[[2]][[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp7 = aux[[2]][[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp8 = aux[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+
+
+p1 = ggarrange(gp1, gp2, gp3, gp4,
+               ncol = 4, nrow = 1
+               ,labels = paste(letters, ".", sep = "")
+               , font.label = list(size = 6, face = "plain"), vjust = 1)
+
+p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(14,1)) +
+  theme(plot.margin = margin(0.3,0.2,0,0.2, "cm"))
+
+p2 = ggarrange(gp5, gp6, gp7, gp8,
+               ncol = 4, nrow = 1
+               ,labels = paste(letters[5:8], ".", sep = "")
+               , font.label = list(size = 6, face = "plain"), vjust = 1)
+
+p2 = ggarrange(p2, colorbar2, ncol = 2, widths = c(14,1)) +
+  theme(plot.margin = margin(0,0.2,0.3,0.2, "cm"))
+
+
+nombre_fig = "/home/luciano.andrian/paper2021/NRMSE.eps" 
+
+pf = ggarrange(p1, p2, ncol = 1, nrow = 2)             
+
+ggsave(nombre_fig,plot =  pf
+       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
+       , units = "in")
+
+# ACC
+# source("aux.desemp.R")
+# save(resultados, file = "ACC.RData")
+load("ACC.RData") # "resutlados"
+
+
+resultados[[2]] = resultados[[2]][,,,3]
+resultados[[5]] = resultados[[5]][,,,,3]
+colorbars = list()
+colorbars[[1]] = "YlOrRd"; colorbars[[2]] = "PuBuGn"
+
+
+ACC_MME = list(); ACC_teo = list()
+
+rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
+
+
+letter.size = 8
+colorbar.length = 14
+colorbar.size = 6
+lats.size = 4 #por ahora borradas
+height.fig = 4
+width.fig = 7
+
+
+for(v in 1:2){
+  v1 = ifelse(v == 1, yes = 6, no = 7)
+  for(s in 1:4){
+    
+    ACC_teo[[s]] = mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr
+                              , colorbar = colorbars[[v]], revert = F
+                              , escala = seq(0, 1, by = .1)
+                              , titulo = "", v.sig = rc
+                              , label.escala = NULL, mapa = "SA"
+                              , width = 20, height = 20, title.size = 13, na.fill = -1000
+                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
+                              , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                              , cajas = T, lon = lon2, lat = lat2
+                              , type.sig = "point2", estacion = s
+                              , mostrar = T, save = F, margen.zero = F
+                              ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
+                              , lats.size = 6, letter.size = letter.size
+                              , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+    
+    ACC_MME[[s]] = mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr
+                              , colorbar = colorbars[[v]], revert = F
+                              , escala = seq(0, 1, by = .1)
+                              , titulo = seasons[s], v.sig = rc
+                              , label.escala = NULL, mapa = "SA"
+                              , width = 20, height = 20, title.size = 13, na.fill = -1000
+                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
+                              , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                              , cajas = T, lon = lon2, lat = lat2
+                              , type.sig = "point2", estacion = s
+                              , mostrar = T, save = F, margen.zero = F
+                              ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
+                              , lats.size = 6, letter.size = letter.size
+                              , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+    
+   
+  }
+
+
+
+colorbar1 = g_legend(ACC_MME[[1]])
+
+gp1 = ACC_MME[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp2 = ACC_MME[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp3 = ACC_MME[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp4 = ACC_MME[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+gp5 = ACC_teo[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp6 = ACC_teo[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp7 = ACC_teo[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
+gp8 = ACC_teo[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+
+
+p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
+               ncol = 4, nrow = 2
+               ,labels = paste(letters, ".", sep = "")
+               , font.label = list(size = 6, face = "plain"), vjust = 1)
+
+p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(15,1)) +
+  theme(plot.margin = margin(0.3,0.2,0.5,0.2, "cm"))
+
+
+nombre_fig = paste("/home/luciano.andrian/paper2021/", 
+                   ifelse(v == 1, yes = "t-", no = "pp-")
+                   , "ACC", ".eps", sep = "")
+
+ggsave(nombre_fig,plot =  p1
+       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
+       , units = "in")
+
+}
+
+
+
+##### ACC cajas y modelos #####
+
+
+t.ACC = resultados[[1]]; pp.ACC = resultados[[2]]
+t.ACC_mod = resultados[[8]]; pp.ACC_mod = resultados[[9]]
+rc = resultados[[3]]
+cajas_lat = list()
+cajas_lat[[1]] = seq(which(lat2 == -29), which(lat2 == -17), by = 1); cajas_lat[[2]] = seq(which(lat2 == -39), which(lat2 == -25), by = 1)
+cajas_lat[[3]] = seq(which(lat2 == -15), which(lat2 == 2), by = 1); cajas_lat[[4]] = seq(which(lat2 == -55), which(lat2 == -37), by = 1)
+cajas_lat[[5]] = seq(which(lat2 == -13), which(lat2 == 2), by = 1)
+#
+
+cajas_lon= list()
+cajas_lon[[1]] = seq(which(lon2 == 303), which(lon2 == 315), by = 1); cajas_lon[[2]] = seq(which(lon2 == 296), which(lon2 == 306), by = 1)
+cajas_lon[[3]] = seq(which(lon2 == 311), which(lon2 == 325), by = 1); cajas_lon[[4]] = seq(which(lon2 == 287), which(lon2 == 294), by = 1)
+cajas_lon[[5]] = seq(which(lon2 == 291), which(lon2 == 304), by = 1)
+
+t.ACC_box = list()
+pp.ACC_box = list()
+t.ACC_ens_box = list()
+pp.ACC_ens_box = list()
+
+for(i in 1:5){
+  
+  t.ACC_ens_box[[i]] = apply(t.ACC[cajas_lon[[i]], cajas_lat[[i]],], c(3), mean, na.rm = T)
+  pp.ACC_ens_box[[i]] = apply(pp.ACC[cajas_lon[[i]], cajas_lat[[i]],], c(3), mean, na.rm = T)
+  
+  t.ACC_box[[i]] = apply(t.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,], c(3, 4), mean, na.rm = T)
+  
+  pp.ACC_box[[i]] = apply(pp.ACC_mod[cajas_lon[[i]], cajas_lat[[i]],,,3], c(3, 4), mean, na.rm = T)
+  
+}
+
+cajas = c("N-SESA", "S-SESA", "NeB", "Patagonia", "Am")
+cajas_num = seq( 1, 5)
+
+
+t.data = fig10(prom_cajas = t.ACC_box, prom_ensamble = t.ACC_ens_box, variable = "temp")
+
+
+pp.data = fig10(prom_cajas = pp.ACC_box, prom_ensamble = pp.ACC_ens_box, variable = "temp")
+
+gs = list()
+# Grafico
+g1 = ggplot() + theme_minimal()+
+  geom_text(data = t.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orange3", size = 2, alpha = 0.6) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_mam, y = MAM), color = "orange3", shape = "-" , size = 6) +
+  geom_text(data = t.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "blue", size = 2, alpha = 0.6) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_jja, y = JJA), color = "blue", shape = "-" , size = 6) +
+  geom_text(data = t.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "forestgreen", size = 2, alpha = 0.6) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_son, y = SON), color = "forestgreen", shape = "-" , size = 6) +
+  geom_text(data = t.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "red1", size = 2, alpha = 0.6) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_djf, y = DJF), color = "red4", shape = "-" , size = 6) +
+  geom_vline(xintercept = c(1.5,2.5,3.5,4.5), size = 1, color = "gray", alpha = 0.3)+
+  geom_hline(yintercept = rc, color = "gray5", size = 0.1) +
+  geom_hline(yintercept = 0, color = "black",size = 0.3)+
+  ggtitle(paste("ACC - Temperature")) + ylab(NULL) +
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  theme(axis.text.y   = element_text(size = 6, color = "black"), axis.text.x   = element_blank(),
+        axis.title.y  = element_text(size = 6),
+        panel.grid.minor = element_blank(), axis.title.x = element_blank(),
+        panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
+        panel.ontop = F,
+        panel.grid.major.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 8)) 
+
+
+g2 = ggplot() + theme_minimal()+
+  geom_text(data = pp.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orange3", size = 2, alpha = 0.6) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_mam, y = MAM), color = "orange3", shape = "-" , size = 6) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "blue", size = 2, alpha = 0.6) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_jja, y = JJA), color = "blue", shape = "-" , size = 6) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "forestgreen", size = 2, alpha = 0.6) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_son, y = SON), color = "forestgreen", shape = "-" , size = 6) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "red1", size = 2, alpha = 0.6) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_djf, y = DJF), color = "red4", shape = "-" , size = 6) +
+  geom_vline(xintercept = c(1.5,2.5,3.5,4.5), size = 1, color = "gray", alpha = 0.3)+
+  geom_hline(yintercept = rc, color = "gray5", size = 0.1) +
+  geom_hline(yintercept = 0, color = "black",size = 0.3)+
+  ggtitle(paste("ACC - Precipitation"))+ylab(NULL) +
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+  scale_x_continuous(labels=c("1" = "N-SESA", "2" = "S-SESA", "3" = "NeB", "4" = "Patagonia", "5" = "Am"),breaks = seq(1, 5, by = 1))+
+  xlab(label = NULL)+
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  theme(axis.text.y   = element_text(size = 6, color = "black"),  axis.text.x   = element_text(size = 8, color = "black", face = "bold"), 
+        axis.title.y  = element_text(size = 6),
+        panel.grid.minor = element_blank(), axis.title.x = element_text(size = 8),  
+        panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
+        panel.ontop = F,
+        panel.grid.major.x = element_blank(),
+        plot.title = element_text(hjust = 0.5, size = 8)) 
+  
+
+gs = list(g1, g2)
+
+p1 = ggarrange(plotlist = gs, labels = paste(letters, ".", sep = ""), nrow = 2, align = "v"
+               , font.label = list(size = 7, face = "plain"), vjust = 1) +
+  theme(plot.margin = margin(0.3,1,1,1, "cm")) 
+
+
+nombre_fig = "/home/luciano.andrian/paper2021/ACC_box.eps"
+
+ggsave(nombre_fig,plot =  p1
+       ,dpi = 300, device = cairo_ps, height = 6, width = 6
+       , units = "in")
+
+################################################################################
+
