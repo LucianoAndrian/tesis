@@ -1,11 +1,15 @@
 # figuras final paper.
 source("funciones.R")
-source("aux_figpaper.R")
+#source("aux_figpaper.R")
 
 library(ggplot2)
 library(gridExtra)
 library(ncdf4)
 library(ggpubr)
+#------------------------------------------------------------------------------#
+# tamaño final de la figura no tiene un gran impacto en el peso final
+# ploteando solo topografia arriba de 2500 reduce bastante el peso
+# bajar la cantidad de invervalos de colores reduce moderadamente el peso
 
 #------------------------------------------------------------------------------#
 g_legend = function(a.gplot){
@@ -86,11 +90,12 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 seasons = c("MAM", "JJA", "SON", "DJF")
 
 letter.size = 8
-colorbar.length = 9.5
+colorbar.length = 10
 colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 6
+height.fig = 7
 width.fig = 7
+rc = sig_temp_emm[[9]] # valor critico de gamma, igual para las dos
 
 # MME
 
@@ -110,68 +115,71 @@ for(v in c(1,3)){
   for(season in 1:4){
     
     signal[[season]] = mapa_topo3(variable = EMM[[v]][[6]]*mask_arr, variable.sig = EMM[[v.sig]][[6-5]]
-                        , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                        , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = .1)
                         , titulo = titulos[[1]]
                         , label.escala = NULL, mapa = "SA"
                         , width = 20, height = 20, title.size = 13, na.fill = -1000
-                        , sig = T, color.vsig = "black", alpha.vsig = 1
-                        , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                        , color.vsig = "black", alpha.vsig = 1
+                        , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                         , cajas = F, lon = lon2, lat = lat2
                         , type.sig = "point", estacion = season
                         , mostrar = T, save = F,  cb.v.w = 0.5
                         , cb.v.h = colorbar.length, cb.size = colorbar.size
                         , lats.size = lats.size
-                        , letter.size = letter.size, margen.zero = F, color.vcont = "black"
-                        , nivel.vcont = c(2,2.01, 2.02, 2.03))
+                        , letter.size = letter.size, margen.zero = F)
     
     bias[[season]] = mapa_topo3(variable =  EMM[[v]][[7]]*mask_arr, variable.sig =  EMM[[v.sig]][[7-5]]
-                      , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                      , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = .1)
                       , titulo = titulos[[2]]
                       , label.escala = NULL, mapa = "SA"
                       , width = 20, height = 20,title.size = 13, na.fill = -1000
-                      , sig = T, color.vsig = "black", alpha.vsig = 1
-                      , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                      , color.vsig = "black", alpha.vsig = 1
+                      , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                       , cajas = F, lon = lon2, lat = lat2
                       , type.sig = "point", estacion = season
                       , mostrar = T, save = F
                       , cb.v.h = colorbar.length, cb.size = colorbar.size
                       , lats.size = lats.size
-                      , letter.size = letter.size, margen.zero = F, color.vcont = "black"
-                      , nivel.vcont = c(2,2.01, 2.02, 2.03))
+                      , letter.size = letter.size, margen.zero = F)
     
     noise[[season]] = mapa_topo3(variable =  EMM[[v]][[9]]*mask_arr, variable.sig =  EMM[[v.sig]][[9-5]]
-                       , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+                       , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = .1)
                        , titulo =  titulos[[3]]
                        , label.escala = NULL, mapa = "SA"
                        , width = 20, height = 20,title.size = 13, na.fill = -1000
-                       , sig = T, color.vsig = "black", alpha.vsig = 1
-                       , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                       , color.vsig = "black", alpha.vsig = 1
+                       , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                        , cajas = F, lon = lon2, lat = lat2
                        , type.sig = "point", estacion = season
                        , mostrar = T, save = F
                        , cb.v.h = colorbar.length, cb.size = colorbar.size
                        , lats.size = lats.size
-                       , letter.size = letter.size, margen.zero = F, color.vcont = "black"
-                       , nivel.vcont = c(2,2.01, 2.02, 2.03))
+                       , letter.size = letter.size, margen.zero = F)
+    
+    
+    # el valor de rc, para gamma en el grafico no esta determinado por un valor
+    # critico de SSgamma, sino es del test previo al analizar la cantidad de var
+    # explicada por gamma. Por lo tanto:
+    aux=EMM[[v]][[8]][,,season]*EMM[[v.sig]][[8-5]][,,season]
+  
     
     structural[[season]] = mapa_topo3(variable = EMM[[v]][[8]]*mask_arr, variable.sig =  EMM[[v.sig]][[8-5]]
                             , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                            , titulo = titulos[[4]]
-                            , label.escala = NULL, mapa = "SA"
+                            , titulo = titulos[[4]], variable.cont = EMM[[v]][[8]]*mask_arr
+                            , label.escala = NULL, mapa = "SA", contour = T
                             , width = 20, height = 20,title.size = 13, na.fill = -1000
-                            , sig = T, color.vsig = "black", alpha.vsig = 0.1
-                            , r = 4, estaciones = T, altura.topo = 2000, size.point = 0.0001
+                            , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                            , r = 4, estaciones = T, altura.topo = 2500, size.point = 0.0001
                             , cajas = F, lon = lon2, lat = lat2
                             , type.sig = "point", estacion = season
                             , mostrar = T, save = F, cb.v.w = 0.5
                             , cb.v.h = colorbar.length, cb.size = colorbar.size
                             , lats.size = lats.size
                             , letter.size = letter.size, margen.zero = F, color.vcont = "black"
-                            , nivel.vcont = c(2,2.01, 2.02, 2.03))
-    
-    
+                            , nivel.vcont = min(aux, na.rm = T))
     
   }
+  
   
   # GRID
   colorbar1 <- g_legend(signal[[1]])
@@ -217,15 +225,14 @@ for(v in c(1,3)){
                       , "anova", ".eps", sep = "")
    
    p1 = ggarrange(p1, p2, ncol = 1, nrow = 2, align = "v") +
-     theme(plot.margin = margin(0.3,0.2,0.3,0.2, "cm"))
-   
-   ggsave(nombre_fig,plot =  p1
-          ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
-          , units = "in")
-   
+     theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
+
+
+     ggsave(nombre_fig,plot =  p1
+            ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
+            , units = "in")
+     
 }
-
-
 
 
 # MME without models
@@ -239,50 +246,54 @@ lats.size = 4 #por ahora borradas
 v = 1; m = 7; season = 1; v.sig = 2
 bias1 = mapa_topo3(variable = EMM_wo[[v]][[m]][[7]]*mask_arr
            , variable.sig = EMM_wo[[v.sig]][[m]][[7-5]]
-           , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = 0.1)
+           , colorbar = colorbars[[v]], revert = F, escala = seq(0, 1, by = .1)
            , titulo = paste(titulos[[2]], "without CanCM4i", sep = " ")
            , label.escala = "", mapa = "SA"
            , na.fill = -1000, title.size = 13
            , sig = T, color.vsig = "black", alpha.vsig = 0.5, r = 4
-           , estaciones = T, altura.topo = 2000, size.point = 1
+           , estaciones = T, altura.topo = 2500, size.point = 1
            , lon = lon2, lat = lat2, type.sig = "point"
            , estacion = season, mostrar = T, save = F
            ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
            , lats.size = 6, letter.size = letter.size, cajas = F
-           , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+           , color.vcont = "black", nivel.vcont = rc)
 
    
 # temp, CFSv2, SON, gamma  
 v = 1; m = 6; season = 3; v.sig = 2
+aux=EMM_wo[[v]][[m]][[8]][,,season]*EMM_wo[[v.sig]][[m]][[8-5]][,,season]
+rc = min(aux, na.rm = T)
 gamma1 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
-           , variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
            , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
            , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
            , label.escala = "", mapa = "SA", width = 20, height = 20
-           , na.fill = -1000
-           , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4
-           , estaciones = T, altura.topo = 2000, size.point = .01
+           , na.fill = -1000, variable.cont = EMM_wo[[v]][[m]][[8]]*mask_arr
+           , contour = T
+           , color.vsig = "black", alpha.vsig = 0.4, r = 4
+           , estaciones = T, altura.topo = 2500, size.point = .01
            , lon = lon2, lat = lat2, type.sig = "point"
            ,estacion = season, mostrar = T, save = F
            ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
            , lats.size = 6, letter.size = letter.size, cajas = F
-           , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+           , color.vcont = "black", nivel.vcont = rc)
 
 # pp, GEM-NEMO, JJA, gamma  
 v = 3; m = 8; season = 2; v.sig = 4
+aux=EMM_wo[[v]][[m]][[8]][,,season]*EMM_wo[[v.sig]][[m]][[8-5]][,,season]
+rc = min(aux, na.rm = T)
 gamma2 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
-                    , variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
                     , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                    , titulo = paste(titulos[[4]], "without GEM-NEMO", sep = " ")
+                    , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
                     , label.escala = "", mapa = "SA", width = 20, height = 20
-                    , na.fill = -1000,title.size = 12
-                    , sig = T, color.vsig = "black", alpha.vsig = 0.4, r = 4
-                    , estaciones = T, altura.topo = 2000, size.point = .01
+                    , na.fill = -1000, variable.cont = EMM_wo[[v]][[m]][[8]]*mask_arr
+                    , contour = T
+                    , color.vsig = "black", alpha.vsig = 0.4, r = 4
+                    , estaciones = T, altura.topo = 2500, size.point = .01
                     , lon = lon2, lat = lat2, type.sig = "point"
                     ,estacion = season, mostrar = T, save = F
                     ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                     , lats.size = 6, letter.size = letter.size, cajas = F
-                    , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                    , color.vcont = "black", nivel.vcont = rc)
  
 
 
@@ -295,7 +306,8 @@ gammas[[1]] = gamma1; gammas[[2]] = gamma2
 ##################3333333333333333333333333
 load("obs.RData")
 load("ens.RData")
-
+load("sst.ci.RData")
+load("vars.RData")
 ####### CORR. entre una region del contienente y toda la SST ####
 
 lats = list()
@@ -352,8 +364,8 @@ region = c("CFSv2", "GEM-NEMO")
 region.fig = c("CFSv2-T", "G-N-PP")
 
 letter.size = 8
-colorbar.length = 14
-colorbar.size = 6
+colorbar.length = 15
+colorbar.size = 4
 lats.size = 4 #por ahora borradas
 height.fig = 3
 width.fig = 7
@@ -374,10 +386,12 @@ for(v in 1:2){
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     
     
+    rc = min(abs(aux*aux2), na.rm = T)
     
     g1 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , sig = T, variable.sig = aux2,  color.vsig = "black"
-                    , alpha.vsig = 0.4, altura.topo = 2000, type.sig = "point", size.point = .01
+                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    , sig = F, variable.sig = aux2,  color.vsig = "black"
+                    , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = "MME"
                     , label.escala = "", mapa = "SA", estaciones = T
@@ -393,11 +407,12 @@ for(v in 1:2){
     aux.cor = corr(mod = aux.prom[,s], obs = vars[,,,s,m,v], lon = 56, lat = 76, cf = .90)
     aux = array(aux.cor[,,1]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
-    
+    rc = min(abs(aux*aux2), na.rm = T)
     
     g2 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , sig = T, variable.sig = aux2,  color.vsig = "black"
-                    , alpha.vsig = 0.4, altura.topo = 2000, type.sig = "point", size.point = .01
+                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    #, sig = T, variable.sig = aux2,  color.vsig = "black"
+                    , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = region[v]
                     , label.escala = "", mapa = "SA", estaciones = T
@@ -413,11 +428,12 @@ for(v in 1:2){
     aux.cor = corr(mod = aux.prom[,s], obs = obs[,,,s,v], lon = 56, lat = 76, cf = .90)
     aux = array(aux.cor[,,1]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
-    
+    rc = min(abs(aux*aux2), na.rm = T)
     
     g3 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , sig = T, variable.sig = aux2,  color.vsig = "black"
-                    , alpha.vsig = 0.4, altura.topo = 2000, type.sig = "point", size.point = .01
+                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    #, sig = T, variable.sig = aux2,  color.vsig = "black"
+                    , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = "Observed"
                     , label.escala = "", mapa = "SA", estaciones = T
@@ -438,7 +454,7 @@ gp3 = g3 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "li
 
 gamma = gammas[[v]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-p0 = ggarrange(gamma, colorbar_gammaT, widths =  c(8,1)
+p0 = ggarrange(gamma, colorbar_gammaT, widths =  c(7,1)
                , labels = paste(letters[1], ".", sep = "")
                , font.label = list(size = 6, face = "plain"), vjust = 1)
 
@@ -452,16 +468,19 @@ p1 = ggarrange(p1, colorbar1, ncol = 1, nrow = 2, heights = c(10,1))
 
 
 p1 = ggarrange(p0, p1, widths = c(1,2)) +
-  theme(plot.margin = margin(0.3,0.2,0.3,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
 
 
 nombre_fig = paste("/home/luciano.andrian/paper2021/", 
                    ifelse(v == 1, yes = "t-", no = "pp-")
                    , "gamma", ".eps", sep = "")
 
-ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
-       , units = "in")
+
+
+  ggsave(nombre_fig,plot =  p1
+         ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
+         , units = "in")
+  
 
 }
 
@@ -513,9 +532,9 @@ for(v in 1){
     #emm
     aux = array(dif_emm, dim = c(56,76,1))
     g1 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , altura.topo = 2000
+                    , altura.topo = 2500
                     , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
-                    , titulo = "MME wo. CanCM4i minus Obs"
+                    , titulo = "MME minus Obs"
                     , label.escala = "ºC", mapa = "SA",estaciones = T
                     , r = 1, contour.fill = T, na.fill = -10000, margen.zero = F
                     , cb.h.w = colorbar.length, cb.h.h = 0.5, save = F
@@ -524,7 +543,7 @@ for(v in 1){
     #mod
     aux = array(dif_obs, dim = c(56,76,1))
     g2 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , altura.topo = 2000
+                    , altura.topo = 2500
                     , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
                     , titulo = "CanCM4i minus Obs."
                     , label.escala = "", mapa = "SA",estaciones = T
@@ -536,9 +555,9 @@ for(v in 1){
     #emm.obs
     aux = array(dif_emm.obs, dim = c(56,76,1))
     g3 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , altura.topo = 2000
+                    , altura.topo = 2500
                     , colorbar = colorbars[[v]], revert = revert[v], escala = escalas[[v]]
-                    , titulo = paste(var.nombre[v]," - Climatología EMM - OBS", " - ", estaciones[s], sep = "")
+                    , titulo = "MME minus Obs."
                     , label.escala = "", mapa = "SA",estaciones = T
                     , r = 1, contour.fill = T, na.fill = -10000
                     , cb.h.w = colorbar.length, cb.h.h = 0.5, save = F, margen.zero = F
@@ -569,16 +588,17 @@ p1 = ggarrange(p1, colorbar1, ncol = 1, nrow = 2, heights = c(10,1))
 
  
 p1 = ggarrange(p0, p1, widths = c(1,2)) +
-  theme(plot.margin = margin(0.3,0.2,0.3,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
 
 
 nombre_fig = paste("/home/luciano.andrian/paper2021/", 
                    ifelse(v == 1, yes = "t-", no = "pp-")
                    , "bias", ".eps", sep = "")
 
-ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
-       , units = "in")
+  ggsave(nombre_fig,plot =  p1
+         ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
+         , units = "in")
+
     
   }
 }
@@ -631,13 +651,13 @@ for(v in c(1,3)){
                                   , label.escala = NULL, mapa = "SA"
                                   , width = 20, height = 20, title.size = 13, na.fill = -1000
                                   , sig = T, color.vsig = "black", alpha.vsig = 1
-                                  , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                                  , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                                   , cajas = F, lon = lon2, lat = lat2
                                   , type.sig = "point", estacion = season
                                   , mostrar = T, save = F, margen.zero = F
                                   ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                                   , lats.size = 6, letter.size = letter.size
-                                  , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                                  , color.vcont = "black", nivel.vcont = rc)
     # sin cfsv2
     m = 6
     pred_MME_wo[[season]] = mapa_topo3(variable = pred_wo[[m]][[v]]*mask_arr, variable.sig = pred_wo[[m]][[v.sig]]
@@ -646,13 +666,13 @@ for(v in c(1,3)){
                                        , label.escala = NULL, mapa = "SA"
                                        , width = 20, height = 20, title.size = 13, na.fill = -1000
                                        , sig = T, color.vsig = "black", alpha.vsig = 1
-                                       , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+                                       , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                                        , cajas = F, lon = lon2, lat = lat2
                                        , type.sig = "point", estacion = season
                                        , mostrar = T, save = F, margen.zero = F
                                        ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                                        , lats.size = 6, letter.size = letter.size
-                                       , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                                       , color.vcont = "black", nivel.vcont = rc)
     
   }
     
@@ -675,16 +695,19 @@ p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                , font.label = list(size = 6, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(15,1)) +
-  theme(plot.margin = margin(0.3,0.2,0.3,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
 
 
 nombre_fig = paste("/home/luciano.andrian/paper2021/", 
                    ifelse(v == 1, yes = "t-", no = "pp-")
                    , "pred", ".eps", sep = "")
 
-ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
-       , units = "in")
+
+  ggsave(nombre_fig,plot =  p1
+         ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
+         , units = "in")
+  
+
 
 }  
 
@@ -730,13 +753,13 @@ for(v in 1:2){
                , titulo = seasons[s]
                , label.escala = NULL, mapa = "SA"
                , width = 20, height = 20, title.size = 13, na.fill = -1000
-               , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
+               , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                , cajas = F, lon = lon2, lat = lat2
                , type.sig = "point", estacion = s
                , mostrar = T, save = F, margen.zero = F
                ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                , lats.size = 6, letter.size = letter.size
-               , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+               , color.vcont = "black", nivel.vcont = rc)
     
   }
 }
@@ -762,7 +785,7 @@ p1 = ggarrange(gp1, gp2, gp3, gp4,
                , font.label = list(size = 6, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(14,1)) +
-  theme(plot.margin = margin(0.3,0.2,0,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0,0.2, "cm"))
 
 p2 = ggarrange(gp5, gp6, gp7, gp8,
                ncol = 4, nrow = 1
@@ -770,7 +793,7 @@ p2 = ggarrange(gp5, gp6, gp7, gp8,
                , font.label = list(size = 6, face = "plain"), vjust = 1)
 
 p2 = ggarrange(p2, colorbar2, ncol = 2, widths = c(14,1)) +
-  theme(plot.margin = margin(0,0.2,0.3,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
 
 
 nombre_fig = "/home/luciano.andrian/paper2021/NRMSE.eps" 
@@ -778,7 +801,7 @@ nombre_fig = "/home/luciano.andrian/paper2021/NRMSE.eps"
 pf = ggarrange(p1, p2, ncol = 1, nrow = 2)             
 
 ggsave(nombre_fig,plot =  pf
-       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
+       ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
        , units = "in")
 
 # ACC
@@ -811,34 +834,34 @@ for(v in 1:2){
   for(s in 1:4){
     
     ACC_teo[[s]] = mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr
-                              , colorbar = colorbars[[v]], revert = F
-                              , escala = seq(0, 1, by = .1)
-                              , titulo = "", v.sig = rc
-                              , label.escala = NULL, mapa = "SA"
-                              , width = 20, height = 20, title.size = 13, na.fill = -1000
-                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
-                              , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
-                              , cajas = T, lon = lon2, lat = lat2
-                              , type.sig = "point2", estacion = s
-                              , mostrar = T, save = F, margen.zero = F
-                              ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
-                              , lats.size = 6, letter.size = letter.size
-                              , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
-    
-    ACC_MME[[s]] = mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr
-                              , colorbar = colorbars[[v]], revert = F
-                              , escala = seq(0, 1, by = .1)
+                              , colorbar = colorbars[[v]], revert = F, variable.cont = resultados[[v1]]*mask_arr
+                              , escala = seq(0, 1, by = .1), contour = T
                               , titulo = seasons[s], v.sig = rc
                               , label.escala = NULL, mapa = "SA"
                               , width = 20, height = 20, title.size = 13, na.fill = -1000
-                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
-                              , r = 4, estaciones = T, altura.topo = 2000, size.point = .01
-                              , cajas = T, lon = lon2, lat = lat2
+                              , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                              , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
+                              , cajas = F, lon = lon2, lat = lat2
                               , type.sig = "point2", estacion = s
                               , mostrar = T, save = F, margen.zero = F
                               ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                               , lats.size = 6, letter.size = letter.size
-                              , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
+                              , color.vcont = "black", nivel.vcont = rc)
+    
+    ACC_MME[[s]] = mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr
+                              , colorbar = colorbars[[v]], revert = F, variable.cont = resultados[[v]]*mask_arr
+                              , escala = seq(0, 1, by = .1), contour = T
+                              , titulo = seasons[s], v.sig = rc
+                              , label.escala = NULL, mapa = "SA"
+                              , width = 20, height = 20, title.size = 13, na.fill = -1000
+                              , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                              , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
+                              , cajas = F, lon = lon2, lat = lat2
+                              , type.sig = "point2", estacion = s
+                              , mostrar = T, save = F, margen.zero = F
+                              ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
+                              , lats.size = 6, letter.size = letter.size
+                              , color.vcont = "black", nivel.vcont = rc)
     
    
   }
@@ -864,16 +887,17 @@ p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                , font.label = list(size = 6, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(15,1)) +
-  theme(plot.margin = margin(0.3,0.2,0.5,0.2, "cm"))
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
 
 
 nombre_fig = paste("/home/luciano.andrian/paper2021/", 
                    ifelse(v == 1, yes = "t-", no = "pp-")
                    , "ACC", ".eps", sep = "")
 
-ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_ps, height = height.fig, width = width.fig
-       , units = "in")
+
+  ggsave(nombre_fig,plot =  p1
+         ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
+         , units = "in")
 
 }
 
@@ -924,20 +948,20 @@ pp.data = fig10(prom_cajas = pp.ACC_box, prom_ensamble = pp.ACC_ens_box, variabl
 gs = list()
 # Grafico
 g1 = ggplot() + theme_minimal()+
-  geom_text(data = t.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orange3", size = 2, alpha = 0.6) + 
-  geom_point(data = t.data[[2]], aes(x = cajas_mam, y = MAM), color = "orange3", shape = "-" , size = 6) +
-  geom_text(data = t.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "blue", size = 2, alpha = 0.6) + 
-  geom_point(data = t.data[[2]], aes(x = cajas_jja, y = JJA), color = "blue", shape = "-" , size = 6) +
-  geom_text(data = t.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "forestgreen", size = 2, alpha = 0.6) + 
-  geom_point(data = t.data[[2]], aes(x = cajas_son, y = SON), color = "forestgreen", shape = "-" , size = 6) +
-  geom_text(data = t.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "red1", size = 2, alpha = 0.6) + 
-  geom_point(data = t.data[[2]], aes(x = cajas_djf, y = DJF), color = "red4", shape = "-" , size = 6) +
   geom_vline(xintercept = c(1.5,2.5,3.5,4.5), size = 1, color = "gray", alpha = 0.3)+
-  geom_hline(yintercept = rc, color = "gray5", size = 0.1) +
-  geom_hline(yintercept = 0, color = "black",size = 0.3)+
+  geom_hline(yintercept = rc, color = "gray4", size = 0.1) +
+  geom_hline(yintercept = 0, color = "black",size = 0.2) +
+  geom_text(data = t.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orangered2", size = 2, alpha = 0.55) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_mam, y = MAM), color = "orangered2", shape = "-" , size = 7) +
+  geom_text(data = t.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "royalblue4", size = 2, alpha = 0.55) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_jja, y = JJA), color = "royalblue4", shape = "-" , size = 7) +
+  geom_text(data = t.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "seagreen", size = 2, alpha = 0.65) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_son, y = SON), color = "seagreen", shape = "-" , size = 7) +
+  geom_text(data = t.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "palevioletred3", size = 2, alpha = 0.65) + 
+  geom_point(data = t.data[[2]], aes(x = cajas_djf, y = DJF), color = "palevioletred3", shape = "-" , size = 7) +
   ggtitle(paste("ACC - Temperature")) + ylab(NULL) +
-  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
-  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = .2)) + 
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = .1)) + 
   theme(axis.text.y   = element_text(size = 6, color = "black"), axis.text.x   = element_blank(),
         axis.title.y  = element_text(size = 6),
         panel.grid.minor = element_blank(), axis.title.x = element_blank(),
@@ -948,22 +972,22 @@ g1 = ggplot() + theme_minimal()+
 
 
 g2 = ggplot() + theme_minimal()+
-  geom_text(data = pp.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orange3", size = 2, alpha = 0.6) + 
-  geom_point(data = pp.data[[2]], aes(x = cajas_mam, y = MAM), color = "orange3", shape = "-" , size = 6) +
-  geom_text(data = pp.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "blue", size = 2, alpha = 0.6) + 
-  geom_point(data = pp.data[[2]], aes(x = cajas_jja, y = JJA), color = "blue", shape = "-" , size = 6) +
-  geom_text(data = pp.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "forestgreen", size = 2, alpha = 0.6) + 
-  geom_point(data = pp.data[[2]], aes(x = cajas_son, y = SON), color = "forestgreen", shape = "-" , size = 6) +
-  geom_text(data = pp.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "red1", size = 2, alpha = 0.6) + 
-  geom_point(data = pp.data[[2]], aes(x = cajas_djf, y = DJF), color = "red4", shape = "-" , size = 6) +
   geom_vline(xintercept = c(1.5,2.5,3.5,4.5), size = 1, color = "gray", alpha = 0.3)+
-  geom_hline(yintercept = rc, color = "gray5", size = 0.1) +
-  geom_hline(yintercept = 0, color = "black",size = 0.3)+
+  geom_hline(yintercept = rc, color = "gray4", size = 0.1) +
+  geom_hline(yintercept = 0, color = "black",size = 0.2)+
+  geom_text(data = pp.data[[1]], aes(x = cajas_mam, y = MAM, label = value), color = "orangered2", size = 2, alpha = 0.55) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_mam, y = MAM), color = "orangered2", shape = "-" , size = 7) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_jja, y = JJA, label = value), color = "royalblue4", size = 2, alpha = 0.55) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_jja, y = JJA), color = "royalblue4", shape = "-" , size = 7) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_son, y = SON, label = value), color = "seagreen", size = 2, alpha = 0.65) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_son, y = SON), color = "seagreen", shape = "-" , size = 7) +
+  geom_text(data = pp.data[[1]], aes(x = cajas_djf, y = DJF, label = value), color = "palevioletred3", size = 2, alpha = 0.65) + 
+  geom_point(data = pp.data[[2]], aes(x = cajas_djf, y = DJF), color = "palevioletred3", shape = "-" , size = 7) +
   ggtitle(paste("ACC - Precipitation"))+ylab(NULL) +
-  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = 0.2)) + 
+  scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = .2)) + 
   scale_x_continuous(labels=c("1" = "N-SESA", "2" = "S-SESA", "3" = "NeB", "4" = "Patagonia", "5" = "Am"),breaks = seq(1, 5, by = 1))+
   xlab(label = NULL)+
-  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = 0.2)) + 
+  #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = .1)) + 
   theme(axis.text.y   = element_text(size = 6, color = "black"),  axis.text.x   = element_text(size = 8, color = "black", face = "bold"), 
         axis.title.y  = element_text(size = 6),
         panel.grid.minor = element_blank(), axis.title.x = element_text(size = 8),  
@@ -977,14 +1001,14 @@ gs = list(g1, g2)
 
 p1 = ggarrange(plotlist = gs, labels = paste(letters, ".", sep = ""), nrow = 2, align = "v"
                , font.label = list(size = 7, face = "plain"), vjust = 1) +
-  theme(plot.margin = margin(0.3,1,1,1, "cm")) 
+  theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm")) 
 
 
 nombre_fig = "/home/luciano.andrian/paper2021/ACC_box.eps"
 
 ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_ps, height = 6, width = 6
+       ,dpi = 300, device = cairo_pdf, height = 6, width = 6
        , units = "in")
 
-################################################################################
+ ################################################################################
 

@@ -129,7 +129,8 @@ while(i<=4){
 obs = array(NA, dim = c(dim(t.obs),2))
 obs[,,,,1] = t.obs; obs[,,,,2] = pp.obs
 
-
+save(vars, file = "vars.RData")
+save(sst.ci, file = "sst.ci.RData")
 save(obs, file="obs.RData")
 save(ens, file = "ens.RData")
 #############################################################################333333

@@ -1116,9 +1116,6 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     gamma = (sigma_gamma_2/sigma_epsilon_2)*mask_arr
     
     # esta OK.
-    
-
-    
     alpha[which(alpha<alpha_f)] = NA
     alpha[which(!is.na(alpha))] = 1
     
@@ -1138,6 +1135,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     sig[[6]] = sigma_beta_2
     sig[[7]] = sigma_gamma_2
     sig[[8]] = sigma_epsilon_2
+    sig[[9]] = gamma_f
     return(sig)
   
   } else {
@@ -1195,6 +1193,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     sig[[6]] = sigma_beta_2
     sig[[7]] = sigma_gamma_2
     sig[[8]] = sigma_epsilon_2
+    sig[[9]] = gamma_f
     return(sig)
     
     } else {
@@ -1249,6 +1248,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       sig[[6]] = sigma_beta_2
       sig[[7]] = sigma_gamma_2
       sig[[8]] = sigma_epsilon_2
+      sig[[9]] = gamma_f
       return(sig)
       
     }
@@ -2315,7 +2315,7 @@ mapa_topo3 = function(variable, variable.sig = NULL, variable.cont = NULL, u = N
       data2[,3] = array(variable.cont[,,i], dim = length(lon)*length(lat)) - resta.vcont
       colnames(data2)<-c("lon", "lat", "cont")
       
-      g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = 1, breaks = nivel.vcont )
+      g = g +  stat_contour(data = data2, aes(x = lon, y = lat, z = cont), color = color.vcont, size = 0.5, breaks = nivel.vcont )
       
     }
     
