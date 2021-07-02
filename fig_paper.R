@@ -10,6 +10,8 @@ library(ggpubr)
 # tamaño final de la figura no tiene un gran impacto en el peso final
 # ploteando solo topografia arriba de 2500 reduce bastante el peso
 # bajar la cantidad de invervalos de colores reduce moderadamente el peso
+# cario_ps --> cairo_pdf reduce un 92% el peso... (overleaf tiene problemas con
+# algunas figuras exportadas asi, texmaker ok)
 
 #------------------------------------------------------------------------------#
 g_legend = function(a.gplot){
@@ -89,12 +91,12 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 8
-colorbar.length = 10
-colorbar.size = 6
+letter.size = 14
+colorbar.length = 18
+colorbar.size = 10
 lats.size = 4 #por ahora borradas
-height.fig = 7
-width.fig = 7
+height.fig = 10
+width.fig = 10
 rc = sig_temp_emm[[9]] # valor critico de gamma, igual para las dos
 
 # MME
@@ -166,9 +168,9 @@ for(v in c(1,3)){
     structural[[season]] = mapa_topo3(variable = EMM[[v]][[8]]*mask_arr, variable.sig =  EMM[[v.sig]][[8-5]]
                             , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
                             , titulo = titulos[[4]], variable.cont = EMM[[v]][[8]]*mask_arr
-                            , label.escala = NULL, mapa = "SA", contour = T
+                            , label.escala = NULL, mapa = "SA", contour = F
                             , width = 20, height = 20,title.size = 13, na.fill = -1000
-                            , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                            , sig = T, color.vsig = "black", alpha.vsig = 0.3
                             , r = 4, estaciones = T, altura.topo = 2500, size.point = 0.0001
                             , cajas = F, lon = lon2, lat = lat2
                             , type.sig = "point", estacion = season
@@ -209,12 +211,12 @@ for(v in c(1,3)){
   p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                  ncol = 4, nrow = 2
                  ,labels = paste(letters, ".", sep = "")
-                 , font.label = list(size = 6, face = "plain"), vjust = 1)
+                 , font.label = list(size = 12, face = "plain"), vjust = 1)
   
   p2 = ggarrange(gp9, gp10, gp11, gp12, gp13, gp14, gp15, gp16,
                  ncol = 4, nrow = 2
                  ,labels = paste(letters[9:16], ".", sep = "")
-                 , font.label = list(size = 6, face = "plain"), vjust = 1)
+                 , font.label = list(size = 12, face = "plain"), vjust = 1)
   
    p1 = ggarrange(p1, colorbar1, widths = c(15,1))
    p2 = ggarrange(p2, colorbar2, widths = c(15,1))
@@ -236,9 +238,8 @@ for(v in c(1,3)){
 
 
 # MME without models
-
-letter.size = 8
-colorbar.length = 9.5
+colorbar.length = 16
+letter.size = 10
 colorbar.size = 6
 lats.size = 4 #por ahora borradas
 
@@ -268,7 +269,7 @@ gamma1 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
            , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
            , label.escala = "", mapa = "SA", width = 20, height = 20
            , na.fill = -1000, variable.cont = EMM_wo[[v]][[m]][[8]]*mask_arr
-           , contour = T
+           , contour = F, sig = T, variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
            , color.vsig = "black", alpha.vsig = 0.4, r = 4
            , estaciones = T, altura.topo = 2500, size.point = .01
            , lon = lon2, lat = lat2, type.sig = "point"
@@ -286,7 +287,7 @@ gamma2 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
                     , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
                     , label.escala = "", mapa = "SA", width = 20, height = 20
                     , na.fill = -1000, variable.cont = EMM_wo[[v]][[m]][[8]]*mask_arr
-                    , contour = T
+                    , contour = F, sig = T, variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
                     , color.vsig = "black", alpha.vsig = 0.4, r = 4
                     , estaciones = T, altura.topo = 2500, size.point = .01
                     , lon = lon2, lat = lat2, type.sig = "point"
@@ -363,12 +364,15 @@ lons.area.inv[[3]] =  seq(which(lon == 300.5), which(lon == 325.5), by = 1)
 region = c("CFSv2", "GEM-NEMO")
 region.fig = c("CFSv2-T", "G-N-PP")
 
-letter.size = 8
-colorbar.length = 15
-colorbar.size = 4
+letter.size = 10
+colorbar.length = 18
+colorbar.size = 10
+# letter.size = 8
+# colorbar.length = 15
+# colorbar.size = 4
 lats.size = 4 #por ahora borradas
-height.fig = 3
-width.fig = 7
+height.fig = 4
+width.fig = 10
 
 for(v in 1:2){
   
@@ -389,8 +393,8 @@ for(v in 1:2){
     rc = min(abs(aux*aux2), na.rm = T)
     
     g1 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
-                    , sig = F, variable.sig = aux2,  color.vsig = "black"
+                    , variable.cont = aux, contour = F, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    , sig = T, variable.sig = aux2,  color.vsig = "black"
                     , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = "MME"
@@ -410,8 +414,8 @@ for(v in 1:2){
     rc = min(abs(aux*aux2), na.rm = T)
     
     g2 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
-                    #, sig = T, variable.sig = aux2,  color.vsig = "black"
+                    , variable.cont = aux, contour = F, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    , sig = T, variable.sig = aux2,  color.vsig = "black"
                     , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = region[v]
@@ -431,8 +435,8 @@ for(v in 1:2){
     rc = min(abs(aux*aux2), na.rm = T)
     
     g3 = mapa_topo3(variable = aux, lon = lon2, lat = lat2
-                    , variable.cont = aux, contour = T, nivel.vcont = c(-rc, rc), color.vcont = "black"
-                    #, sig = T, variable.sig = aux2,  color.vsig = "black"
+                    , variable.cont = aux, contour = F, nivel.vcont = c(-rc, rc), color.vcont = "black"
+                    , sig = T, variable.sig = aux2,  color.vsig = "black"
                     , alpha.vsig = 0.3, altura.topo = 2500, type.sig = "point", size.point = .01
                     , colorbar = "RdBu", revert = T, escala = seq(-1,1,by = .2)
                     , titulo = "Observed"
@@ -456,13 +460,13 @@ gamma = gammas[[v]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,
 
 p0 = ggarrange(gamma, colorbar_gammaT, widths =  c(7,1)
                , labels = paste(letters[1], ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 
 p1 = ggarrange(gp1, gp2, gp3,
                ncol = 3, nrow = 1
                ,labels = paste(letters[2:4], ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 1, nrow = 2, heights = c(10,1))
 
@@ -502,6 +506,16 @@ colorbars = list(); colorbars[[1]] = "RdBu"
 revert = c(T, F)
 
 var.titulo = c("T", "PP")
+
+letter.size = 10
+colorbar.length = 18
+colorbar.size = 10
+# letter.size = 8
+# colorbar.length = 15
+# colorbar.size = 4
+lats.size = 4 #por ahora borradas
+height.fig = 4
+width.fig = 10
 
 for(v in 1){
   
@@ -582,7 +596,7 @@ p0 = ggarrange(bias, colorbar2, widths =  c(8,1)
 p1 = ggarrange(gp1, gp2, gp3,
                ncol = 3, nrow = 1
                ,labels = paste(letters[2:4], ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 1, nrow = 2, heights = c(10,1))
 
@@ -620,12 +634,16 @@ colorbars[[1]] = "YlOrRd"; colorbars[[3]] = "PuBuGn"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 8
-colorbar.length = 14
-colorbar.size = 6
+letter.size = 10
+colorbar.length = 18
+colorbar.size = 10
+
+# letter.size = 8
+# colorbar.length = 14
+# colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 4
-width.fig = 7
+height.fig = 5
+width.fig = 10
 
 
 # MME
@@ -692,7 +710,7 @@ gp8 = pred_MME_wo[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,
 p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                ncol = 4, nrow = 2
                ,labels = paste(letters, ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(15,1)) +
   theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
@@ -733,12 +751,16 @@ revert = c(T, F)
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 8
-colorbar.length = 8.5
-colorbar.size = 6
+letter.size = 10
+colorbar.length = 9
+colorbar.size = 10
+
+# letter.size = 8
+# colorbar.length = 14
+# colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 4
-width.fig = 7
+height.fig = 5
+width.fig = 10
 
 aux = list()
 
@@ -782,7 +804,7 @@ gp8 = aux[[2]][[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,
 p1 = ggarrange(gp1, gp2, gp3, gp4,
                ncol = 4, nrow = 1
                ,labels = paste(letters, ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(14,1)) +
   theme(plot.margin = margin(0.2,0.2,0,0.2, "cm"))
@@ -790,7 +812,7 @@ p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(14,1)) +
 p2 = ggarrange(gp5, gp6, gp7, gp8,
                ncol = 4, nrow = 1
                ,labels = paste(letters[5:8], ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p2 = ggarrange(p2, colorbar2, ncol = 2, widths = c(14,1)) +
   theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
@@ -821,12 +843,16 @@ ACC_MME = list(); ACC_teo = list()
 rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
 
 
-letter.size = 8
-colorbar.length = 14
-colorbar.size = 6
+letter.size = 10
+colorbar.length = 18
+colorbar.size = 10
+
+# letter.size = 8
+# colorbar.length = 14
+# colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 4
-width.fig = 7
+height.fig = 5
+width.fig = 10
 
 
 for(v in 1:2){
@@ -834,34 +860,34 @@ for(v in 1:2){
   for(s in 1:4){
     
     ACC_teo[[s]] = mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr
-                              , colorbar = colorbars[[v]], revert = F, variable.cont = resultados[[v1]]*mask_arr
-                              , escala = seq(0, 1, by = .1), contour = T
+                              , colorbar = colorbars[[v]], revert = F, nivel.vcont = c(2,2.01, 2.02, 2.03)
+                              , escala = seq(0, 1, by = .1), contour = F
                               , titulo = seasons[s], v.sig = rc
                               , label.escala = NULL, mapa = "SA"
                               , width = 20, height = 20, title.size = 13, na.fill = -1000
-                              , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
                               , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                               , cajas = F, lon = lon2, lat = lat2
                               , type.sig = "point2", estacion = s
                               , mostrar = T, save = F, margen.zero = F
                               ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                               , lats.size = 6, letter.size = letter.size
-                              , color.vcont = "black", nivel.vcont = rc)
+                              , color.vcont = "black")
     
     ACC_MME[[s]] = mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr
                               , colorbar = colorbars[[v]], revert = F, variable.cont = resultados[[v]]*mask_arr
-                              , escala = seq(0, 1, by = .1), contour = T
+                              , escala = seq(0, 1, by = .1), contour = F
                               , titulo = seasons[s], v.sig = rc
                               , label.escala = NULL, mapa = "SA"
                               , width = 20, height = 20, title.size = 13, na.fill = -1000
-                              , sig = F, color.vsig = "black", alpha.vsig = 0.3
+                              , sig = T, color.vsig = "black", alpha.vsig = 0.3
                               , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
-                              , cajas = F, lon = lon2, lat = lat2
+                              , cajas = T, lon = lon2, lat = lat2
                               , type.sig = "point2", estacion = s
                               , mostrar = T, save = F, margen.zero = F
                               ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                               , lats.size = 6, letter.size = letter.size
-                              , color.vcont = "black", nivel.vcont = rc)
+                              , color.vcont = "black", nivel.vcont = c(2,2.01, 2.02, 2.03))
     
    
   }
@@ -875,16 +901,16 @@ gp2 = ACC_MME[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.
 gp3 = ACC_MME[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
 gp4 = ACC_MME[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
 
-gp5 = ACC_teo[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
-gp6 = ACC_teo[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
-gp7 = ACC_teo[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) 
-gp8 = ACC_teo[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))
+gp5 = ACC_teo[[1]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp6 = ACC_teo[[2]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp7 = ACC_teo[[3]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines")) + ggtitle(label = "")
+gp8 = ACC_teo[[4]] + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2), "lines"))+ ggtitle(label = "")
 
 
 p1 = ggarrange(gp1, gp2, gp3, gp4, gp5, gp6, gp7, gp8,
                ncol = 4, nrow = 2
                ,labels = paste(letters, ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 p1 = ggarrange(p1, colorbar1, ncol = 2, widths = c(15,1)) +
   theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm"))
