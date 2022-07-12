@@ -781,11 +781,11 @@ anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL 
     
     #cocientes
     
-    c_b = (SSb - (m-1)/(t*97)*SSe)/TSS   #fraccion de TSS explicada por SSb
+    c_b = (SSb - (m-1)/(t*sum(k-1))*SSe)/TSS   #fraccion de TSS explicada por SSb
     
-    c_a = (SSa - (t-1)/(t*97)*SSe)/TSS   #fraccion de TSS explicada por SSa 
+    c_a = (SSa - (t-1)/(t*sum(k-1))*SSe)/TSS   #fraccion de TSS explicada por SSa 
     
-    c_g = (SSg - ((t-1)*(m-1))/(t*97)*SSe)/TSS  #fraccion de TSS explicada por SSg   
+    c_g = (SSg - ((t-1)*(m-1))/(t*sum(k-1))*SSe)/TSS  #fraccion de TSS explicada por SSg   
     
     c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
     
@@ -912,11 +912,11 @@ anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL 
         
         #cocientes
         
-        c_b = (SSb - (m-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSb
+        c_b = (SSb - (m-1)/(t*(sum(k-1)))*SSe)/TSS   #fraccion de TSS explicada por SSb
         
-        c_a = (SSa - (t-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSa 
+        c_a = (SSa - (t-1)/(t*(sum(k-1)))*SSe)/TSS   #fraccion de TSS explicada por SSa 
         
-        c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k)-1))*SSe)/TSS  #fraccion de TSS explicada por SSg   
+        c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k-1)))*SSe)/TSS  #fraccion de TSS explicada por SSg   
         
         c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
         
@@ -1047,13 +1047,13 @@ anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL 
       
       #cocientes
       
-      c_b = (SSb - (m-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSb
+      c_b = (SSb - (m-1)/(t*(sum(k-1)))*SSe)/TSS   #fraccion de TSS explicada por SSb
       
-      c_a = (SSa - (t-1)/(t*(sum(k)-1))*SSe)/TSS   #fraccion de TSS explicada por SSa 
+      c_a = (SSa - (t-1)/(t*(sum(k-1)))*SSe)/TSS   #fraccion de TSS explicada por SSa 
       
-      c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k)-1))*SSe)/TSS  #fraccion de TSS explicada por SSg   
+      c_g = (SSg - ((t-1)*(m-1))/(t*(sum(k-1)))*SSe)/TSS  #fraccion de TSS explicada por SSg   
       
-      c_e = SSe/TSS #fraccion de ÇTSS explicada por SSe
+      c_e = SSe/TSS #fraccion de TSS explicada por SSe
       
       SS[[6]] = c_a
       SS[[7]] = c_b
@@ -1099,9 +1099,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     t = 29 #anios
     m = 8 #modelos
     
-    alpha_f = qf(0.95,t-1,t*(sum(k)-1))
-    beta_f = qf(0.95, m-1, t*(sum(k)-1))
-    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k)-1)) 
+    alpha_f = qf(0.95,t-1,t*(sum(k-1)))
+    beta_f = qf(0.95, m-1, t*(sum(k-1)))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k-1))) 
     
     sigma_alpha_2 = SS[[1]]/((t-1)) 
     
@@ -1109,7 +1109,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     
     sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
     
-    sigma_epsilon_2 = SS[[4]]/(t*(sum(k)-1))     
+    sigma_epsilon_2 = SS[[4]]/(t*(sum(k-1)))     
     
     alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
     beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
@@ -1156,9 +1156,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     k[nomodel] = NA
     m = 7 #modelos
     
-    alpha_f = qf(0.95,t-1,t*(sum(k, na.rm = T)-1))
-    beta_f = qf(0.95, m-1, t*(sum(k, na.rm = T)-1))
-    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k, na.rm = T)-1))
+    alpha_f = qf(0.95,t-1,t*(sum(k-1, na.rm = T)))
+    beta_f = qf(0.95, m-1, t*(sum(k-1, na.rm = T)))
+    gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k-1, na.rm = T)))
     
     sigma_alpha_2 = SS[[1]]/((t-1)) 
     
@@ -1166,7 +1166,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     
     sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
     
-    sigma_epsilon_2 = SS[[4]]/(t*(sum(k, na.rm = T)-1))     
+    sigma_epsilon_2 = SS[[4]]/(t*(sum(k-1, na.rm = T)))     
     
     alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
     beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
@@ -1211,9 +1211,9 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       k[nomodel] = NA
       m = 7 #modelos
       
-      alpha_f = qf(0.95,t-1,t*(sum(k, na.rm = T)-1))
-      beta_f = qf(0.95, m-1, t*(sum(k, na.rm = T)-1))
-      gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k, na.rm = T)-1))
+      alpha_f = qf(0.95,t-1,t*(sum(k-1, na.rm = T)))
+      beta_f = qf(0.95, m-1, t*(sum(k-1, na.rm = T)))
+      gamma_f = qf(0.95, (m-1)*(t-1), t*(sum(k-1, na.rm = T)))
       
       sigma_alpha_2 = SS[[1]]/((t-1)) 
       
@@ -1221,7 +1221,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       
       sigma_gamma_2 = SS[[3]]/((t-1)*(m-1))  
       
-      sigma_epsilon_2 = SS[[4]]/(t*(sum(k, na.rm = T)-1))     
+      sigma_epsilon_2 = SS[[4]]/(t*(sum(k-1, na.rm = T)))     
       
       alpha = (sigma_alpha_2/sigma_epsilon_2)*mask_arr
       beta = (sigma_beta_2/sigma_epsilon_2)*mask_arr
@@ -1485,13 +1485,13 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     t = 29 #anios
     m = 8 #modelos
     
-    f = qf(0.95, t-1, t*97)
-    pp_f = 1/(1+(m*sum(k)/(f-1)))
+    f = qf(0.95, t-1, t*sum(k-1))
+    pp_f = 1/(1+(sum(k)/(f-1)))
     
     # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
     
     aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*97)/(t-1))
-    pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))
+    pp_temp = 1/(1+((sum(k))/(aux_pp_temp-1)))
     
     pp_temp_sig = pp_temp
     
@@ -1507,7 +1507,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     #ideam pp
     
     aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*97)/(t-1))
-    pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+    pp_pp = 1/(1+((sum(k))/(aux_pp_pp-1)))
     
     pp_pp_sig = pp_pp
     
@@ -1538,13 +1538,13 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
       t = 29 #anios
       m = 7 #modelos
       
-      f = qf(0.95, t-1, t*97)
-      pp_f = 1/(1+(m*sum(k, na.rm = T)/(f-1)))
+      f = qf(0.95, t-1, t*sum(k-1))
+      pp_f = 1/(1+(sum(k, na.rm = T)/(f-1)))
       
       # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
       
-      aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*sum(k, na.rm = T))/(t-1))
-      pp_temp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_temp-1)))
+      aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*sum(k-1, na.rm = T))/(t-1))
+      pp_temp = 1/(1+((sum(k, na.rm = T))/(aux_pp_temp-1)))
       
       pp_temp_sig = pp_temp
       
@@ -1559,8 +1559,8 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
       
       #ideam pp
       
-      aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*sum(k, na.rm = T))/(t-1))
-      pp_pp = 1/(1+((m*sum(k, na.rm = T))/(aux_pp_pp-1)))
+      aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*sum(k-1, na.rm = T))/(t-1))
+      pp_pp = 1/(1+((sum(k, na.rm = T))/(aux_pp_pp-1)))
       
       pp_pp_sig = pp_pp
       
@@ -1592,11 +1592,11 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
         k[l] = NA # eliminando el correspondiente al modelo omitido
         k = k[!is.na(k)] # lenght = 7
         
-        f = qf(0.95, t-1, t*sum(k)-1)
-        pp_f = 1/(1+(m*sum(k)/(f-1)))
+        f = qf(0.95, t-1, t*sum(k-1))
+        pp_f = 1/(1+(sum(k)/(f-1)))
         
-        aux_pp_temp = (ss_temp[[l]][[1]]/ss_temp[[l]][[4]])*((t*sum(k)-1)/(t-1))
-        pp_temp = 1/(1+((m*sum(k))/(aux_pp_temp-1)))   
+        aux_pp_temp = (ss_temp[[l]][[1]]/ss_temp[[l]][[4]])*((t*sum(k-1))/(t-1))
+        pp_temp = 1/(1+((sum(k))/(aux_pp_temp-1)))   
         
         pp_temp_sig = pp_temp
         
@@ -1613,7 +1613,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
         #ideam pp
         
         aux_pp_pp = (ss_pp[[l]][[1]]/ss_pp[[l]][[4]])*((t*sum(k))/(t-1))
-        pp_pp = 1/(1+((m*sum(k))/(aux_pp_pp-1)))
+        pp_pp = 1/(1+((sum(k))/(aux_pp_pp-1)))
         
         pp_pp_sig = pp_pp
         
