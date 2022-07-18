@@ -95,8 +95,8 @@ letter.size = 14
 colorbar.length = 18
 colorbar.size = 10
 lats.size = 4 #por ahora borradas
-height.fig = 10
-width.fig = 10
+height.fig = 9
+width.fig = 6.85039
 rc = sig_temp_emm[[9]] # valor critico de gamma, igual para las dos
 
 # MME
@@ -284,7 +284,7 @@ aux=EMM_wo[[v]][[m]][[8]][,,season]*EMM_wo[[v.sig]][[m]][[8-5]][,,season]
 rc = min(aux, na.rm = T)
 gamma2 = mapa_topo3(variable = EMM_wo[[v]][[m]][[8]]*mask_arr
                     , colorbar = colorbars_gamma[[v]], revert = F, escala = seq(0, 0.1, by = 0.01)
-                    , titulo = paste(titulos[[4]], "without CFSv2", sep = " ")
+                    , titulo = paste(titulos[[4]], "without GEM-NEMO", sep = " ")
                     , label.escala = "", mapa = "SA", width = 20, height = 20
                     , na.fill = -1000, variable.cont = EMM_wo[[v]][[m]][[8]]*mask_arr
                     , contour = F, sig = T, variable.sig = EMM_wo[[v.sig]][[m]][[8-5]]
@@ -590,7 +590,7 @@ bias = bias1 + theme(legend.position = "none", plot.margin = unit(c(0,.2,.2,.2),
 
 p0 = ggarrange(bias, colorbar2, widths =  c(8,1)
                , labels = paste(letters[1], ".", sep = "")
-               , font.label = list(size = 6, face = "plain"), vjust = 1)
+               , font.label = list(size = 10, face = "plain"), vjust = 1)
 
 
 p1 = ggarrange(gp1, gp2, gp3,
@@ -627,7 +627,7 @@ pred = pp_test(ss_temp = ss_temp, ss_pp = ss_pp, ensemble_total = "si")
 pred_wo =pp_test(ss_temp = ss_T, ss_pp = ss_PP, ensemble_total = "no")
 
 escala_pred = list()
-escala_pred[[1]] = seq(0,1, by = .1); escala_pred[[3]] = seq(0, .6, by = .1)
+escala_pred[[1]] = seq(0,1, by = .1); escala_pred[[3]] = seq(0, 1, by = .1)
 
 colorbars = list()
 colorbars[[1]] = "YlOrRd"; colorbars[[3]] = "PuBuGn"
@@ -642,8 +642,8 @@ colorbar.size = 10
 # colorbar.length = 14
 # colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 5
-width.fig = 10
+height.fig = 4.5
+width.fig = 6.85
 
 
 # MME

@@ -670,7 +670,7 @@ anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL 
   #variable = as.character(readline("Variable (pp), (temp): "))
   #ensemble_total = readline("Todos los modelos?(si, no): ")
   
-  k = c(10, 10, 12, 12, 4, 28, 10, 12)
+  k = c(10, 10, 12, 12, 4, 24, 10, 12)
   t = 29 #anios
   lon2 = read.table("lon2.txt")[,1]
   lat2 = read.table("lat2.txt")[,1]
@@ -834,7 +834,7 @@ anova_fun = function(variable, ensemble_total, todos = 1, no.mods = 1, f = NULL 
         }
         # para lo proximo es necesario un nuevo k, que no tenga la cantidad de miembros que le corresponden al modelo omitido
         
-        k = c(10, 10, 12, 12, 4, 28, 10, 12) # es necesario q se defina para cada j
+        k = c(10, 10, 12, 12, 4, 24, 10, 12) # es necesario q se defina para cada j
         k[f] = NA # eliminando el correspondiente al modelo omitido
         k = k[!is.na(k)] # lenght = 7
         
@@ -1095,7 +1095,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
     }
     # 
     
-    k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
+    k = c(10, 10, 12, 12, 4, 24, 10, 12) #miembros de cada modelo
     t = 29 #anios
     m = 8 #modelos
     
@@ -1151,7 +1151,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
       mask_arr[,,i] = mask
     }
      
-    k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
+    k = c(10, 10, 12, 12, 4, 24, 10, 12) #miembros de cada modelo
     t = 29 #anios
     k[nomodel] = NA
     m = 7 #modelos
@@ -1206,7 +1206,7 @@ test_cos = function(SS, ensemble_total, nomodel_selec, no_model){
         mask_arr[,,i] = mask
       }
       
-      k = c(10, 10, 12, 12, 4, 28, 10, 12) #miembros de cada modelo
+      k = c(10, 10, 12, 12, 4, 24, 10, 12) #miembros de cada modelo
       t = 29 #anios
       k[nomodel] = NA
       m = 7 #modelos
@@ -1490,7 +1490,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     
     # hodson - sutton. segun zwiers PP  # esto lo hago solo para testear y crear una mascara para el mapa
     
-    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*97)/(t-1))
+    aux_pp_temp = (ss_temp[[1]]/ss_temp[[4]])*((t*sum(k-1))/(t-1))
     pp_temp = 1/(1+((sum(k))/(aux_pp_temp-1)))
     
     pp_temp_sig = pp_temp
@@ -1506,7 +1506,7 @@ pp_test = function(ss_temp, ss_pp, ensemble_total, todos = 1){
     
     #ideam pp
     
-    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*97)/(t-1))
+    aux_pp_pp = (ss_pp[[1]]/ss_pp[[4]])*((t*sum(k-1))/(t-1))
     pp_pp = 1/(1+((sum(k))/(aux_pp_pp-1)))
     
     pp_pp_sig = pp_pp
