@@ -432,3 +432,20 @@ WriteNC_ACC = function(tosave, paste_name){
   
   nc_close(ncout)
 }
+
+################################################################################
+WriteNC_diff = function(tosave, paste_name){
+  ss_arr = tosave
+  londim = ncdim_def("lon", "grados_este", as.double(lon2))
+  latdim = ncdim_def("lat", "grados_norte", as.double(lat2))
+  seasondim = ncdim_def("seasons", "season", as.double(1:4))
+  vdim = ncdim_def("v", "v", as.double(1))
+  fillvalue = NA
+  dlname = "dif"
+  v_def = ncvar_def("dif", "", list(londim, latdim, seasondim, vdim), fillvalue, dlname, prec="single")
+  ncfname = paste("/pikachu/datos/luciano.andrian/aux_nmme_quantiles/", paste_name, '.nc', sep = "")
+  ncout = nc_create(ncfname, list(v_def), force_v4=T)
+  ncvar_put(ncout, v_def, ss_arr)
+  nc_close(ncout)
+}
+
