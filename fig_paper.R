@@ -91,12 +91,12 @@ colorbars_gamma[[1]] = "RdPu"; colorbars_gamma[[3]] = "BuPu"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 14
-colorbar.length = 18
-colorbar.size = 10
+letter.size = 13
+colorbar.length = 17
+colorbar.size = 9
 lats.size = 4 #por ahora borradas
-height.fig = 9
-width.fig = 6.85039
+height.fig = 234
+width.fig = 174
 rc = sig_temp_emm[[9]] # valor critico de gamma, igual para las dos
 
 # MME
@@ -232,15 +232,15 @@ for(v in c(1,3)){
 
      ggsave(nombre_fig,plot =  p1
             ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-            , units = "in")
+            , units = 'mm')
      
 }
 
 
 # MME without models
-colorbar.length = 16
-letter.size = 10
-colorbar.size = 6
+colorbar.length = 13
+letter.size = 9
+colorbar.size = 5
 lats.size = 4 #por ahora borradas
 
 # temp. CanCM4i, MAM, Bias
@@ -364,28 +364,44 @@ lons.area.inv[[3]] =  seq(which(lon == 300.5), which(lon == 325.5), by = 1)
 region = c("CFSv2", "GEM-NEMO")
 region.fig = c("CFSv2-T", "G-N-PP")
 
-letter.size = 10
-colorbar.length = 18
-colorbar.size = 10
+letter.size = 9
+colorbar.length = 17
+colorbar.size = 9
 # letter.size = 8
 # colorbar.length = 15
 # colorbar.size = 4
 lats.size = 4 #por ahora borradas
-height.fig = 4
-width.fig = 10
+height.fig = 80
+width.fig = 174
+
+load('/pikachu/datos/luciano.andrian/aux_nmme_quantiles/sst/N34_sst.RData')
+load('/pikachu/datos/luciano.andrian/aux_nmme_quantiles/sst/TNA_sst.RData')
+load('/pikachu/datos/luciano.andrian/aux_nmme_quantiles/sst/sst_ci_N34_wo_cfsv2.RData')
+load('/pikachu/datos/luciano.andrian/aux_nmme_quantiles/sst/sst_ci_TNA_wo_cfsv2.RData')
+
+areas_MME = list()
+areas_MME[[1]] = sst_ci_N34
+areas_MME[[2]] = sst_ci_TNA
+
+areas_MME_wo_cfsv2 = list()
+areas_MME_wo_cfsv2[[1]] = sst_ci_N34_wo_cfsv2
+areas_MME_wo_cfsv2[[2]] = sst_ci_TNA_wo_cfsv2
+
 
 for(v in 1:2){
   
   j = area.mod[v]
+  j2 = v
     
     s = seasons[v]
     
     
     #### MME ###
     
-    aux.prom = apply(sst.ci[lons.area.inv[[j]], lats.area.inv[[j]],,], c(3,4), mean, na.rm = T)
+    #
     
-    aux.cor = corr(mod = aux.prom[,s], obs = ens[,,,s,v], lon = 56, lat = 76, cf = .90)
+
+    aux.cor = corr(mod = areas_MME_wo_cfsv2[[v]][,s], obs = ens[,,,s,v], lon = 56, lat = 76, cf = .90)
     aux = array(aux.cor[,,1]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     
@@ -408,7 +424,7 @@ for(v in 1:2){
     
     m = wo.mod[v]
     
-    aux.cor = corr(mod = aux.prom[,s], obs = vars[,,,s,m,v], lon = 56, lat = 76, cf = .90)
+    aux.cor = corr(mod = areas_MME[[v]][,s,m], obs = vars[,,,s,m,v], lon = 56, lat = 76, cf = .90)
     aux = array(aux.cor[,,1]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     rc = min(abs(aux*aux2), na.rm = T)
@@ -428,7 +444,7 @@ for(v in 1:2){
     
     
     ### OBS ###
-    
+    aux.prom = apply(sst.ci[lons.area.inv[[j]], lats.area.inv[[j]],,], c(3,4), mean, na.rm = T)
     aux.cor = corr(mod = aux.prom[,s], obs = obs[,,,s,v], lon = 56, lat = 76, cf = .90)
     aux = array(aux.cor[,,1]*mask2, dim = c(dim(aux.cor[,,1]), 1))
     aux2 = array(aux.cor[,,2]*mask2, dim = c(dim(aux.cor[,,1]), 1))
@@ -483,7 +499,7 @@ nombre_fig = paste("/home/luciano.andrian/paper2021/",
 
   ggsave(nombre_fig,plot =  p1
          ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-         , units = "in")
+         , units = 'mm')
   
 
 }
@@ -507,15 +523,15 @@ revert = c(T, F)
 
 var.titulo = c("T", "PP")
 
-letter.size = 10
-colorbar.length = 18
-colorbar.size = 10
+letter.size = 9
+colorbar.length = 17
+colorbar.size = 9
 # letter.size = 8
 # colorbar.length = 15
 # colorbar.size = 4
 lats.size = 4 #por ahora borradas
-height.fig = 4
-width.fig = 10
+height.fig = 80
+width.fig = 174
 
 for(v in 1){
   
@@ -611,7 +627,7 @@ nombre_fig = paste("/home/luciano.andrian/paper2021/",
 
   ggsave(nombre_fig,plot =  p1
          ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-         , units = "in")
+         , units = 'mm')
 
     
   }
@@ -634,16 +650,16 @@ colorbars[[1]] = "YlOrRd"; colorbars[[3]] = "PuBuGn"
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 10
-colorbar.length = 18
-colorbar.size = 10
+letter.size = 9
+colorbar.length = 17
+colorbar.size = 9
 
 # letter.size = 8
 # colorbar.length = 14
 # colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 4.5
-width.fig = 6.85
+height.fig = 117
+width.fig = 174
 
 
 # MME
@@ -723,7 +739,7 @@ nombre_fig = paste("/home/luciano.andrian/paper2021/",
 
   ggsave(nombre_fig,plot =  p1
          ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-         , units = "in")
+         , units = 'mm')
   
 
 
@@ -751,16 +767,16 @@ revert = c(T, F)
 
 seasons = c("MAM", "JJA", "SON", "DJF")
 
-letter.size = 10
-colorbar.length = 9
-colorbar.size = 10
+letter.size = 9
+colorbar.length = 8
+colorbar.size = 9
 
 # letter.size = 8
 # colorbar.length = 14
 # colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 5
-width.fig = 10
+height.fig = 117
+width.fig = 174
 
 aux = list()
 
@@ -824,7 +840,7 @@ pf = ggarrange(p1, p2, ncol = 1, nrow = 2)
 
 ggsave(nombre_fig,plot =  pf
        ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-       , units = "in")
+       , units = 'mm')
 
 # ACC
 # source("aux.desemp.R")
@@ -843,16 +859,16 @@ ACC_MME = list(); ACC_teo = list()
 rc = qt(p = 0.95,df = 29-1)/sqrt((29-1)+qt(p = 0.95,df = 29-1))
 
 
-letter.size = 10
-colorbar.length = 18
-colorbar.size = 10
+letter.size = 9
+colorbar.length = 17
+colorbar.size = 9
 
 # letter.size = 8
 # colorbar.length = 14
 # colorbar.size = 6
 lats.size = 4 #por ahora borradas
-height.fig = 5
-width.fig = 10
+height.fig = 117
+width.fig = 174
 
 
 for(v in 1:2){
@@ -923,7 +939,7 @@ nombre_fig = paste("/home/luciano.andrian/paper2021/",
 
   ggsave(nombre_fig,plot =  p1
          ,dpi = 300, device = cairo_pdf, height = height.fig, width = width.fig
-         , units = "in")
+         , units = 'mm')
 
 }
 
@@ -988,8 +1004,8 @@ g1 = ggplot() + theme_minimal()+
   ggtitle(paste("ACC - Temperature")) + ylab(NULL) +
   scale_y_continuous(limits = c(-0.2, 0.8), breaks = seq(-0.2,0.8, by = .2)) + 
   #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = .1)) + 
-  theme(axis.text.y   = element_text(size = 6, color = "black"), axis.text.x   = element_blank(),
-        axis.title.y  = element_text(size = 6),
+  theme(axis.text.y   = element_text(size = 7, color = "black"), axis.text.x   = element_blank(),
+        axis.title.y  = element_text(size = 7),
         panel.grid.minor = element_blank(), axis.title.x = element_blank(),
         panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
         panel.ontop = F,
@@ -1014,8 +1030,8 @@ g2 = ggplot() + theme_minimal()+
   scale_x_continuous(labels=c("1" = "N-SESA", "2" = "S-SESA", "3" = "NeB", "4" = "Patagonia", "5" = "Am"),breaks = seq(1, 5, by = 1))+
   xlab(label = NULL)+
   #scale_y_continuous(limits = c(0, 0.8), breaks = seq(0,0.8, by = .1)) + 
-  theme(axis.text.y   = element_text(size = 6, color = "black"),  axis.text.x   = element_text(size = 8, color = "black", face = "bold"), 
-        axis.title.y  = element_text(size = 6),
+  theme(axis.text.y   = element_text(size = 7, color = "black"),  axis.text.x   = element_text(size = 8, color = "black", face = "bold"), 
+        axis.title.y  = element_text(size = 7),
         panel.grid.minor = element_blank(), axis.title.x = element_text(size = 8),  
         panel.border = element_rect(colour = "black", fill = NA, size = 0.1),
         panel.ontop = F,
@@ -1026,15 +1042,15 @@ g2 = ggplot() + theme_minimal()+
 gs = list(g1, g2)
 
 p1 = ggarrange(plotlist = gs, labels = paste(letters, ".", sep = ""), nrow = 2, align = "v"
-               , font.label = list(size = 7, face = "plain"), vjust = 1) +
+               , font.label = list(size = 8, face = "plain"), vjust = 1) +
   theme(plot.margin = margin(0.2,0.2,0.2,0.2, "cm")) 
 
 
 nombre_fig = "/home/luciano.andrian/paper2021/ACC_box.eps"
 
 ggsave(nombre_fig,plot =  p1
-       ,dpi = 300, device = cairo_pdf, height = 6, width = 6
-       , units = "in")
+       ,dpi = 300, device = cairo_pdf, height = 234, width = 174
+       , units = 'mm')
 
  ################################################################################
 

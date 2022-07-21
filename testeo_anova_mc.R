@@ -148,18 +148,19 @@ for(v in c(1,2)){
   # > dim(dif_or)
   # [1] 56 76  4
   
-  for (i in 7:11){ # desde los persentiles 0.6-> 0.95
+  for (i in 10){ # desde los persentiles 0.6-> 0.95
     # Mascara para regiones donde se superan los percentiles
     aux = dif_or
-    aux[which(dif_or<qt_v[,,,i])] = NA
-    aux[which(!is.na(aux))] = 1
-    aux[is.nan(aux)] = NA
+    aux1 = qt_v[,,,i]
+    #aux[which(dif_or<qt_v[,,,i])] = NA
+    #aux[which(!is.na(aux))] = 1
+    #aux[is.nan(aux)] = NA
 
     # Ploteo por seasons
     for(season in 1:4){
       
-      pred_MME[[season]] = mapa_topo3(variable = PPt[[v]], variable.sig = NULL
-                                      , colorbar = colorbars[[v]], revert = F, escala = seq(0,1,0.1)
+      pred_MME[[season]] = mapa_topo3(variable = aux, variable.sig = NULL
+                                      , colorbar = colorbars[[v]], revert = F, escala = seq(0,0.6,0.1)
                                       , titulo = seasons[[season]]
                                       , label.escala = NULL, mapa = "SA"
                                       , width = 20, height = 20, title.size = 13, na.fill = -1000
@@ -172,12 +173,12 @@ for(v in c(1,2)){
                                       , lats.size = 6, letter.size = letter.size
                                       , color.vcont = "black", nivel.vcont = rc)
       # sin cfsv2
-      pred_MME_wo[[season]] = mapa_topo3(variable = pred_wo_cfs[[v]], variable.sig = aux
-                                         , colorbar = colorbars[[v]], revert = F, escala = seq(0,1,0.1)
+      pred_MME_wo[[season]] = mapa_topo3(variable = aux1, variable.sig = aux
+                                         , colorbar = colorbars[[v]], revert = F, escala = seq(0,0.6,0.1)
                                          , titulo = paste("percentil", percentiles[i]) 
                                          , label.escala = NULL, mapa = "SA"
                                          , width = 20, height = 20, title.size = 13, na.fill = -1000
-                                         , sig = T, color.vsig = "black", alpha.vsig = 1
+                                         , sig = F, color.vsig = "black", alpha.vsig = 1
                                          , r = 4, estaciones = T, altura.topo = 2500, size.point = .01
                                          , cajas = F, lon = lon2, lat = lat2
                                          , type.sig = "point2", estacion = season
@@ -212,7 +213,7 @@ for(v in c(1,2)){
     
     nombre_fig = paste("/home/luciano.andrian/tesis/aux_pics_2022/", 
                        ifelse(v == 1, yes = "t-", no = "pp-")
-                       , "pred_qt", percentiles[i], ".png", sep = "")
+                       , "diff-pred_qt", percentiles[i], ".png", sep = "")
     
     
     ggsave(nombre_fig,plot =  p1
