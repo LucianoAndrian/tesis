@@ -843,13 +843,37 @@ ggsave(nombre_fig,plot =  pf
        , units = 'mm')
 
 # ACC
+# library(fields)
 # source("aux.desemp.R")
 # save(resultados, file = "ACC.RData")
 load("ACC.RData") # "resutlados"
-
-
 resultados[[2]] = resultados[[2]][,,,3]
 resultados[[5]] = resultados[[5]][,,,,3]
+
+
+
+dir_acc_dif = "/pikachu/datos/luciano.andrian/ACC_aux_nmme_quantiles/"
+diff_acc_qt = nc_open(paste(dir_acc_dif, 'diff_ACC_qt.nc', sep =''))
+diff_acc_qt = ncvar_get(diff_acc_qt, 'ACCv')
+# # > dim(diff_acc_qt)
+# # [1] 56 76  4  2 11 (,,seasons,variables,percentiles)
+# percentiles = c(.05, .1, .2, .3, .4, .5, .6, .7, .8, .9, .95)
+
+diff_acc = array(data=NA, dim = c(56,76,4,2))
+diff_acc[,,,1] = resultados[[1]] - resultados[[6]] # temp
+diff_acc[,,,2] = resultados[[2]] - resultados[[7]] # pp
+
+mask_arr2 = array(data = NA, dim = c(dim(mask_arr),2))
+mask_arr2[,,,1] = mask_arr2[,,,2] = mask_arr
+
+aux = diff_acc*mask_arr2
+qt_90 = diff_acc_qt[,,,,10]
+aux2 = array(1, dim = c(56,76,4,2))
+aux[which(aux<qt_90)] = 999
+aux2[which(aux==999)] = NA
+
+
+
 colorbars = list()
 colorbars[[1]] = "YlOrRd"; colorbars[[2]] = "PuBuGn"
 
@@ -870,12 +894,14 @@ lats.size = 4 #por ahora borradas
 height.fig = 117
 width.fig = 174
 
+source('funciones_MC.R')
+
 
 for(v in 1:2){
   v1 = ifelse(v == 1, yes = 6, no = 7)
   for(s in 1:4){
     
-    ACC_teo[[s]] = mapa_topo3(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr
+    ACC_teo[[s]] = mapa_topo3.2(variable = resultados[[v1]]*mask_arr, variable.sig = resultados[[v1]]*mask_arr
                               , colorbar = colorbars[[v]], revert = F, nivel.vcont = c(2,2.01, 2.02, 2.03)
                               , escala = seq(0, 1, by = .1), contour = F
                               , titulo = seasons[s], v.sig = rc
@@ -888,7 +914,8 @@ for(v in 1:2){
                               , mostrar = T, save = F, margen.zero = F
                               ,  cb.v.w = 0.5, cb.v.h = colorbar.length, cb.size = colorbar.size
                               , lats.size = 6, letter.size = letter.size
-                              , color.vcont = "black")
+                              , color.vcont = "black"
+                              ,tile = T, variable.cont = aux2[,,,v], alpha.vtile = 0.4, color.vtile = 'gray25')
     
     ACC_MME[[s]] = mapa_topo3(variable = resultados[[v]]*mask_arr, variable.sig = resultados[[v]]*mask_arr
                               , colorbar = colorbars[[v]], revert = F, variable.cont = resultados[[v]]*mask_arr
@@ -1053,4 +1080,3 @@ ggsave(nombre_fig,plot =  p1
        , units = 'mm')
 
  ################################################################################
-
